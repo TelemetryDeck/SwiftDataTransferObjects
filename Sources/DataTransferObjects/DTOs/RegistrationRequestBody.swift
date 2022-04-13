@@ -19,30 +19,30 @@ public extension DTOv1 {
         public var userPasswordConfirm: String = ""
         public var receiveMarketingEmails: Bool = false
         public var countryCode: String? = ""
-        public var referralCode: String? = nil
-        public var source: String? = nil
+        public var referralCode: String?
+        public var source: String?
 
         public var isValid: ValidationState {
             if organisationName.isEmpty || userFirstName.isEmpty || userEmail.isEmpty || userPassword.isEmpty {
                 return .fieldsMissing
             }
-            
+
             if userPassword != userPasswordConfirm {
                 return .passwordsNotEqual
             }
-            
+
             if userPassword.count < 8 {
                 return .passwordTooShort
             }
-            
+
             if userPassword.contains(":") {
                 return .passwordContainsColon
             }
-            
+
             if !userEmail.contains("@") {
                 return .noAtInEmail
             }
-            
+
             return .valid
         }
     }

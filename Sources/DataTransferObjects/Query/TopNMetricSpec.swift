@@ -5,15 +5,15 @@ public indirect enum TopNMetricSpec: Codable, Equatable, Hashable {
     case numeric(NumericTopNMetricSpec)
     case dimension(DimensionTopNMetricSpec)
     case inverted(InvertedTopNMetricSpec)
-    
+
     enum CodingKeys: String, CodingKey {
         case type
     }
-    
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let type = try values.decode(String.self, forKey: .type)
-        
+
         switch type {
         case "numeric":
             self = .numeric(try NumericTopNMetricSpec(from: decoder))
@@ -25,18 +25,18 @@ public indirect enum TopNMetricSpec: Codable, Equatable, Hashable {
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
-        case .numeric(let numericSpec):
+        case let .numeric(numericSpec):
             try container.encode("numeric", forKey: .type)
             try numericSpec.encode(to: encoder)
-        case .dimension(let dimensionSpec):
+        case let .dimension(dimensionSpec):
             try container.encode("dimension", forKey: .type)
             try dimensionSpec.encode(to: encoder)
-        case .inverted(let invertedSpec):
+        case let .inverted(invertedSpec):
             try container.encode("inverted", forKey: .type)
             try invertedSpec.encode(to: encoder)
         }
@@ -48,7 +48,7 @@ public struct NumericTopNMetricSpec: Codable, Equatable, Hashable {
     public init(metric: String) {
         self.metric = metric
     }
-    
+
     /// the actual metric field in which results will be sorted by  (i.e. "sort by this field")
     public let metric: String
 }
@@ -59,9 +59,9 @@ public struct DimensionTopNMetricSpec: Codable, Equatable, Hashable {
         self.ordering = ordering
         self.previousStop = previousStop
     }
-    
+
     public let ordering: StringComparators
-    
+
     /// The starting point of the sort. For example, if a previousStop value is 'b', all values before 'b' are discarded. This field can be used to paginate through all the dimension values.
     public let previousStop: String?
 }
@@ -71,6 +71,6 @@ public struct InvertedTopNMetricSpec: Codable, Equatable, Hashable {
     public init(metric: TopNMetricSpec) {
         self.metric = metric
     }
-    
+
     public let metric: TopNMetricSpec
 }

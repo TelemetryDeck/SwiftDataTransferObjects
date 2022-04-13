@@ -12,7 +12,7 @@ public extension DTOv1 {
     struct InsightData: Hashable, Codable {
         public var xAxisValue: String
         public var yAxisValue: String?
-        
+
         public init(xAxisValue: String, yAxisValue: String?) {
             self.xAxisValue = xAxisValue
             self.yAxisValue = yAxisValue

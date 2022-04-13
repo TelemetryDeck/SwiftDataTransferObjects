@@ -6,14 +6,14 @@ public struct Aggregator: Codable, Hashable {
         self.name = name
         self.fieldName = fieldName
     }
-    
+
     public let type: AggregatorType
-    
+
     /// The output name for the aggregated value
     public let name: String
-    
+
     /// The name of the column to aggregate over. Ignore for aggregator type "count"
-    public var fieldName: String? = nil
+    public var fieldName: String?
 }
 
 public enum AggregatorType: String, Codable, Hashable {

@@ -9,7 +9,13 @@ import Foundation
 
 /// Custom JSON based  query
 public struct CustomQuery: Codable, Hashable, Equatable {
-    public init(queryType: CustomQuery.QueryType, dataSource: String = "telemetry-signals", descending: Bool? = nil, filter: Filter? = nil, intervals: [QueryTimeInterval], granularity: CustomQuery.Granularity, aggregations: [Aggregator]? = nil, limit: Int? = nil, context: QueryContext? = nil, threshold: Int? = nil, metric: TopNMetricSpec? = nil, dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil) {
+    public init(queryType: CustomQuery.QueryType, dataSource: String = "telemetry-signals",
+                descending: Bool? = nil, filter: Filter? = nil, intervals: [QueryTimeInterval],
+                granularity: CustomQuery.Granularity, aggregations: [Aggregator]? = nil,
+                limit: Int? = nil, context: QueryContext? = nil, threshold: Int? = nil,
+                metric: TopNMetricSpec? = nil, dimension: DimensionSpec? = nil,
+                dimensions: [DimensionSpec]? = nil)
+    {
         self.queryType = queryType
         self.dataSource = dataSource
         self.descending = descending
@@ -26,8 +32,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     }
 
     public enum QueryType: String, Codable, CaseIterable, Identifiable {
-        public var id: String { self.rawValue }
-        
+        public var id: String { rawValue }
+
         case timeseries
         case groupBy
         case topN
@@ -50,20 +56,20 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
     public var queryType: QueryType
     public var dataSource: String = "telemetry-signals"
-    public var descending: Bool? = nil
-    public var filter: Filter? = nil
+    public var descending: Bool?
+    public var filter: Filter?
     public var intervals: [QueryTimeInterval]
     public let granularity: Granularity
-    public var aggregations: [Aggregator]? = nil
-    public var limit: Int? = nil
-    public var context: QueryContext? = nil
-    
+    public var aggregations: [Aggregator]?
+    public var limit: Int?
+    public var context: QueryContext?
+
     /// Only for topN Queries: An integer defining the N in the topN (i.e. how many results you want in the top list)
-    public var threshold: Int? = nil
-    
+    public var threshold: Int?
+
     /// Only for topN Queries: A DimensionSpec defining the dimension that you want the top taken for
     public var dimension: DimensionSpec?
-    
+
     /// Only for topN Queries: Specifying the metric to sort by for the top list
     public var metric: TopNMetricSpec?
 
@@ -87,6 +93,6 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     }
 
     public static func == (lhs: CustomQuery, rhs: CustomQuery) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        lhs.hashValue == rhs.hashValue
     }
 }

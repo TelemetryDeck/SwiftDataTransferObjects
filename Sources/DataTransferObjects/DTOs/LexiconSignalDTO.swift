@@ -15,8 +15,8 @@ public extension DTOv1 {
             self.userCount = userCount
             self.sessionCount = sessionCount
         }
-        
-        public var id: String { return type }
+
+        public var id: String { type }
         public var type: String
         public var signalCount: Int
         public var userCount: Int

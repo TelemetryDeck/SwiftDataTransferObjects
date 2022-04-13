@@ -15,7 +15,7 @@ public extension DTOv1 {
             self.max = max
             self.median = median
         }
-        
+
         public let min: TimeInterval
         public let avg: TimeInterval
         public let max: TimeInterval

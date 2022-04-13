@@ -9,7 +9,7 @@ import DataTransferObjects
 import XCTest
 
 class QueryResultTests: XCTestCase {
-    let randomDate = Date(timeIntervalSinceReferenceDate: 656510400) // Thursday, October 21, 2021 2:00:00 PM GMT+02:00
+    let randomDate = Date(timeIntervalSinceReferenceDate: 656_510_400) // Thursday, October 21, 2021 2:00:00 PM GMT+02:00
 
     func testEncodingTimeSeries() throws {
         let exampleQueryResult = QueryResult.timeSeries(
@@ -22,7 +22,7 @@ class QueryResultTests: XCTestCase {
         )
 
         let encodedQueryResult = try JSONEncoder.telemetryEncoder.encode(exampleQueryResult)
-        
+
         let expectedResult = """
         {
             "rows": [
@@ -33,13 +33,12 @@ class QueryResultTests: XCTestCase {
         }
         """
         .filter { !$0.isWhitespace }
-        
+
         XCTAssertEqual(String(data: encodedQueryResult, encoding: .utf8)!, expectedResult)
-        
     }
 
     func testEncodingGroupBy() throws {
-        let exampleQueryResult = QueryResult.groupBy(.init(rows: [GroupByQueryResultRow(timestamp: randomDate, event: .init(metrics: [:], dimensions: ["abc":"def","uno":"due"]))]))
+        let exampleQueryResult = QueryResult.groupBy(.init(rows: [GroupByQueryResultRow(timestamp: randomDate, event: .init(metrics: [:], dimensions: ["abc": "def", "uno": "due"]))]))
         let encodedQueryResult = try JSONEncoder.telemetryEncoder.encode(exampleQueryResult)
         let expectedResult = """
         {
@@ -52,12 +51,13 @@ class QueryResultTests: XCTestCase {
         }
         """
         .filter { !$0.isWhitespace }
-            
+
         XCTAssertEqual(String(data: encodedQueryResult, encoding: .utf8)!, expectedResult)
     }
-    
+
     func testDecodingGroupBy() throws {
-        let expectedResult = QueryResult.groupBy(GroupByQueryResult(rows: [GroupByQueryResultRow(timestamp: randomDate, event: .init(metrics: ["count":12], dimensions: ["abc":"def","uno":"due"]))]))
+        let expectedResult = QueryResult.groupBy(GroupByQueryResult(rows: [GroupByQueryResultRow(timestamp: randomDate,
+                                                                                                 event: .init(metrics: ["count": 12], dimensions: ["abc": "def", "uno": "due"]))]))
         let groupByResult = """
         {
         "rows": [
@@ -70,19 +70,19 @@ class QueryResultTests: XCTestCase {
         "type":"groupByResult"
         }
         """
-        
+
         let decodedResult = try JSONDecoder.telemetryDecoder.decode(QueryResult.self, from: groupByResult.data(using: .utf8)!)
         XCTAssertEqual(expectedResult, decodedResult)
     }
-    
+
     func testDecodingTimeSeriesResult() throws {
         let exampleResult = """
         {"timestamp":"2021-01-01T00:00:00.000Z","result":{"d0":1609459200000}}
         """
         .filter { !$0.isWhitespace }
-        
+
         let decodedResult = try JSONDecoder.telemetryDecoder.decode(TimeSeriesQueryResultRow.self, from: exampleResult.data(using: .utf8)!)
-        
-        XCTAssertEqual(decodedResult.result, ["d0": 1609459200000])
+
+        XCTAssertEqual(decodedResult.result, ["d0": 1_609_459_200_000])
     }
 }

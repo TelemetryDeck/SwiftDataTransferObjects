@@ -2,20 +2,32 @@ name: Run Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    container: swift:5.5-focal
+    runs-on: self-hosted
+    name: Build and run tests
 
     steps:
-    - name: Check out Source
-      uses: actions/checkout@v2
-      with:
-        submodules: 'true'
-    - name: Build and Run Tests
-      working-directory: .
-      run: swift test
+      - name: Check out Source
+        uses: actions/checkout@v2
+        with:
+          submodules: "true"
+      - name: test
+        working-directory: .
+        run: swift test
+  lint:
+    runs-on: self-hosted
+    name: Run Swiftlint
+    needs: test
+
+    steps:
+      - name: Check out Source
+        uses: actions/checkout@v2
+        with:
+          submodules: "true"
+      - name: Swiftlint
+        run: /opt/homebrew/bin/swiftlint

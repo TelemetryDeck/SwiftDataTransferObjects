@@ -9,10 +9,10 @@ struct Links: Codable {
     var last: String?
 }
 
-struct ApiResponseGeneric<T> : Codable where T: Codable {
+struct ApiResponseGeneric<T>: Codable where T: Codable {
     var links: Links?
     var data: T
-    
+
     init(links: Links, data: T) {
         self.links = links
         self.data = data

@@ -170,7 +170,6 @@ public enum DTOv2 {
         public var id: UUID
         public var groupID: UUID
 
-        
         /// order in which insights appear in the apps (if not expanded)
         public var order: Double?
         public var title: String
@@ -214,7 +213,7 @@ public enum DTOv2 {
             order: Double?,
             title: String,
             accentColor: String? = nil,
-            widgetable: Bool? = false,
+            widgetable _: Bool? = false,
             customQuery: CustomQuery? = nil,
             signalType: String?,
             uniqueUser: Bool,
@@ -282,7 +281,9 @@ public enum DTOv2 {
     }
 
     public struct PriceStructure: Identifiable, Codable {
-        public init(id: String, order: Int, title: String, description: String, includedSignals: Int64, nakedPrice: String, mostPopular: Bool, currency: String, billingPeriod: String, features: [String]) {
+        public init(id: String, order: Int, title: String, description: String,
+                    includedSignals: Int64, nakedPrice: String, mostPopular: Bool, currency: String, billingPeriod: String, features: [String])
+        {
             self.id = id
             self.order = order
             self.title = title
@@ -297,15 +298,15 @@ public enum DTOv2 {
             // currency is derived
             switch currency {
             case "EUR":
-                self.currencySymbol = "€"
+                currencySymbol = "€"
             case "USD", "CAD":
-                self.currencySymbol = "$"
+                currencySymbol = "$"
             default:
-                self.currencySymbol = currency
+                currencySymbol = currency
             }
 
             // price is derived
-            self.price = "\(currencySymbol)\(self.nakedPrice)/\(self.billingPeriod)"
+            price = "\(currencySymbol)\(self.nakedPrice)/\(self.billingPeriod)"
         }
 
         public let id: String
@@ -362,27 +363,26 @@ public enum DTOv2 {
             self.sessionCount = sessionCount
         }
 
-        public var id: String { return type }
+        public var id: String { type }
         public var type: String
         public var signalCount: Int
         public var userCount: Int
         public var sessionCount: Int
     }
-    
-    public struct LexiconPayloadKey: Codable, Hashable, Identifiable {
 
+    public struct LexiconPayloadKey: Codable, Hashable, Identifiable {
         public init(name: String, count: Int) {
             self.name = name
             self.count = count
         }
-        
+
         /// Name of the payload key
         public let name: String
-        
+
         /// Occurrences of the payload key within this month and the previous one
         public let count: Int
-        
-        public var id:  String  { name }
+
+        public var id: String { name }
     }
 }
 
@@ -392,7 +392,7 @@ public struct ChartTemplate: Codable {
         self.breakdownKey = breakdownKey
         self.funnelSignalTypes = funnelSignalTypes
     }
-    
+
     public enum Template: String, Codable {
         case custom
         case signalCount
@@ -537,13 +537,13 @@ public extension DTOv2.Insight {
     }
 
     static func newCustomQueryInsight(groupID: UUID) -> DTOv2.Insight {
-        let customQuery = CustomQuery.init(
+        let customQuery = CustomQuery(
             queryType: .groupBy,
             dataSource: "telemetry-signals",
             intervals: [],
             granularity: .all,
             aggregations: [
-                .init(type: .longSum, name: "total_usage", fieldName: "count")
+                .init(type: .longSum, name: "total_usage", fieldName: "count"),
             ]
         )
 

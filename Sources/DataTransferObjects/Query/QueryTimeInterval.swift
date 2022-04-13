@@ -1,10 +1,10 @@
-import Foundation
 import DateOperations
+import Foundation
 
 public struct QueryTimeInterval: Codable, Hashable, Equatable {
     public let beginningDate: Date
     public let endDate: Date
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
 

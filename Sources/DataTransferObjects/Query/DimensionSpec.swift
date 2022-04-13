@@ -9,15 +9,15 @@ import Foundation
 public indirect enum DimensionSpec: Codable, Equatable, Hashable {
     case `default`(DefaultDimensionSpec)
     case extraction(ExtractionDimensionSpec)
-    
+
     enum CodingKeys: String, CodingKey {
         case type
     }
-    
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let type = try values.decode(String.self, forKey: .type)
-        
+
         switch type {
         case "default":
             self = .default(try DefaultDimensionSpec(from: decoder))
@@ -27,15 +27,15 @@ public indirect enum DimensionSpec: Codable, Equatable, Hashable {
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
-        case .default(let defaultDimensionSpec):
+        case let .default(defaultDimensionSpec):
             try container.encode("default", forKey: .type)
             try defaultDimensionSpec.encode(to: encoder)
-        case .extraction(let exxtractionDimensionSpec):
+        case let .extraction(exxtractionDimensionSpec):
             try container.encode("extraction", forKey: .type)
             try exxtractionDimensionSpec.encode(to: encoder)
         }
@@ -54,7 +54,7 @@ public struct DefaultDimensionSpec: Codable, Equatable, Hashable {
         self.outputName = outputName
         self.outputType = outputType
     }
-    
+
     public let dimension: String
     public let outputName: String
     public let outputType: OutputType?
@@ -67,7 +67,7 @@ public struct ExtractionDimensionSpec: Codable, Equatable, Hashable {
         self.outputType = outputType
         self.extractionFn = extractionFn
     }
-    
+
     public let dimension: String
     public let outputName: String
     public let outputType: OutputType?

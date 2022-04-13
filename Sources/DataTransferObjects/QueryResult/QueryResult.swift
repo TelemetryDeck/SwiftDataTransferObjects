@@ -29,13 +29,13 @@ public enum QueryResult: Codable, Hashable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
-        case .timeSeries(let timeSeries):
+        case let .timeSeries(timeSeries):
             try container.encode("timeSeriesResult", forKey: .type)
             try timeSeries.encode(to: encoder)
-        case .topN(let topN):
+        case let .topN(topN):
             try container.encode("topNResult", forKey: .type)
             try topN.encode(to: encoder)
-        case .groupBy(let columnComparison):
+        case let .groupBy(columnComparison):
             try container.encode("groupByResult", forKey: .type)
             try columnComparison.encode(to: encoder)
         }
@@ -74,7 +74,7 @@ public struct GroupByQueryResult: Codable, Hashable, Equatable {
 
 public struct GroupByQueryResultRow: Codable, Hashable, Equatable {
     public init(timestamp: Date, event: AdaptableQueryResultItem) {
-        self.version = "v1"
+        version = "v1"
         self.timestamp = timestamp
         self.event = event
     }
@@ -128,13 +128,9 @@ public struct AdaptableQueryResultItem: Codable, Hashable, Equatable {
         for key in container.allKeys {
             if let stringElement = try? container.decode(String.self, forKey: key) {
                 dimensions[key.stringValue] = stringElement
-            }
-
-            else if let doubleElement = try? container.decode(Double.self, forKey: key) {
+            } else if let doubleElement = try? container.decode(Double.self, forKey: key) {
                 metrics[key.stringValue] = doubleElement
-            }
-
-            else {
+            } else {
                 nullValues.append(key.stringValue)
             }
         }
@@ -166,8 +162,8 @@ public struct AdaptableQueryResultItem: Codable, Hashable, Equatable {
         }
 
         var intValue: Int?
-        init?(intValue: Int) {
-            return nil
+        init?(intValue _: Int) {
+            nil
         }
     }
 }

@@ -8,7 +8,7 @@ public struct FilterSelector: Codable, Hashable, Equatable {
         self.dimension = dimension
         self.value = value
     }
-    
+
     public let dimension: String
     public let value: String
 }
@@ -19,7 +19,7 @@ public struct FilterColumnComparison: Codable, Hashable, Equatable {
     public init(dimensions: [String]) {
         self.dimensions = dimensions
     }
-    
+
     public let dimensions: [String]
 }
 
@@ -33,7 +33,7 @@ public struct FilterRegex: Codable, Hashable, Equatable {
         self.dimension = dimension
         self.pattern = pattern
     }
-    
+
     public let dimension: String
     public let pattern: String
 }
@@ -43,7 +43,7 @@ public struct FilterExpression: Codable, Hashable, Equatable {
     public init(fields: [Filter]) {
         self.fields = fields
     }
-    
+
     public let fields: [Filter]
 }
 
@@ -51,7 +51,7 @@ public struct FilterNot: Codable, Hashable, Equatable {
     public init(field: Filter) {
         self.field = field
     }
-    
+
     public let field: Filter
 }
 
@@ -107,22 +107,22 @@ public indirect enum Filter: Codable, Hashable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
-        case .selector(let selector):
+        case let .selector(selector):
             try container.encode("selector", forKey: .type)
             try selector.encode(to: encoder)
-        case .columnComparison(let columnComparison):
+        case let .columnComparison(columnComparison):
             try container.encode("columnComparison", forKey: .type)
             try columnComparison.encode(to: encoder)
-        case .regex(let regex):
+        case let .regex(regex):
             try container.encode("regex", forKey: .type)
             try regex.encode(to: encoder)
-        case .and(let and):
+        case let .and(and):
             try container.encode("and", forKey: .type)
             try and.encode(to: encoder)
-        case .or(let or):
+        case let .or(or):
             try container.encode("or", forKey: .type)
             try or.encode(to: encoder)
-        case .not(let not):
+        case let .not(not):
             try container.encode("not", forKey: .type)
             try not.encode(to: encoder)
         }

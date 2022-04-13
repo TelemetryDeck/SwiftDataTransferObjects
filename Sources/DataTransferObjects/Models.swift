@@ -31,7 +31,7 @@ public enum DTOv1 {
             self.id = id
             self.title = title
             self.order = order
-            self.insights = []
+            insights = []
         }
     }
 
@@ -74,7 +74,10 @@ public struct TelemetryApp: Codable, Hashable, Identifiable {
 }
 
 public struct InsightDefinitionRequestBody: Codable {
-    public init(order: Double? = nil, title: String, signalType: String? = nil, uniqueUser: Bool, filters: [String: String], rollingWindowSize: TimeInterval, breakdownKey: String? = nil, groupBy: InsightGroupByInterval? = nil, displayMode: InsightDisplayMode, groupID: UUID? = nil, id: UUID? = nil, isExpanded: Bool) {
+    public init(order: Double? = nil, title: String, signalType: String? = nil, uniqueUser: Bool,
+                filters: [String: String], rollingWindowSize: TimeInterval, breakdownKey: String? = nil,
+                groupBy: InsightGroupByInterval? = nil, displayMode: InsightDisplayMode, groupID: UUID? = nil, id: UUID? = nil, isExpanded: Bool)
+    {
         self.order = order
         self.title = title
         self.signalType = signalType
