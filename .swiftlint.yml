@@ -4,7 +4,6 @@ disabled_rules: # rule identifiers turned on by default to exclude from running
   - function_body_length
   - opening_brace
   - trailing_comma
-  - todo
   - function_parameter_count
   - closure_parameter_position
   - nesting
