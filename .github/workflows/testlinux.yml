@@ -1,0 +1,20 @@
+name: Test Linux
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: swift:5.5-focal
+
+    steps:
+      - name: Check out Source
+        uses: actions/checkout@v2
+        with:
+          submodules: "true"
+      - name: Build for Release
+        run: swift build -c release
