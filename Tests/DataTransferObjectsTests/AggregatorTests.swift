@@ -78,5 +78,48 @@ final class AggregatorTests: XCTestCase {
 
     func testFilteredAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleDruidAggregatorsFiltered)
+        
+        XCTAssertEqual(decodedAggregators, [
+            .filtered(
+                .init(
+                    filter: .selector(
+                        .init(
+                            dimension: "type",
+                            value: "newSessionBegan"
+                        )
+                    ),
+                    aggregator: .thetaSketch(
+                        .init(
+                            type: .thetaSketch,
+                            name: "newSessionBegan",
+                            fieldName: "clientUser"
+                        )
+                    )
+                )
+            ),
+            .filtered(
+                .init(
+                    filter: .and(
+                        .init(
+                            fields: [
+                                .selector(
+                                    .init(
+                                        dimension: "type",
+                                        value: "InsightShown"
+                                    )
+                                )
+                            ]
+                        )
+                    ),
+                    aggregator: .thetaSketch(
+                        .init(
+                            type: .thetaSketch,
+                            name: "InsightShown",
+                            fieldName: "clientUser"
+                        )
+                    )
+                )
+            )
+        ])
     }
 }

@@ -83,17 +83,30 @@ public indirect enum Aggregator: Codable, Hashable {
     /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null). stringAny returns any string metric value.
     case stringAny(GenericAggregator)
     
-    
     // Approximate Aggregations
+    /// This module provides Apache Druid aggregators based on Theta sketch from Apache DataSketches library.
+    ///
+    /// Note that sketch algorithms are approximate; see details in the "Accuracy" section of the datasketches doc.
+    ///
+    /// At ingestion time, this aggregator creates the Theta sketch objects which get stored in Druid segments. Logically speaking, a Theta sketch object can be thought of as a Set data
+    /// structure. At query time, sketches are read and aggregated (set unioned) together. In the end, by default, you receive the estimate of the number of unique entries in the sketch
+    /// object. Also, you can use post aggregators to do union, intersection or difference on sketch columns in the same row. Note that you can use thetaSketch aggregator on columns
+    /// which were not ingested using the same. It will return estimated cardinality of the column. It is recommended to use it at ingestion time as well to make querying faster.
+    ///
+    /// https://druid.apache.org/docs/latest/development/extensions-core/datasketches-theta.html
     case thetaSketch(GenericAggregator)
     
     // Miscellaneous Aggregations
-     case filtered(FilteredAggregator)
+    
+    /// A filtered aggregator wraps any given aggregator, but only aggregates the values for which the given dimension filter matches.
+    ///
+    /// This makes it possible to compute the results of a filtered and an unfiltered aggregation simultaneously, without having to issue multiple queries, and use both results as part of post-aggregations.
+    ///
+    /// Note: If only the filtered results are required, consider putting the filter on the query itself, which will be much faster since it does not require scanning all the data.
+    case filtered(FilteredAggregator)
     
     // Not implemented
     // case javaScript: JavaScript aggregator
-    
-    
     
     enum CodingKeys: String, CodingKey {
         case type
@@ -153,6 +166,8 @@ public indirect enum Aggregator: Codable, Hashable {
             self = .stringAny(try GenericAggregator(from: decoder))
         case "thetaSketch":
             self = .thetaSketch(try GenericAggregator(from: decoder))
+        case "filtered":
+            self = .filtered(try FilteredAggregator(from: decoder))
             
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
@@ -290,7 +305,6 @@ public struct GenericTimeColumnAggregator: Codable, Hashable {
     public let timeColumn: String?
 }
 
-
 public enum AggregatorType: String, Codable, Hashable {
     case count
 
@@ -322,7 +336,6 @@ public enum AggregatorType: String, Codable, Hashable {
 
     // JavaScript aggregator missing
 }
-
 
 /// A filtered aggregator wraps any given aggregator, but only aggregates the values for which the given dimension filter matches.
 ///
