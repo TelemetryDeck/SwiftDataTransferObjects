@@ -1,125 +1,134 @@
+// swiftlint:disable cyclomatic_complexity
+
 import Foundation
 
 /// https://druid.apache.org/docs/latest/querying/aggregations.html
 public indirect enum Aggregator: Codable, Hashable {
     // Exact aggregations
-    
+
     /// count computes the count of rows that match the filters.
     case count(CountAggregator)
-    
+
     /// Computes the sum of values as a 64-bit, signed integer.
     ///
     /// The longSum aggregator takes the following properties:
     ///     - name: Output name for the summed value
     ///     - fieldName: Name of the metric column to sum over
     case longSum(GenericAggregator)
-    
+
     /// Computes and stores the sum of values as a 64-bit floating point value. Similar to longSum.
     case doubleSum(GenericAggregator)
-    
+
     /// Computes and stores the sum of values as a 32-bit floating point value. Similar to longSum and doubleSum.
     case floatSum(GenericAggregator)
-    
+
     /// doubleMin computes the minimum of all metric values and Double.POSITIVE_INFINITY.
     case doubleMin(GenericAggregator)
-    
+
     /// doubleMax computes the maximum of all metric values and Double.NEGATIVE_INFINITY.
     case doubleMax(GenericAggregator)
-    
+
     /// floatMin computes the minimum of all metric values and Float.POSITIVE_INFINITY.
     case floatMin(GenericAggregator)
-    
+
     /// floatMax computes the maximum of all metric values and Float.NEGATIVE_INFINITY.
     case floatMax(GenericAggregator)
-    
+
     /// longMin computes the minimum of all metric values and Long.MAX_VALUE.
     case longMin(GenericAggregator)
-    
+
     /// longMax computes the maximum of all metric values and Long.MIN_VALUE.
     case longMax(GenericAggregator)
-    
+
     /// Computes and returns the arithmetic mean of a column's values as a 64-bit floating point value.
     ///
     /// doubleMean is a query time aggregator only. It is not available for indexing.
     ///
     /// It also is very mean 😡😡
     case doubleMean(GenericAggregator)
-    
+
     // First and last aggregators
     /// doubleFirst computes the metric value with the minimum value for time column or 0 in default mode, or null in SQL-compatible mode if no row exists.
     case doubleFirst(GenericTimeColumnAggregator)
-    
+
     /// doubleLast computes the metric value with the maximum value for time column or 0 in default mode, or null in SQL-compatible mode if no row exists.
     case doubleLast(GenericTimeColumnAggregator)
-    
+
     /// floatFirst computes the metric value with the minimum value for time column or 0 in default mode, or null in SQL-compatible mode if no row exists.
     case floatFirst(GenericTimeColumnAggregator)
-    
+
     /// floatLast computes the metric value with the maximum value for time column or 0 in default mode, or null in SQL-compatible mode if no row exists.
     case floatLast(GenericTimeColumnAggregator)
-    
+
     /// longFirst computes the metric value with the minimum value for time column or 0 in default mode, or null in SQL-compatible mode if no row exists.
     case longFirst(GenericTimeColumnAggregator)
-    
+
     /// longLast computes the metric value with the maximum value for time column or 0 in default mode, or null in SQL-compatible mode if no row exists.
     case longLast(GenericTimeColumnAggregator)
-    
+
     /// stringFirst computes the metric value with the minimum value for time column or null if no row exists.
     case stringFirst(GenericTimeColumnAggregator)
-    
+
     /// stringLast computes the metric value with the maximum value for time column or null if no row exists.
     case stringLast(GenericTimeColumnAggregator)
-    
+
     // ANY aggregators
-    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null). doubleAny returns any double metric value.
+    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null).
+    /// doubleAny returns any double metric value.
     case doubleAny(GenericAggregator)
-    
-    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null). floatAny returns any float metric value.
+
+    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null).
+    /// floatAny returns any float metric value.
     case floatAny(GenericAggregator)
-    
-    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null). longAny returns any long metric value.
+
+    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null).
+    /// longAny returns any long metric value.
     case longAny(GenericAggregator)
-    
-    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null). stringAny returns any string metric value.
+
+    /// Returns any value including null. This aggregator can simplify and optimize the performance by returning the first encountered value (including null).
+    /// stringAny returns any string metric value.
     case stringAny(GenericAggregator)
-    
+
     // Approximate Aggregations
     /// This module provides Apache Druid aggregators based on Theta sketch from Apache DataSketches library.
     ///
     /// Note that sketch algorithms are approximate; see details in the "Accuracy" section of the datasketches doc.
     ///
-    /// At ingestion time, this aggregator creates the Theta sketch objects which get stored in Druid segments. Logically speaking, a Theta sketch object can be thought of as a Set data
-    /// structure. At query time, sketches are read and aggregated (set unioned) together. In the end, by default, you receive the estimate of the number of unique entries in the sketch
-    /// object. Also, you can use post aggregators to do union, intersection or difference on sketch columns in the same row. Note that you can use thetaSketch aggregator on columns
-    /// which were not ingested using the same. It will return estimated cardinality of the column. It is recommended to use it at ingestion time as well to make querying faster.
+    /// At ingestion time, this aggregator creates the Theta sketch objects which get stored in Druid segments. Logically speaking, a Theta sketch
+    /// object can be thought of as a Set data structure. At query time, sketches are read and aggregated (set unioned) together. In the end, by
+    /// default, you receive the estimate of the number of unique entries in the sketch object. Also, you can use post aggregators to do union,
+    /// intersection or difference on sketch columns in the same row. Note that you can use thetaSketch aggregator on columns which were not
+    /// ingested using the same. It will return estimated cardinality of the column. It is recommended to use it at ingestion time as well to make
+    /// querying faster.
     ///
     /// https://druid.apache.org/docs/latest/development/extensions-core/datasketches-theta.html
     case thetaSketch(GenericAggregator)
-    
+
     // Miscellaneous Aggregations
-    
+
     /// A filtered aggregator wraps any given aggregator, but only aggregates the values for which the given dimension filter matches.
     ///
-    /// This makes it possible to compute the results of a filtered and an unfiltered aggregation simultaneously, without having to issue multiple queries, and use both results as part of post-aggregations.
+    /// This makes it possible to compute the results of a filtered and an unfiltered aggregation simultaneously, without having to issue multiple
+    /// queries, and use both results as part of post-aggregations.
     ///
     /// Note: If only the filtered results are required, consider putting the filter on the query itself, which will be much faster since it does not require scanning all the data.
     case filtered(FilteredAggregator)
-    
+
     // Not implemented
     // case javaScript: JavaScript aggregator
-    
+
     enum CodingKeys: String, CodingKey {
         case type
     }
-    
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let type = try values.decode(String.self, forKey: .type)
-        
+
         switch type {
         case "count":
             self = .count(try CountAggregator(from: decoder))
-            
+
         case "longSum":
             self = .longSum(try GenericAggregator(from: decoder))
         case "doubleSum":
@@ -168,15 +177,15 @@ public indirect enum Aggregator: Codable, Hashable {
             self = .thetaSketch(try GenericAggregator(from: decoder))
         case "filtered":
             self = .filtered(try FilteredAggregator(from: decoder))
-            
+
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case let .count(selector):
             try container.encode("count", forKey: .type)
@@ -300,7 +309,7 @@ public struct GenericTimeColumnAggregator: Codable, Hashable {
 
     /// The name of the column to aggregate over
     public var fieldName: String
-    
+
     /// Name of the time column to use. Optional, defaults to `__time`
     public let timeColumn: String?
 }
@@ -331,7 +340,7 @@ public enum AggregatorType: String, Codable, Hashable {
     case longAny
     case stringAny
     case thetaSketch
-    
+
     case filtered
 
     // JavaScript aggregator missing
@@ -339,7 +348,8 @@ public enum AggregatorType: String, Codable, Hashable {
 
 /// A filtered aggregator wraps any given aggregator, but only aggregates the values for which the given dimension filter matches.
 ///
-/// This makes it possible to compute the results of a filtered and an unfiltered aggregation simultaneously, without having to issue multiple queries, and use both results as part of post-aggregations.
+/// This makes it possible to compute the results of a filtered and an unfiltered aggregation simultaneously, without having to issue multiple
+/// queries, and use both results as part of post-aggregations.
 ///
 /// Note: If only the filtered results are required, consider putting the filter on the query itself, which will be much faster since it does not require scanning all the data.
 public struct FilteredAggregator: Codable, Hashable {
@@ -348,10 +358,10 @@ public struct FilteredAggregator: Codable, Hashable {
         self.filter = filter
         self.aggregator = aggregator
     }
-    
+
     public let type: AggregatorType
-    
+
     public let filter: Filter
-    
+
     public let aggregator: Aggregator
 }

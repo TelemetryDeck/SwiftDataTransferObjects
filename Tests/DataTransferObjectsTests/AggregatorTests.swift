@@ -13,7 +13,7 @@ final class AggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
+
     let exampleDruidAggregatorsCountSum = """
     [
         {
@@ -63,22 +63,22 @@ final class AggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
+
     func testThetaSketchAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleDruidAggregatorsThetaSketch)
-        
+
         XCTAssertEqual(decodedAggregators, [Aggregator.thetaSketch(.init(type: .thetaSketch, name: "count", fieldName: "clientUser"))])
     }
-    
+
     func testLongSumAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleDruidAggregatorsCountSum)
-        
+
         XCTAssertEqual(decodedAggregators, [Aggregator.longSum(.init(type: .longSum, name: "count", fieldName: "count"))])
     }
 
     func testFilteredAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleDruidAggregatorsFiltered)
-        
+
         XCTAssertEqual(decodedAggregators, [
             .filtered(
                 .init(
