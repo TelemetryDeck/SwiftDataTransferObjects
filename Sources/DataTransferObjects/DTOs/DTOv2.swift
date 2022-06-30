@@ -543,7 +543,7 @@ public extension DTOv2.Insight {
             intervals: [],
             granularity: .all,
             aggregations: [
-                .init(type: .longSum, name: "total_usage", fieldName: "count"),
+                .longSum(.init(type: .longSum, name: "total_usage", fieldName: "count"))
             ]
         )
 

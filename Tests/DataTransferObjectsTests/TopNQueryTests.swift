@@ -33,7 +33,7 @@ class TopNQueryTests: XCTestCase {
         dataSource: "telemetry-signals",
         intervals: [.init(beginningDate: beginDate, endDate: endDate)],
         granularity: .all,
-        aggregations: [.init(type: .count, name: "count")],
+        aggregations: [.count(.init(name: "count"))],
         threshold: 1_048_576,
         metric: .dimension(.init(ordering: .version)),
         dimension: .default(.init(dimension: "appVersion", outputName: "appVersion"))

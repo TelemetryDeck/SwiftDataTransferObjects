@@ -63,7 +63,7 @@ class HashingTests: XCTestCase {
             dataSource: "telemetry-signals",
             intervals: [.init(beginningDate: Self.beginDate, endDate: Self.endDate)],
             granularity: .all,
-            aggregations: [.init(type: .count, name: "count")],
+            aggregations: [.count(.init(name: "count"))],
             threshold: 10,
             metric: .dimension(.init(ordering: .version)),
             dimension: .default(.init(dimension: "appVersion", outputName: "appVersion"))
@@ -74,7 +74,7 @@ class HashingTests: XCTestCase {
             dataSource: "telemetry-signals",
             intervals: [.init(beginningDate: Self.beginDate, endDate: Self.endDate)],
             granularity: .all,
-            aggregations: [.init(type: .count, name: "count")],
+            aggregations: [.count(.init(name: "count"))],
             threshold: 10,
             metric: .dimension(.init(ordering: .version)),
             dimension: .default(.init(dimension: "buildNumber", outputName: "buildNumber"))
@@ -89,7 +89,7 @@ class HashingTests: XCTestCase {
             dataSource: "telemetry-signals",
             intervals: [.init(beginningDate: Self.beginDate, endDate: Self.endDate)],
             granularity: .all,
-            aggregations: [.init(type: .count, name: "count")],
+            aggregations: [.count(.init(name: "count"))],
             threshold: 10,
             metric: .dimension(.init(ordering: .version)),
             dimension: .default(.init(dimension: "appVersion", outputName: "appVersion"))
@@ -134,7 +134,7 @@ class HashingTests: XCTestCase {
             dataSource: "telemetry-signals",
             intervals: [.init(beginningDate: Self.beginDate, endDate: Self.endDate)],
             granularity: .all,
-            aggregations: [.init(type: .count, name: "count")],
+            aggregations: [.count(.init(name: "count"))],
             threshold: 10,
             metric: .dimension(.init(ordering: .version)),
             dimension: .default(.init(dimension: "appVersion", outputName: "appVersion"))
@@ -162,7 +162,7 @@ class HashingTests: XCTestCase {
             dataSource: "telemetry-signals",
             intervals: [.init(beginningDate: Self.beginDate, endDate: Self.endDate)],
             granularity: .all,
-            aggregations: [.init(type: .count, name: "count")],
+            aggregations: [.count(.init(name: "count"))],
             threshold: 10,
             metric: .dimension(.init(ordering: .version)),
             dimension: dimensionSpec1
@@ -173,7 +173,7 @@ class HashingTests: XCTestCase {
             dataSource: "telemetry-signals",
             intervals: [.init(beginningDate: Self.beginDate, endDate: Self.endDate)],
             granularity: .all,
-            aggregations: [.init(type: .count, name: "count")],
+            aggregations: [.count(.init(name: "count"))],
             threshold: 10,
             metric: .dimension(.init(ordering: .version)),
             dimension: dimensionSpec2
@@ -190,8 +190,8 @@ class HashingTests: XCTestCase {
             intervals: [],
             granularity: .day,
             aggregations: [
-                .init(type: .count, name: "signals"),
-                .init(type: .thetaSketch, name: "users", fieldName: "clientUser"),
+                .count(.init(name: "signals")),
+                .thetaSketch(.init(type: .thetaSketch, name: "users", fieldName: "clientUser")),
             ]
         )
 
@@ -202,8 +202,8 @@ class HashingTests: XCTestCase {
             intervals: [],
             granularity: .day,
             aggregations: [
-                .init(type: .count, name: "signals"),
-                .init(type: .thetaSketch, name: "users", fieldName: "clientUser"),
+                .count(.init(name: "signals")),
+                .thetaSketch(.init(type: .thetaSketch, name: "users", fieldName: "clientUser")),
             ]
         )
 
