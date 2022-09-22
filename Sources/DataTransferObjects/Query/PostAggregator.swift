@@ -11,13 +11,16 @@ public indirect enum PostAggregator: Codable, Hashable {
     case fieldAccess(FieldAccessPostAggregator)
     case finalizingFieldAccess(FieldAccessPostAggregator)
     case constant(ConstantPostAggregator)
-//    case expression
-//    case doubleGreatest
-//    case longGreatest
-//    case doubleMax
-//    case doubleLeast
-//    case longLeast
+    case doubleGreatest(GreatestLeastPostAggregator)
+    case longGreatest(GreatestLeastPostAggregator)
+    case doubleMax(GreatestLeastPostAggregator)
+    case doubleLeast(GreatestLeastPostAggregator)
+    case longLeast(GreatestLeastPostAggregator)
+    // - Expression post-aggregator
 //    case hyperUniqueCardinality
+    
+    // Not implemented by design
+    // - JavaScript post-aggregator
     
     enum CodingKeys: String, CodingKey {
         case type
@@ -36,6 +39,16 @@ public indirect enum PostAggregator: Codable, Hashable {
             self = .fieldAccess(try FieldAccessPostAggregator(from: decoder))
         case "constant":
             self = .constant(try ConstantPostAggregator(from: decoder))
+        case "doubleGreatest":
+            self = .doubleGreatest(try GreatestLeastPostAggregator(from: decoder))
+        case "longGreatest":
+            self = .longGreatest(try GreatestLeastPostAggregator(from: decoder))
+        case "doubleMax":
+            self = .doubleMax(try GreatestLeastPostAggregator(from: decoder))
+        case "doubleLeast":
+            self = .doubleLeast(try GreatestLeastPostAggregator(from: decoder))
+        case "longLeast":
+            self = .longLeast(try GreatestLeastPostAggregator(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type: \(type)", underlyingError: nil))
         }
@@ -57,6 +70,21 @@ public indirect enum PostAggregator: Codable, Hashable {
         case let .constant(postAggregator):
             try container.encode("constant", forKey: .type)
             try postAggregator.encode(to: encoder)
+        case let .doubleGreatest(postAggregator):
+            try container.encode("doubleGreatest", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .longGreatest(postAggregator):
+            try container.encode("longGreatest", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .doubleMax(postAggregator):
+            try container.encode("doubleMax", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .doubleLeast(postAggregator):
+            try container.encode("doubleLeast", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .longLeast(postAggregator):
+            try container.encode("longLeast", forKey: .type)
+            try postAggregator.encode(to: encoder)
         }
     }
 }
@@ -73,8 +101,6 @@ public enum PostAggregatorType: String, Codable, Hashable {
     case doubleLeast
     case longLeast
     case hyperUniqueCardinality
-
-    // JavaScript post-aggregator not implemented on purpose
 }
 
 /// Arithmetic post-aggregator
@@ -167,3 +193,19 @@ public struct ConstantPostAggregator: Codable, Hashable {
     /// The value to return
     public let value: Double
 }
+
+public struct GreatestLeastPostAggregator: Codable, Hashable {
+    public init(type: PostAggregatorType, name: String, fields: [PostAggregator]) {
+        self.type = type
+        self.name = name
+        self.fields = fields
+    }
+    
+    public let type: PostAggregatorType
+    
+    /// The output name for the aggregated value
+    public let name: String
+
+    public let fields: [PostAggregator]
+}
+

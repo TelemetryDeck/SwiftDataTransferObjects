@@ -79,6 +79,20 @@ final class PostAggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
+    
+    let exampleHyperUnique = """
+    [{
+        "type"   : "arithmetic",
+        "name"   : "average_users_per_row",
+        "fn"     : "/",
+        "fields" : [
+          { "type" : "hyperUniqueCardinality", "fieldName" : "unique_users" },
+          { "type" : "fieldAccess", "name" : "rows", "fieldName" : "rows" }
+        ]
+      }]
+    """
+    .filter { !$0.isWhitespace }
+    .data(using: .utf8)!
 
     func testThetaSketchAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorThetaSketchEstimate)
@@ -112,6 +126,19 @@ final class PostAggregatorTests: XCTestCase {
 
     func testExpressionDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorExpression)
+
+        XCTAssertEqual(decodedAggregators, [
+            PostAggregator.arithmetic(.init(
+                name: "part_percentage",
+                function: .multiplication,
+                fields: [
+                ]
+            ))
+        ])
+    }
+    
+    func testHyperUniqueDecoding() throws {
+        let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: exampleHyperUnique)
 
         XCTAssertEqual(decodedAggregators, [
             PostAggregator.arithmetic(.init(
