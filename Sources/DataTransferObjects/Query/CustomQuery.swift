@@ -5,7 +5,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public init(queryType: CustomQuery.QueryType, dataSource: String = "telemetry-signals",
                 descending: Bool? = nil, filter: Filter? = nil, intervals: [QueryTimeInterval]? = nil,
                 relativeIntervals: [RelativeTimeInterval]? = nil, granularity: CustomQuery.Granularity,
-                aggregations: [Aggregator]? = nil, limit: Int? = nil, context: QueryContext? = nil,
+                aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
+                limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
                 dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil)
     {
@@ -17,6 +18,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.relativeIntervals = relativeIntervals
         self.granularity = granularity
         self.aggregations = aggregations
+        self.postAggregations = postAggregations
         self.limit = limit
         self.context = context
         self.threshold = threshold
@@ -58,6 +60,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var relativeIntervals: [RelativeTimeInterval]?
     public let granularity: Granularity
     public var aggregations: [Aggregator]?
+    public var postAggregations: [PostAggregator]?
     public var limit: Int?
     public var context: QueryContext?
 
