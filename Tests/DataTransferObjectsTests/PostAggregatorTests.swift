@@ -79,20 +79,7 @@ final class PostAggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
-    let exampleHyperUnique = """
-    [{
-        "type"   : "arithmetic",
-        "name"   : "average_users_per_row",
-        "fn"     : "/",
-        "fields" : [
-          { "type" : "hyperUniqueCardinality", "fieldName" : "unique_users" },
-          { "type" : "fieldAccess", "name" : "rows", "fieldName" : "rows" }
-        ]
-      }]
-    """
-    .filter { !$0.isWhitespace }
-    .data(using: .utf8)!
+
 
     func testThetaSketchAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorThetaSketchEstimate)
@@ -137,14 +124,30 @@ final class PostAggregatorTests: XCTestCase {
         ])
     }
     
+    let exampleHyperUnique = """
+    [{
+        "type"   : "arithmetic",
+        "name"   : "average_users_per_row",
+        "fn"     : "/",
+        "fields" : [
+          { "type" : "hyperUniqueCardinality", "fieldName" : "unique_users" },
+          { "type" : "fieldAccess", "name" : "rows", "fieldName" : "rows" }
+        ]
+      }]
+    """
+    .filter { !$0.isWhitespace }
+    .data(using: .utf8)!
+    
     func testHyperUniqueDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: exampleHyperUnique)
 
         XCTAssertEqual(decodedAggregators, [
             PostAggregator.arithmetic(.init(
-                name: "part_percentage",
-                function: .multiplication,
+                name: "average_users_per_row",
+                function: .division,
                 fields: [
+                    .hyperUniqueCardinality(.init(fieldName: "unique_users")),
+                    .fieldAccess(.init(type: .fieldAccess, name: "rows", fieldName: "rows"))
                 ]
             ))
         ])

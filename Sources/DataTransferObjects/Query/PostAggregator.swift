@@ -16,8 +16,8 @@ public indirect enum PostAggregator: Codable, Hashable {
     case doubleMax(GreatestLeastPostAggregator)
     case doubleLeast(GreatestLeastPostAggregator)
     case longLeast(GreatestLeastPostAggregator)
+    case hyperUniqueCardinality(HyperUniqueCardinalityPostAggregator)
     // - Expression post-aggregator
-//    case hyperUniqueCardinality
     
     // Not implemented by design
     // - JavaScript post-aggregator
@@ -49,6 +49,8 @@ public indirect enum PostAggregator: Codable, Hashable {
             self = .doubleLeast(try GreatestLeastPostAggregator(from: decoder))
         case "longLeast":
             self = .longLeast(try GreatestLeastPostAggregator(from: decoder))
+        case "hyperUniqueCardinality":
+            self = .hyperUniqueCardinality(try HyperUniqueCardinalityPostAggregator(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type: \(type)", underlyingError: nil))
         }
@@ -84,6 +86,9 @@ public indirect enum PostAggregator: Codable, Hashable {
             try postAggregator.encode(to: encoder)
         case let .longLeast(postAggregator):
             try container.encode("longLeast", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .hyperUniqueCardinality(postAggregator):
+            try container.encode("hyperUniqueCardinality", forKey: .type)
             try postAggregator.encode(to: encoder)
         }
     }
@@ -209,3 +214,18 @@ public struct GreatestLeastPostAggregator: Codable, Hashable {
     public let fields: [PostAggregator]
 }
 
+/// The hyperUniqueCardinality post aggregator is used to wrap a hyperUnique object such that it can be used in post aggregations.
+public struct HyperUniqueCardinalityPostAggregator: Codable, Hashable {
+    public init(name: String? = nil, fieldName: String) {
+        self.type = .hyperUniqueCardinality
+        self.name = name
+        self.fieldName = fieldName
+    }
+    
+    public let type: PostAggregatorType
+    
+    /// The output name for the aggregated value
+    public let name: String?
+
+    public let fieldName: String
+}
