@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Daniel Jilg on 22.09.22.
 //
@@ -34,7 +34,7 @@ final class PostAggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
+
     let examplePostAggregatorArithmetic = """
     [{
         "type"   : "arithmetic",
@@ -48,7 +48,7 @@ final class PostAggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
+
     let examplePostAggregatorPercentage = """
     [{
         "type"   : "arithmetic",
@@ -69,7 +69,7 @@ final class PostAggregatorTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
+
     let examplePostAggregatorExpression = """
     [{
         "type"       : "expression",
@@ -83,18 +83,43 @@ final class PostAggregatorTests: XCTestCase {
     func testThetaSketchAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorThetaSketchEstimate)
 
-        XCTAssertEqual(decodedAggregators, [PostAggregator.test])
+        XCTAssertEqual(decodedAggregators, [PostAggregator.arithmetic(ArithmetricPostAggregator(name: "part_percentage", function: .multiplication, fields: []))])
     }
-    
+
     func testPercentageArithmeticDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorPercentage)
 
-        XCTAssertEqual(decodedAggregators, [PostAggregator.test])
+        XCTAssertEqual(
+            decodedAggregators,
+            [
+                PostAggregator.arithmetic(.init(
+                    name: "part_percentage",
+                    function: .multiplication,
+                    fields: [
+                        .arithmetic(.init(
+                            name: "ratio",
+                            function: .division, fields: [
+                                .fieldAccess(.init(type: .fieldAccess, name: "part", fieldName: "part")),
+                                .fieldAccess(.init(type: .fieldAccess, name: "tot", fieldName: "tot"))
+                            ]
+                        )),
+                        PostAggregator.constant(.init(name: "const", value: 100))
+                    ]
+                ))
+            ]
+        )
     }
-    
+
     func testExpressionDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorExpression)
 
-        XCTAssertEqual(decodedAggregators, [PostAggregator.test])
+        XCTAssertEqual(decodedAggregators, [
+            PostAggregator.arithmetic(.init(
+                name: "part_percentage",
+                function: .multiplication,
+                fields: [
+                ]
+            ))
+        ])
     }
 }

@@ -117,7 +117,7 @@ public indirect enum Aggregator: Codable, Hashable {
     case filtered(FilteredAggregator)
 
     // Not implemented
-    // case javaScript: JavaScript aggregator
+    // case javaScript: JavaScript aggregator (missing on purpose)
 
     enum CodingKeys: String, CodingKey {
         case type
