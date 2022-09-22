@@ -139,9 +139,11 @@ final class PostAggregatorTests: XCTestCase {
 
         XCTAssertEqual(decodedAggregators, [
             PostAggregator.arithmetic(.init(
-                name: "part_percentage",
-                function: .multiplication,
+                name: "average",
+                function: .division,
                 fields: [
+                    .fieldAccess(.init(type: .fieldAccess, name: "tot", fieldName: "tot")),
+                    .fieldAccess(.init(type: .fieldAccess, name: "rows", fieldName: "rows"))
                 ]
             ))
         ])
