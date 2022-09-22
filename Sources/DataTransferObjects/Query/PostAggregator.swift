@@ -7,7 +7,6 @@ import Foundation
 ///
 /// https://druid.apache.org/docs/latest/querying/post-aggregations.html
 public indirect enum PostAggregator: Codable, Hashable {
-    
     // Included
     case arithmetic(ArithmetricPostAggregator)
     case fieldAccess(FieldAccessPostAggregator)
@@ -181,7 +180,6 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
     public let ordering: PostAggregatorOrdering?
 }
 
-
 /// Field accessor post-aggregators
 ///
 /// These post-aggregators return the value produced by the specified aggregator.
@@ -284,10 +282,10 @@ public struct ThetaSketchEstimatePostAggregator: Codable, Hashable {
 }
 
 public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
-    public init(name: String? = nil, `func`: ThetaSketchSetOpPostAggregator.SketchOperation, fields: [PostAggregator]) {
+    public init(name: String? = nil, func: ThetaSketchSetOpPostAggregator.SketchOperation, fields: [PostAggregator]) {
         self.type = .thetaSketchSetOp
         self.name = name
-        self.`func` = `func`
+        self.func = `func`
         self.fields = fields
     }
     

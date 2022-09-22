@@ -48,7 +48,7 @@ final class PostAggregatorTests: XCTestCase {
                         func: .intersect,
                         fields: [
                             .fieldAccess(.init(type: .fieldAccess, fieldName: "appLaunchedByNotification_count")),
-                            .fieldAccess(.init(type: .fieldAccess, fieldName: "dataEntered_count")),
+                            .fieldAccess(.init(type: .fieldAccess, fieldName: "dataEntered_count"))
                         ]
                     ))
                 ))
