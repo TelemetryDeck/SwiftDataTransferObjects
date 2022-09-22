@@ -17,7 +17,7 @@ public indirect enum PostAggregator: Codable, Hashable {
     case doubleLeast(GreatestLeastPostAggregator)
     case longLeast(GreatestLeastPostAggregator)
     case hyperUniqueCardinality(HyperUniqueCardinalityPostAggregator)
-    // - Expression post-aggregator
+    case expression(ExpressionPostAggregator)
     
     // Not implemented by design
     // - JavaScript post-aggregator
@@ -51,6 +51,8 @@ public indirect enum PostAggregator: Codable, Hashable {
             self = .longLeast(try GreatestLeastPostAggregator(from: decoder))
         case "hyperUniqueCardinality":
             self = .hyperUniqueCardinality(try HyperUniqueCardinalityPostAggregator(from: decoder))
+        case "expression":
+            self = .expression(try ExpressionPostAggregator(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type: \(type)", underlyingError: nil))
         }
@@ -90,6 +92,9 @@ public indirect enum PostAggregator: Codable, Hashable {
         case let .hyperUniqueCardinality(postAggregator):
             try container.encode("hyperUniqueCardinality", forKey: .type)
             try postAggregator.encode(to: encoder)
+        case let .expression(postAggregator):
+            try container.encode("expression", forKey: .type)
+            try postAggregator.encode(to: encoder)
         }
     }
 }
@@ -106,6 +111,10 @@ public enum PostAggregatorType: String, Codable, Hashable {
     case doubleLeast
     case longLeast
     case hyperUniqueCardinality
+}
+
+public enum PostAggregatorOrdering: String, Codable, Hashable {
+    case numericFirst
 }
 
 /// Arithmetic post-aggregator
@@ -126,7 +135,7 @@ public enum PostAggregatorType: String, Codable, Hashable {
 /// - If no ordering (or null) is specified, the default floating point ordering is used.
 /// - numericFirst ordering always returns finite values first, followed by NaN, and infinite values last.
 public struct ArithmetricPostAggregator: Codable, Hashable {
-    public init(name: String, function: MathematicalFunction, fields: [PostAggregator], ordering: Ordering? = nil) {
+    public init(name: String, function: MathematicalFunction, fields: [PostAggregator], ordering: PostAggregatorOrdering? = nil) {
         self.type = .arithmetic
         self.name = name
         self.fn = function
@@ -141,10 +150,6 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
         case division = "/"
         case quotient
     }
-    
-    public enum Ordering: String, Codable, Hashable {
-        case numericFirst
-    }
 
     public let type: PostAggregatorType
 
@@ -155,7 +160,7 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
     
     public let fields: [PostAggregator]
     
-    public let ordering: Ordering?
+    public let ordering: PostAggregatorOrdering?
 }
 
 
@@ -212,6 +217,26 @@ public struct GreatestLeastPostAggregator: Codable, Hashable {
     public let name: String
 
     public let fields: [PostAggregator]
+}
+
+/// The expression post-aggregator is defined using a Druid expression.
+/// see https://druid.apache.org/docs/latest/misc/math-expr.html
+public struct ExpressionPostAggregator: Codable, Hashable {
+    public init(name: String, expression: String, ordering: PostAggregatorOrdering? = nil) {
+        self.type = .expression
+        self.name = name
+        self.expression = expression
+        self.ordering = ordering
+    }
+    
+    public let type: PostAggregatorType
+    
+    /// The output name for the aggregated value
+    public let name: String
+    
+    public let expression: String
+    
+    public let ordering: PostAggregatorOrdering?
 }
 
 /// The hyperUniqueCardinality post aggregator is used to wrap a hyperUnique object such that it can be used in post aggregations.
