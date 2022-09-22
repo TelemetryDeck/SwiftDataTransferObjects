@@ -38,7 +38,22 @@ final class PostAggregatorTests: XCTestCase {
 
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: examplePostAggregatorThetaSketchEstimate)
 
-        XCTAssertEqual(decodedAggregators, [PostAggregator.arithmetic(ArithmetricPostAggregator(name: "part_percentage", function: .multiplication, fields: []))])
+        XCTAssertEqual(
+            decodedAggregators,
+            [
+                .thetaSketchEstimate(.init(
+                    name: "app_launched_and_data_entered_count",
+                    field: .thetaSketchSetOp(.init(
+                        name: "app_launched_and_data_entered_count",
+                        func: .intersect,
+                        fields: [
+                            .fieldAccess(.init(type: .fieldAccess, fieldName: "appLaunchedByNotification_count")),
+                            .fieldAccess(.init(type: .fieldAccess, fieldName: "dataEntered_count")),
+                        ]
+                    ))
+                ))
+            ]
+        )
     }
 
     func testPercentageArithmeticDecoding() throws {
@@ -136,21 +151,21 @@ final class PostAggregatorTests: XCTestCase {
         ])
     }
 
-    let exampleHyperUnique = """
-    [{
-        "type"   : "arithmetic",
-        "name"   : "average_users_per_row",
-        "fn"     : "/",
-        "fields" : [
-          { "type" : "hyperUniqueCardinality", "fieldName" : "unique_users" },
-          { "type" : "fieldAccess", "name" : "rows", "fieldName" : "rows" }
-        ]
-      }]
-    """
-    .filter { !$0.isWhitespace }
-    .data(using: .utf8)!
-
     func testHyperUniqueDecoding() throws {
+        let exampleHyperUnique = """
+        [{
+            "type"   : "arithmetic",
+            "name"   : "average_users_per_row",
+            "fn"     : "/",
+            "fields" : [
+              { "type" : "hyperUniqueCardinality", "fieldName" : "unique_users" },
+              { "type" : "fieldAccess", "name" : "rows", "fieldName" : "rows" }
+            ]
+          }]
+        """
+        .filter { !$0.isWhitespace }
+        .data(using: .utf8)!
+
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: exampleHyperUnique)
 
         XCTAssertEqual(decodedAggregators, [

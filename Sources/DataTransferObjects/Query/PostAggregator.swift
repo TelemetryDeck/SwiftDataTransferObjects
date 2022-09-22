@@ -7,6 +7,8 @@ import Foundation
 ///
 /// https://druid.apache.org/docs/latest/querying/post-aggregations.html
 public indirect enum PostAggregator: Codable, Hashable {
+    
+    // Included
     case arithmetic(ArithmetricPostAggregator)
     case fieldAccess(FieldAccessPostAggregator)
     case finalizingFieldAccess(FieldAccessPostAggregator)
@@ -18,6 +20,10 @@ public indirect enum PostAggregator: Codable, Hashable {
     case longLeast(GreatestLeastPostAggregator)
     case hyperUniqueCardinality(HyperUniqueCardinalityPostAggregator)
     case expression(ExpressionPostAggregator)
+    
+    // From DataSketches ThetaSketches
+    case thetaSketchEstimate(ThetaSketchEstimatePostAggregator)
+    case thetaSketchSetOp(ThetaSketchSetOpPostAggregator)
     
     // Not implemented by design
     // - JavaScript post-aggregator
@@ -53,6 +59,10 @@ public indirect enum PostAggregator: Codable, Hashable {
             self = .hyperUniqueCardinality(try HyperUniqueCardinalityPostAggregator(from: decoder))
         case "expression":
             self = .expression(try ExpressionPostAggregator(from: decoder))
+        case "thetaSketchEstimate":
+            self = .thetaSketchEstimate(try ThetaSketchEstimatePostAggregator(from: decoder))
+        case "thetaSketchSetOp":
+            self = .thetaSketchSetOp(try ThetaSketchSetOpPostAggregator(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type: \(type)", underlyingError: nil))
         }
@@ -95,6 +105,12 @@ public indirect enum PostAggregator: Codable, Hashable {
         case let .expression(postAggregator):
             try container.encode("expression", forKey: .type)
             try postAggregator.encode(to: encoder)
+        case let .thetaSketchEstimate(postAggregator):
+            try container.encode("thetaSketchEstimate", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .thetaSketchSetOp(postAggregator):
+            try container.encode("thetaSketchOp", forKey: .type)
+            try postAggregator.encode(to: encoder)
         }
     }
 }
@@ -111,6 +127,8 @@ public enum PostAggregatorType: String, Codable, Hashable {
     case doubleLeast
     case longLeast
     case hyperUniqueCardinality
+    case thetaSketchEstimate
+    case thetaSketchSetOp
 }
 
 public enum PostAggregatorOrdering: String, Codable, Hashable {
@@ -172,7 +190,7 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
 /// "hyperUnique", the type of the post-aggregator determines what the post-aggregator will return. Use type "fieldAccess" to return the raw aggregation
 /// object, or use type "finalizingFieldAccess" to return a finalized value, such as an estimated cardinality.
 public struct FieldAccessPostAggregator: Codable, Hashable {
-    public init(type: PostAggregatorType, name: String, fieldName: String) {
+    public init(type: PostAggregatorType, name: String? = nil, fieldName: String) {
         self.type = type
         self.name = name
         self.fieldName = fieldName
@@ -181,7 +199,7 @@ public struct FieldAccessPostAggregator: Codable, Hashable {
     public let type: PostAggregatorType
     
     /// The output name for the aggregated value
-    public let name: String
+    public let name: String?
     
     /// An aggregator name
     public let fieldName: String
@@ -248,9 +266,39 @@ public struct HyperUniqueCardinalityPostAggregator: Codable, Hashable {
     }
     
     public let type: PostAggregatorType
-    
-    /// The output name for the aggregated value
     public let name: String?
-
     public let fieldName: String
+}
+
+///   "field"  : <post aggregator of type fieldAccess that refers to a thetaSketch aggregator or that of type thetaSketchSetOp>
+public struct ThetaSketchEstimatePostAggregator: Codable, Hashable {
+    public init(name: String? = nil, field: PostAggregator) {
+        self.type = .thetaSketchEstimate
+        self.name = name
+        self.field = field
+    }
+    
+    public let type: PostAggregatorType
+    public let name: String?
+    public let field: PostAggregator
+}
+
+public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
+    public init(name: String? = nil, `func`: ThetaSketchSetOpPostAggregator.SketchOperation, fields: [PostAggregator]) {
+        self.type = .thetaSketchSetOp
+        self.name = name
+        self.`func` = `func`
+        self.fields = fields
+    }
+    
+    public enum SketchOperation: String, Codable, Hashable {
+        case union = "UNION"
+        case intersect = "INTERSECT"
+        case not = "NOT"
+    }
+    
+    public let type: PostAggregatorType
+    public let name: String?
+    public let `func`: SketchOperation
+    public let fields: [PostAggregator]
 }
