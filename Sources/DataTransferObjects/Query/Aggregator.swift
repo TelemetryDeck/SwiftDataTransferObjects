@@ -2,6 +2,8 @@
 
 import Foundation
 
+/// You can use aggregations at query time to summarize result data.
+/// 
 /// https://druid.apache.org/docs/latest/querying/aggregations.html
 public indirect enum Aggregator: Codable, Hashable {
     // Exact aggregations
