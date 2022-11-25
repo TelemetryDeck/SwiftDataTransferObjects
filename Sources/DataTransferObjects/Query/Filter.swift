@@ -23,6 +23,25 @@ public struct FilterColumnComparison: Codable, Hashable, Equatable {
     public let dimensions: [String]
 }
 
+/// The Interval filter enables range filtering on columns that contain long
+/// millisecond values, with the boundaries specified as ISO 8601 time intervals.
+/// It is suitable for the __time column, long metric columns, and dimensions
+/// with values that can be parsed as long milliseconds.
+///
+/// This filter converts the ISO 8601 intervals to long millisecond start/end
+/// ranges and translates to an OR of Bound filters on those millisecond ranges,
+/// with numeric comparison. The Bound filters will have left-closed and
+/// right-open matching (i.e., start <= time < end).
+public struct FilterInterval: Codable, Hashable, Equatable {
+    public init(dimension: String, intervals: [QueryTimeInterval]) {
+        self.dimension = dimension
+        self.intervals = intervals
+    }
+
+    public let dimension: String
+    public let intervals: [QueryTimeInterval]
+}
+
 /// The regular expression filter is similar to the selector filter, but using regular
 /// expressions. It matches the specified dimension with the given pattern. The
 /// pattern can be any standard Java regular expression.
@@ -66,6 +85,12 @@ public indirect enum Filter: Codable, Hashable, Equatable {
     /// The column comparison filter is similar to the selector filter, but instead
     /// compares dimensions to each other.
     case columnComparison(FilterColumnComparison)
+    
+    /// The Interval filter enables range filtering on columns that contain long
+    /// millisecond values, with the boundaries specified as ISO 8601 time intervals.
+    /// It is suitable for the __time column, long metric columns, and dimensions
+    /// with values that can be parsed as long milliseconds.
+    case interval(FilterInterval)
 
     /// The regular expression filter is similar to the selector filter, but using regular
     /// expressions. It matches the specified dimension with the given pattern. The
@@ -90,6 +115,8 @@ public indirect enum Filter: Codable, Hashable, Equatable {
             self = .selector(try FilterSelector(from: decoder))
         case "columnComparison":
             self = .columnComparison(try FilterColumnComparison(from: decoder))
+        case "interval":
+            self = .interval(try FilterInterval(from: decoder))
         case "regex":
             self = .regex(try FilterRegex(from: decoder))
         case "and":
@@ -113,6 +140,9 @@ public indirect enum Filter: Codable, Hashable, Equatable {
         case let .columnComparison(columnComparison):
             try container.encode("columnComparison", forKey: .type)
             try columnComparison.encode(to: encoder)
+        case let .interval(interval):
+            try container.encode("interval", forKey: .type)
+            try interval.encode(to: encoder)
         case let .regex(regex):
             try container.encode("regex", forKey: .type)
             try regex.encode(to: encoder)

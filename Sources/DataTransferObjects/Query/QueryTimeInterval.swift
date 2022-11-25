@@ -22,8 +22,8 @@ public struct QueryTimeInterval: Codable, Hashable, Equatable {
 
         guard let beginningString = intervalArray.first,
               let endString = intervalArray.last,
-              let beginningDate = Formatter.iso8601.date(from: beginningString) ?? Formatter.iso8601noFS.date(from: beginningString),
-              let endDate = Formatter.iso8601.date(from: endString) ?? Formatter.iso8601noFS.date(from: endString)
+              let beginningDate = Formatter.iso8601.date(from: beginningString) ?? Formatter.iso8601noFS.date(from: beginningString) ?? Formatter.iso8601dateOnly.date(from: beginningString),
+              let endDate = Formatter.iso8601.date(from: endString) ?? Formatter.iso8601noFS.date(from: endString) ?? Formatter.iso8601dateOnly.date(from: endString)
         else {
             throw DecodingError.dataCorrupted(.init(
                 codingPath: [],
