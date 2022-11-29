@@ -32,5 +32,17 @@ let package = Package(
             name: "DataTransferObjectsTests",
             dependencies: ["DataTransferObjects"]
         ),
+        .testTarget(
+            name: "QueryTests",
+            dependencies: ["DataTransferObjects"]
+        ),
+        .testTarget(
+            name: "QueryResultTests",
+            dependencies: ["DataTransferObjects"]
+        ),
+        .testTarget(
+            name: "QueryGenerationTests",
+            dependencies: ["DataTransferObjects"]
+        ),
     ]
 )
