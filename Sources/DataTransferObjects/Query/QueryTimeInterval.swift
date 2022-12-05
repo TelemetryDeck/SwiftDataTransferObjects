@@ -40,4 +40,9 @@ public struct QueryTimeInterval: Codable, Hashable, Equatable {
         self.beginningDate = beginningDate
         self.endDate = endDate
     }
+    
+    public init(dateInterval: DateInterval) {
+        self.beginningDate = dateInterval.start
+        self.endDate = dateInterval.end
+    }
 }

@@ -5,7 +5,7 @@ import Foundation
 /// You can use aggregations at query time to summarize result data.
 /// 
 /// https://druid.apache.org/docs/latest/querying/aggregations.html
-public indirect enum Aggregator: Codable, Hashable {
+public indirect enum Aggregator: Codable, Hashable, Equatable {
     // Exact aggregations
 
     /// count computes the count of rows that match the filters.

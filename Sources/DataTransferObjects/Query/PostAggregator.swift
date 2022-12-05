@@ -6,7 +6,7 @@ import Foundation
 /// If you include a post aggregation as part of a query, make sure to include all aggregators the post-aggregator requires.
 ///
 /// https://druid.apache.org/docs/latest/querying/post-aggregations.html
-public indirect enum PostAggregator: Codable, Hashable {
+public indirect enum PostAggregator: Codable, Hashable, Equatable {
     // Included
     case arithmetic(ArithmetricPostAggregator)
     case fieldAccess(FieldAccessPostAggregator)
