@@ -107,7 +107,7 @@ public enum RetentionQueryGenerator {
     
     static func postAggregatorBetween(interval1: DateInterval, interval2: DateInterval) -> PostAggregator {
         return .thetaSketchEstimate(.init(
-            name: "retention-\(title(for: interval1))-\(title(for: interval2))",
+            name: "retention_\(title(for: interval1))_\(title(for: interval2))",
             field: .thetaSketchSetOp(.init(
                 func: .intersect,
                 fields: [

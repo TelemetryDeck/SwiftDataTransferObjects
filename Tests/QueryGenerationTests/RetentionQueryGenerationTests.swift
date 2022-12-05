@@ -62,7 +62,7 @@ final class RetentionQueryGenerationTests: XCTestCase {
         ],
         postAggregations: [
             .thetaSketchEstimate(.init(
-                name: "retention-2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z-2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z",
+                name: "retention_2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z_2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z",
                 field: .thetaSketchSetOp(.init(
                     func: .intersect,
                     fields: [
@@ -79,7 +79,7 @@ final class RetentionQueryGenerationTests: XCTestCase {
             )
             ),
             .thetaSketchEstimate(.init(
-                name: "retention-2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z-2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z",
+                name: "retention_2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z_2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z",
                 field: .thetaSketchSetOp(.init(
                     func: .intersect,
                     fields: [
@@ -96,7 +96,7 @@ final class RetentionQueryGenerationTests: XCTestCase {
             )
             ),
             .thetaSketchEstimate(.init(
-                name: "retention-2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z-2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z",
+                name: "retention_2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z_2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z",
                 field: .thetaSketchSetOp(.init(
                     func: .intersect,
                     fields: [
