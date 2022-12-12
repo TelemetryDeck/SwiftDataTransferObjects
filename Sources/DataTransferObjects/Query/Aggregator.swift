@@ -3,13 +3,16 @@
 import Foundation
 
 /// You can use aggregations at query time to summarize result data.
-/// 
+///
 /// https://druid.apache.org/docs/latest/querying/aggregations.html
 public indirect enum Aggregator: Codable, Hashable, Equatable {
     // Exact aggregations
 
     /// count computes the count of rows that match the filters.
     case count(CountAggregator)
+
+    /// Calcluate the cardinality of a dimension (deprecated)
+    case cardinality(CardinalityAggregator)
 
     /// Computes the sum of values as a 64-bit, signed integer.
     ///
@@ -130,7 +133,8 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
         switch type {
         case "count":
             self = .count(try CountAggregator(from: decoder))
-
+        case "cardinality":
+            self = .cardinality(try CardinalityAggregator(from: decoder))
         case "longSum":
             self = .longSum(try GenericAggregator(from: decoder))
         case "doubleSum":
@@ -191,6 +195,9 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
         switch self {
         case let .count(selector):
             try container.encode("count", forKey: .type)
+            try selector.encode(to: encoder)
+        case let .cardinality(selector):
+            try container.encode("cardinality", forKey: .type)
             try selector.encode(to: encoder)
         case let .longSum(selector):
             try container.encode("longSum", forKey: .type)
@@ -280,6 +287,25 @@ public struct CountAggregator: Codable, Hashable {
     public let name: String
 }
 
+/// Calcluate the cardinality of a dimension (deprecated)
+public struct CardinalityAggregator: Codable, Hashable {
+    public init(name: String, fields: [String], byRow: Bool = false, round: Bool = true) {
+        self.type = .cardinality
+        self.name = name
+        self.fields = fields
+        self.byRow = byRow
+        self.round = round
+    }
+
+    public let type: AggregatorType
+
+    /// The output name for the aggregated value
+    public let name: String
+    public let fields: [String]
+    public let byRow: Bool
+    public let round: Bool
+}
+
 public struct GenericAggregator: Codable, Hashable {
     public init(type: AggregatorType, name: String, fieldName: String) {
         self.type = type
@@ -318,7 +344,7 @@ public struct GenericTimeColumnAggregator: Codable, Hashable {
 
 public enum AggregatorType: String, Codable, Hashable {
     case count
-
+    case cardinality
     case longSum
     case doubleSum
     case floatSum
