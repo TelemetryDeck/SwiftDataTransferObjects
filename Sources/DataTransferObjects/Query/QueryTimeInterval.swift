@@ -1,6 +1,15 @@
 import DateOperations
 import Foundation
 
+public struct QueryTimeIntervalsContainer: Codable, Hashable, Equatable {
+    public enum ContainerType: String, Codable, Hashable, Equatable {
+        case intervals
+    }
+    
+    public let type: ContainerType
+    public let intervals: [QueryTimeInterval]
+}
+
 public struct QueryTimeInterval: Codable, Hashable, Equatable {
     public let beginningDate: Date
     public let endDate: Date

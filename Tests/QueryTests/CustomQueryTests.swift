@@ -144,4 +144,114 @@ final class CustomQueryTests: XCTestCase {
         XCTAssertTrue(decodedOutput.replaceMissingValue)
         XCTAssertEqual(expectedOutput, decodedOutput)
     }
+    
+    func testExpandedGranularityDefinition() throws {
+        let exampleJSON = """
+        {
+            "queryType": "groupBy",
+            "dataSource": "telemetry-signals",
+            "intervals": [
+                "2021-10-21T12:00:00Z/2021-10-21T12:00:00Z"
+            ],
+            "granularity": {"type": "all"},
+            "dimensions": [
+                {
+                    "type": "default",
+                    "dimension": "appID",
+                    "outputName": "appID",
+                    "outputType": "STRING"
+                },
+                {
+                    "type": "extraction",
+                    "dimension": "payload",
+                    "outputName": "payload",
+                    "outputType": "STRING",
+                    "extractionFn": {
+                        "type": "regex",
+                        "expr": "(.*:).*",
+                        "index": 1,
+                        "replaceMissingValue": true,
+                        "replaceMissingValueWith": "foobar"
+                    }
+                }
+            ],
+            "descending": false
+        }
+        """
+        .filter { !$0.isWhitespace }
+        .data(using: .utf8)!
+        
+                
+        let regexQuery = CustomQuery(
+            queryType: .groupBy,
+            dataSource: "telemetry-signals",
+            descending: false,
+            filter: nil,
+            intervals: [],
+            granularity: .all,
+            aggregations: nil,
+            limit: nil,
+            context: nil,
+            dimensions: []
+        )
+
+        let decodedQuery = try JSONDecoder.telemetryDecoder.decode(CustomQuery.self, from: exampleJSON)
+
+        XCTAssertEqual(regexQuery.granularity, decodedQuery.granularity)
+    }
+    
+    func testExpandedDataSourceDefinition() throws {
+        let exampleJSON = """
+        {
+            "queryType": "groupBy",
+            "dataSource":{"type":"table","name":"telemetry-signals"},
+            "intervals": [
+                "2021-10-21T12:00:00Z/2021-10-21T12:00:00Z"
+            ],
+            "granularity": {"type": "all"},
+            "dimensions": [
+                {
+                    "type": "default",
+                    "dimension": "appID",
+                    "outputName": "appID",
+                    "outputType": "STRING"
+                },
+                {
+                    "type": "extraction",
+                    "dimension": "payload",
+                    "outputName": "payload",
+                    "outputType": "STRING",
+                    "extractionFn": {
+                        "type": "regex",
+                        "expr": "(.*:).*",
+                        "index": 1,
+                        "replaceMissingValue": true,
+                        "replaceMissingValueWith": "foobar"
+                    }
+                }
+            ],
+            "descending": false
+        }
+        """
+        .filter { !$0.isWhitespace }
+        .data(using: .utf8)!
+        
+                
+        let regexQuery = CustomQuery(
+            queryType: .groupBy,
+            dataSource: "telemetry-signals",
+            descending: false,
+            filter: nil,
+            intervals: [],
+            granularity: .all,
+            aggregations: nil,
+            limit: nil,
+            context: nil,
+            dimensions: []
+        )
+
+        let decodedQuery = try JSONDecoder.telemetryDecoder.decode(CustomQuery.self, from: exampleJSON)
+
+        XCTAssertEqual(regexQuery.dataSource, decodedQuery.dataSource)
+    }
 }
