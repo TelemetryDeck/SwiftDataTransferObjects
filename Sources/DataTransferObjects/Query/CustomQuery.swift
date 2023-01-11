@@ -4,7 +4,7 @@ import Foundation
 public struct CustomQuery: Codable, Hashable, Equatable {
     public init(queryType: CustomQuery.QueryType, dataSource: String = "telemetry-signals",
                 descending: Bool? = nil, filter: Filter? = nil, intervals: [QueryTimeInterval]? = nil,
-                relativeIntervals: [RelativeTimeInterval]? = nil, granularity: CustomQuery.Granularity,
+                relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
@@ -29,7 +29,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     
     public init(queryType: CustomQuery.QueryType, dataSource: DataSource = .init(type: .table, name: "telemetry-signals"),
                 descending: Bool? = nil, filter: Filter? = nil, intervals: [QueryTimeInterval]? = nil,
-                relativeIntervals: [RelativeTimeInterval]? = nil, granularity: CustomQuery.Granularity,
+                relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
@@ -60,52 +60,6 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         case topN
     }
 
-    public enum Granularity: String, Codable, Hashable, CaseIterable {
-        case all
-        case none
-        case second
-        case minute
-        case fifteen_minute
-        case thirty_minute
-        case hour
-        case day
-        case week
-        case month
-        case quarter
-        case year
-        
-        enum CodingKeys: String, CodingKey {
-            case type
-        }
-        
-        public init(from decoder: Decoder) throws {
-            let type: String
-            
-            let singleValueContainer = try decoder.singleValueContainer()
-            if let singleValueType = try? singleValueContainer.decode(String.self) {
-                type = singleValueType
-            }
-            
-            else {
-                let keyedContainer = try decoder.container(keyedBy: CodingKeys.self)
-                type = try keyedContainer.decode(String.self, forKey: .type)
-            }
-            
-            for possibleCase in Self.allCases {
-                if type == possibleCase.rawValue {
-                    self = possibleCase
-                    return
-                }
-            }
-            
-            throw DecodingError.dataCorrupted(.init(
-                codingPath: [],
-                debugDescription: "needs to be a string or a dict",
-                underlyingError: nil
-            ))
-        }
-    }
-
     public var queryType: QueryType
     public var dataSource: DataSource = .init(type: .table, name: "telemetry-signals")
     public var descending: Bool?
@@ -114,7 +68,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
     /// If a relative intervals are set, their calculated output replaces the regular intervals
     public var relativeIntervals: [RelativeTimeInterval]?
-    public let granularity: Granularity
+    public let granularity: QueryGranularity
     public var aggregations: [Aggregator]?
     public var postAggregations: [PostAggregator]?
     public var limit: Int?
@@ -161,7 +115,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.descending = try container.decodeIfPresent(Bool.self, forKey: CustomQuery.CodingKeys.descending)
         self.filter = try container.decodeIfPresent(Filter.self, forKey: CustomQuery.CodingKeys.filter)
         self.relativeIntervals = try container.decodeIfPresent([RelativeTimeInterval].self, forKey: CustomQuery.CodingKeys.relativeIntervals)
-        self.granularity = try container.decode(CustomQuery.Granularity.self, forKey: CustomQuery.CodingKeys.granularity)
+        self.granularity = try container.decode(QueryGranularity.self, forKey: CustomQuery.CodingKeys.granularity)
         self.aggregations = try container.decodeIfPresent([Aggregator].self, forKey: CustomQuery.CodingKeys.aggregations)
         self.postAggregations = try container.decodeIfPresent([PostAggregator].self, forKey: CustomQuery.CodingKeys.postAggregations)
         self.limit = try container.decodeIfPresent(Int.self, forKey: CustomQuery.CodingKeys.limit)

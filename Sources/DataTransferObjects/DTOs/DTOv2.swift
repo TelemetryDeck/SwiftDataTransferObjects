@@ -202,7 +202,7 @@ public enum DTOv2 {
         public var breakdownKey: String?
 
         /// If set, group and count found signals by this time interval. Incompatible with breakdownKey
-        public var groupBy: InsightGroupByInterval?
+        public var groupBy: QueryGranularity?
 
         /// How should this insight's data be displayed?
         public var displayMode: InsightDisplayMode
@@ -229,7 +229,7 @@ public enum DTOv2 {
             uniqueUser: Bool,
             filters: [String: String],
             breakdownKey: String?,
-            groupBy: InsightGroupByInterval?,
+            groupBy: QueryGranularity?,
             displayMode: InsightDisplayMode,
             isExpanded: Bool,
             lastRunTime: TimeInterval?,
@@ -423,13 +423,6 @@ public enum InsightDisplayMode: String, Codable {
     case barChart
     case lineChart
     case pieChart
-}
-
-public enum InsightGroupByInterval: String, Codable {
-    case hour
-    case day
-    case week
-    case month
 }
 
 public extension DTOv2.Insight {

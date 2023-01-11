@@ -32,7 +32,7 @@ public extension DTOv1 {
         public var breakdownKey: String?
 
         /// If set, group and count found signals by this time interval. Incompatible with breakdownKey
-        public var groupBy: InsightGroupByInterval?
+        public var groupBy: QueryGranularity?
 
         /// How should this insight's data be displayed?
         public var displayMode: InsightDisplayMode
@@ -55,7 +55,7 @@ public extension DTOv1 {
     /// Defines the result of an insight calculation
     struct InsightCalculationResult: Identifiable, Codable {
         public init(id: UUID, order: Double?, title: String, signalType: String?, uniqueUser: Bool, filters: [String: String],
-                    rollingWindowSize _: TimeInterval, breakdownKey: String? = nil, groupBy: InsightGroupByInterval? = nil,
+                    rollingWindowSize _: TimeInterval, breakdownKey: String? = nil, groupBy: QueryGranularity? = nil,
                     displayMode: InsightDisplayMode, isExpanded: Bool, data: [DTOv1.InsightData], calculatedAt: Date, calculationDuration: TimeInterval)
         {
             self.id = id
@@ -91,7 +91,7 @@ public extension DTOv1 {
         public var breakdownKey: String?
 
         /// If set, group and count found signals by this time interval. Incompatible with breakdownKey
-        public var groupBy: InsightGroupByInterval?
+        public var groupBy: QueryGranularity?
 
         /// How should this insight's data be displayed?
         public var displayMode: InsightDisplayMode

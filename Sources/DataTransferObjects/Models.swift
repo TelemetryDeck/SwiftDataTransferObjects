@@ -76,7 +76,7 @@ public struct TelemetryApp: Codable, Hashable, Identifiable {
 public struct InsightDefinitionRequestBody: Codable {
     public init(order: Double? = nil, title: String, signalType: String? = nil, uniqueUser: Bool,
                 filters: [String: String], rollingWindowSize: TimeInterval, breakdownKey: String? = nil,
-                groupBy: InsightGroupByInterval? = nil, displayMode: InsightDisplayMode, groupID: UUID? = nil, id: UUID? = nil, isExpanded: Bool)
+                groupBy: QueryGranularity? = nil, displayMode: InsightDisplayMode, groupID: UUID? = nil, id: UUID? = nil, isExpanded: Bool)
     {
         self.order = order
         self.title = title
@@ -111,7 +111,7 @@ public struct InsightDefinitionRequestBody: Codable {
     public var breakdownKey: String?
 
     /// If set, group and count found signals by this time interval. Incompatible with breakdownKey
-    public var groupBy: InsightGroupByInterval?
+    public var groupBy: QueryGranularity?
 
     /// How should this insight's data be displayed?
     public var displayMode: InsightDisplayMode
