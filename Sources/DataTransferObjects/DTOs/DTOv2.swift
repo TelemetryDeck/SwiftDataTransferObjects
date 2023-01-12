@@ -171,6 +171,7 @@ public enum DTOv2 {
             case timeseries
             case topN
             case customQuery
+            case funnel
         }
         
         public var id: UUID
