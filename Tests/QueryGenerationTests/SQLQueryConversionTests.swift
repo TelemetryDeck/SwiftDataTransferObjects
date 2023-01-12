@@ -45,6 +45,6 @@ final class SQLQueryConversionTests: XCTestCase {
         let responseItems = try JSONDecoder.telemetryDecoder.decode([SQLQueryConversionResponseItem].self, from: planJSON)
         let responseItem = responseItems.first!
         
-        let query = try responseItem.getQuery()
+        _ = try responseItem.getQuery()
     }
 }

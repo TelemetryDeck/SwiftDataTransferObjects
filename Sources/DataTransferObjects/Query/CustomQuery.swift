@@ -8,7 +8,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
-                dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil)
+                dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil,
+                steps: [Filter]? = nil, stepNames: [String]? = nil)
     {
         self.queryType = queryType
         self.dataSource = DataSource(type: .table, name: dataSource)
@@ -25,6 +26,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.metric = metric
         self.dimension = dimension
         self.dimensions = dimensions
+        self.steps = steps
+        self.stepNames = stepNames
     }
     
     public init(queryType: CustomQuery.QueryType, dataSource: DataSource = .init(type: .table, name: "telemetry-signals"),
@@ -33,7 +36,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
-                dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil)
+                dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil,
+                steps: [Filter]? = nil, stepNames: [String]? = nil)
     {
         self.queryType = queryType
         self.dataSource = dataSource
@@ -50,6 +54,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.metric = metric
         self.dimension = dimension
         self.dimensions = dimensions
+        self.steps = steps
+        self.stepNames = stepNames
     }
 
     public enum QueryType: String, Codable, CaseIterable, Identifiable {
@@ -85,6 +91,12 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
     /// Only for groupBy Queries: A list of dimensions to do the groupBy over, if queryType is groupBy
     public var dimensions: [DimensionSpec]?
+    
+    /// Only for funnel Queries: A list of filters that form the steps of the funnel
+    public var steps: [Filter]?
+    
+    /// Only for funnel Queries: An optional List of names for the funnel steps
+    public var stepNames: [String]?
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(queryType)
