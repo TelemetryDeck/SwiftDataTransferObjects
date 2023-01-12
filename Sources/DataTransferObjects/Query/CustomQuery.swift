@@ -30,7 +30,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.stepNames = stepNames
     }
     
-    public init(queryType: CustomQuery.QueryType, dataSource: DataSource = .init(type: .table, name: "telemetry-signals"),
+    public init(queryType: CustomQuery.QueryType, dataSource: DataSource,
                 descending: Bool? = nil, filter: Filter? = nil, intervals: [QueryTimeInterval]? = nil,
                 relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
@@ -64,6 +64,9 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         case timeseries
         case groupBy
         case topN
+        
+        // derived types
+        case funnel
     }
 
     public var queryType: QueryType

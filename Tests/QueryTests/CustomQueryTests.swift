@@ -254,4 +254,17 @@ final class CustomQueryTests: XCTestCase {
 
         XCTAssertEqual(regexQuery.dataSource, decodedQuery.dataSource)
     }
+    
+    func testMinimalCustomQueryForFunnels() throws {
+        // just ensuring this compiles
+        _ = CustomQuery(
+            queryType: .funnel,
+            granularity: .all,
+            steps: [
+                .selector(.init(dimension: "something", value: "one")),
+                .selector(.init(dimension: "other", value: "two")),
+            ],
+            stepNames: ["Step One", "Step Two"]
+        )
+    }
 }
