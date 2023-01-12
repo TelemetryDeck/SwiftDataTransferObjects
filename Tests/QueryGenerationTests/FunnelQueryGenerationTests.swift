@@ -75,14 +75,9 @@ final class FunnelQueryGenerationTests: XCTestCase {
         postAggregations: [
             .thetaSketchEstimate(.init(
                 name: "0_Regular Launch",
-                field: .thetaSketchSetOp(.init(
-                    func: .intersect,
-                    fields: [
-                        .fieldAccess(.init(
-                            type: .fieldAccess,
-                            fieldName: "_funnel_step_0"
-                        ))
-                    ]
+                field: .fieldAccess(.init(
+                    type: .fieldAccess,
+                    fieldName: "_funnel_step_0"
                 ))
             )),
             .thetaSketchEstimate(.init(
@@ -150,14 +145,27 @@ final class FunnelQueryGenerationTests: XCTestCase {
 
     func testExample() throws {
         let generatedTinyQuery = try FunnelQueryGenerator.generateFunnelQuery(
-            steps: [],
+            steps: steps,
+            stepNames: stepNames,
             filter: nil,
             appID: "79167A27-EBBF-4012-9974-160624E5D07B",
             testMode: false
         )
-
+        
+        XCTAssertEqual(tinyQuery.filter, generatedTinyQuery.filter)
+        XCTAssertEqual(tinyQuery.aggregations, generatedTinyQuery.aggregations)
+        XCTAssertEqual(tinyQuery.postAggregations, generatedTinyQuery.postAggregations)
+        
         XCTAssertEqual(tinyQuery, generatedTinyQuery)
 
         XCTAssertEqual(String(data: try! JSONEncoder.telemetryEncoder.encode(tinyQuery), encoding: .utf8), String(data: try! JSONEncoder.telemetryEncoder.encode(generatedTinyQuery), encoding: .utf8))
+    }
+    
+    func testWithAdditionalFilters() throws {
+        XCTFail("Not Implemented")
+    }
+    
+    func testWithoutAppID() throws {
+        XCTFail("Not Implemented")
     }
 }
