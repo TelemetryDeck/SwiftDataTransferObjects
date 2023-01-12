@@ -158,14 +158,36 @@ final class FunnelQueryGenerationTests: XCTestCase {
         
         XCTAssertEqual(tinyQuery, generatedTinyQuery)
 
+        // Apparently sometimes the previous line says the queries are equal even if they are not,
+        // let's double check by comparing the encoded JSON strings!
         XCTAssertEqual(String(data: try! JSONEncoder.telemetryEncoder.encode(tinyQuery), encoding: .utf8), String(data: try! JSONEncoder.telemetryEncoder.encode(generatedTinyQuery), encoding: .utf8))
     }
     
     func testWithAdditionalFilters() throws {
-        XCTFail("Not Implemented")
-    }
-    
-    func testWithoutAppID() throws {
-        XCTFail("Not Implemented")
+        let additionalFilter = Filter.selector(.init(dimension: "something", value: "other"))
+        let generatedTinyQuery = try FunnelQueryGenerator.generateFunnelQuery(
+            steps: steps,
+            stepNames: stepNames,
+            filter: additionalFilter,
+            appID: "B97579B6-FFB8-4AC5-AAA7-DA5796CC5DCE",
+            testMode: false
+        )
+        
+        let expectedFilter = Filter.and(.init(fields: [
+            .selector(.init(dimension: "appID", value: "B97579B6-FFB8-4AC5-AAA7-DA5796CC5DCE")),
+            .selector(.init(dimension: "isTestMode", value: "false")),
+            additionalFilter,
+            .or(.init(fields: [
+                .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
+                .selector(.init(dimension: "type", value: "dataEntered")),
+                .selector(.init(dimension: "type", value: "paywallSeen")),
+                .selector(.init(dimension: "type", value: "conversion"))
+            ]))
+        ]))
+        
+        
+        XCTAssertEqual(expectedFilter, generatedTinyQuery.filter)
+        XCTAssertEqual(tinyQuery.aggregations, generatedTinyQuery.aggregations)
+        XCTAssertEqual(tinyQuery.postAggregations, generatedTinyQuery.postAggregations)
     }
 }

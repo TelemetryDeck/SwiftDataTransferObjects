@@ -1,22 +1,33 @@
 import Foundation
 
 public enum FunnelQueryGenerator {
-    public enum FunnelQueryGeneratorErrors: Error {
-        // case errors here
-    }
-
     public static func generateFunnelQuery(
         steps: [Filter],
         stepNames: [String],
-        filter _: Filter?,
-        appID: String,
+        filter: Filter?,
+        appID: String?,
         testMode: Bool
     ) throws -> CustomQuery {
         // Generate Filter Statement
         let stepsFilters = Filter.or(.init(fields: steps))
         let testModeFilter = Filter.selector(.init(dimension: "isTestMode", value: "\(testMode)"))
-        let appIDFilter = Filter.selector(.init(dimension: "appID", value: appID))
-        let filter = Filter.and(.init(fields: [appIDFilter, testModeFilter, stepsFilters]))
+        
+        var filterFields = [Filter]()
+        
+        if let appID = appID {
+            let appIDFilter = Filter.selector(.init(dimension: "appID", value: appID))
+            filterFields.append(appIDFilter)
+        }
+        
+        filterFields.append(testModeFilter)
+        
+        if let additionalFilter = filter {
+            filterFields.append(additionalFilter)
+        }
+        
+        filterFields.append(stepsFilters)
+        
+        let queryFilter = Filter.and(.init(fields: filterFields))
 
         // Generate Aggregations
         let aggregationNamePrefix = "_funnel_step_"
@@ -61,7 +72,7 @@ public enum FunnelQueryGenerator {
         return CustomQuery(
             queryType: .groupBy,
             dataSource: "telemetry-signals",
-            filter: filter,
+            filter: queryFilter,
             granularity: .all,
             aggregations: aggregations,
             postAggregations: postAggregations
