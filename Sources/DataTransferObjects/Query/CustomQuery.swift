@@ -116,6 +116,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         hasher.combine(metric)
         hasher.combine(dimensions)
         hasher.combine(dimension)
+        hasher.combine(steps)
+        hasher.combine(stepNames)
     }
 
     public static func == (lhs: CustomQuery, rhs: CustomQuery) -> Bool {
