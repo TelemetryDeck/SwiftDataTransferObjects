@@ -16,6 +16,6 @@ final class QueryTimeIntervalTests: XCTestCase {
     
 
     func testDecodingQueryTimeInterval() throws {
-        try JSONDecoder.telemetryDecoder.decode(QueryTimeIntervalsContainer.self, from: exampleData)
+        _ = try JSONDecoder.telemetryDecoder.decode(QueryTimeIntervalsContainer.self, from: exampleData)
     }
 }
