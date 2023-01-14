@@ -5,7 +5,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public init(queryType: CustomQuery.QueryType, dataSource: String = "telemetry-signals",
                 descending: Bool? = nil,
                 filter: Filter? = nil,
-                defaultFilterBehavior: DefaultFilterBehavior?  = nil,
+                baseFilters: BaseFilters?  = nil,
                 intervals: [QueryTimeInterval]? = nil,
                 relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
@@ -17,7 +17,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.queryType = queryType
         self.dataSource = DataSource(type: .table, name: dataSource)
         self.descending = descending
-        self.defaultFilterBehavior = defaultFilterBehavior
+        self.baseFilters = baseFilters
         self.filter = filter
         self.intervals = intervals
         self.relativeIntervals = relativeIntervals
@@ -37,7 +37,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public init(queryType: CustomQuery.QueryType, dataSource: DataSource,
                 descending: Bool? = nil,
                 filter: Filter? = nil,
-                defaultFilterBehavior: DefaultFilterBehavior? = nil,
+                baseFilters: BaseFilters? = nil,
                 intervals: [QueryTimeInterval]? = nil,
                 relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
@@ -49,7 +49,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.queryType = queryType
         self.dataSource = dataSource
         self.descending = descending
-        self.defaultFilterBehavior = defaultFilterBehavior
+        self.baseFilters = baseFilters
         self.filter = filter
         self.intervals = intervals
         self.relativeIntervals = relativeIntervals
@@ -80,7 +80,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var queryType: QueryType
     public var dataSource: DataSource = .init(type: .table, name: "telemetry-signals")
     public var descending: Bool?
-    public var defaultFilterBehavior: DefaultFilterBehavior?
+    public var baseFilters: BaseFilters?
     public var filter: Filter?
     public var intervals: [QueryTimeInterval]?
 
@@ -114,7 +114,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         hasher.combine(queryType)
         hasher.combine(dataSource)
         hasher.combine(descending)
-        hasher.combine(defaultFilterBehavior)
+        hasher.combine(baseFilters)
         hasher.combine(filter)
         hasher.combine(intervals)
         hasher.combine(relativeIntervals)
