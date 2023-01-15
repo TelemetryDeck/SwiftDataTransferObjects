@@ -6,7 +6,7 @@ import Foundation
 /// using an `and` filter.
 public enum BaseFilters: String, Codable, Hashable, Equatable {
     /// Attach test mode filter and filter for all apps of the executing user's organization
-    case allApps
+    case thisOrganization
     
     /// Attach test mode filter and filter for the app the insight lives in
     ///
