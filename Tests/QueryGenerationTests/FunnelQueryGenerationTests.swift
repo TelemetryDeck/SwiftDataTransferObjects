@@ -19,15 +19,13 @@ final class FunnelQueryGenerationTests: XCTestCase {
     let tinyQuery = CustomQuery(
         queryType: .groupBy,
         dataSource: "telemetry-signals",
-        filter: .and(.init(fields: [
-            .selector(.init(dimension: "appID", value: "79167A27-EBBF-4012-9974-160624E5D07B")),
-            .selector(.init(dimension: "isTestMode", value: "false")),
-            .or(.init(fields: [
-                .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
-                .selector(.init(dimension: "type", value: "dataEntered")),
-                .selector(.init(dimension: "type", value: "paywallSeen")),
-                .selector(.init(dimension: "type", value: "conversion"))
-            ]))
+        filter:
+        .or(.init(fields: [
+            .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
+            .selector(.init(dimension: "type", value: "dataEntered")),
+            .selector(.init(dimension: "type", value: "paywallSeen")),
+            .selector(.init(dimension: "type", value: "conversion"))
+
         ])),
         granularity: .all,
         aggregations: [
@@ -170,8 +168,6 @@ final class FunnelQueryGenerationTests: XCTestCase {
         )
 
         let expectedFilter = Filter.and(.init(fields: [
-            .selector(.init(dimension: "appID", value: "B97579B6-FFB8-4AC5-AAA7-DA5796CC5DCE")),
-            .selector(.init(dimension: "isTestMode", value: "false")),
             additionalFilter,
             .or(.init(fields: [
                 .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
