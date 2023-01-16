@@ -2,10 +2,13 @@ import Foundation
 
 /// Custom JSON based  query
 public struct CustomQuery: Codable, Hashable, Equatable {
-    public init(queryType: CustomQuery.QueryType, dataSource: String = "telemetry-signals",
+    public init(queryType: CustomQuery.QueryType,
+                dataSource: String? = "telemetry-signals",
                 descending: Bool? = nil,
                 filter: Filter? = nil,
-                baseFilters: BaseFilters?  = nil,
+                appID: UUID? = nil,
+                baseFilters: BaseFilters? = nil,
+                testMode: Bool? = nil,
                 intervals: [QueryTimeInterval]? = nil,
                 relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
@@ -15,10 +18,16 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 steps: [Filter]? = nil, stepNames: [String]? = nil)
     {
         self.queryType = queryType
-        self.dataSource = DataSource(type: .table, name: dataSource)
+        
+        if let dataSource = dataSource {
+            self.dataSource = DataSource(type: .table, name: dataSource)
+        }
+        
         self.descending = descending
         self.baseFilters = baseFilters
+        self.testMode = testMode
         self.filter = filter
+        self.appID = appID
         self.intervals = intervals
         self.relativeIntervals = relativeIntervals
         self.granularity = granularity
@@ -34,10 +43,13 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.stepNames = stepNames
     }
     
-    public init(queryType: CustomQuery.QueryType, dataSource: DataSource,
+    public init(queryType: CustomQuery.QueryType,
+                dataSource: DataSource?,
                 descending: Bool? = nil,
                 filter: Filter? = nil,
+                appID: UUID? = nil,
                 baseFilters: BaseFilters? = nil,
+                testMode: Bool? = nil,
                 intervals: [QueryTimeInterval]? = nil,
                 relativeIntervals: [RelativeTimeInterval]? = nil, granularity: QueryGranularity,
                 aggregations: [Aggregator]? = nil, postAggregations: [PostAggregator]? = nil,
@@ -50,7 +62,9 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dataSource = dataSource
         self.descending = descending
         self.baseFilters = baseFilters
+        self.testMode = testMode
         self.filter = filter
+        self.appID = appID
         self.intervals = intervals
         self.relativeIntervals = relativeIntervals
         self.granularity = granularity
@@ -75,13 +89,19 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         
         // derived types
         case funnel
+        // case retention // TODO
     }
 
     public var queryType: QueryType
-    public var dataSource: DataSource = .init(type: .table, name: "telemetry-signals")
+    public var dataSource: DataSource? = .init(type: .table, name: "telemetry-signals")
     public var descending: Bool?
     public var baseFilters: BaseFilters?
+    public var testMode: Bool?
     public var filter: Filter?
+    
+    /// Used by baseFilter.thisApp, the appID to use for the appID filter
+    public var appID: UUID?
+    
     public var intervals: [QueryTimeInterval]?
 
     /// If a relative intervals are set, their calculated output replaces the regular intervals
@@ -115,11 +135,14 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         hasher.combine(dataSource)
         hasher.combine(descending)
         hasher.combine(baseFilters)
+        hasher.combine(testMode)
         hasher.combine(filter)
+        hasher.combine(appID)
         hasher.combine(intervals)
         hasher.combine(relativeIntervals)
         hasher.combine(granularity)
         hasher.combine(aggregations)
+        hasher.combine(postAggregations)
         hasher.combine(limit)
         hasher.combine(context)
         hasher.combine(threshold)
@@ -138,10 +161,12 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         let container: KeyedDecodingContainer<CustomQuery.CodingKeys> = try decoder.container(keyedBy: CustomQuery.CodingKeys.self)
         
         self.queryType = try container.decode(CustomQuery.QueryType.self, forKey: CustomQuery.CodingKeys.queryType)
-        self.dataSource = try container.decode(DataSource.self, forKey: CustomQuery.CodingKeys.dataSource)
+        self.dataSource = try container.decodeIfPresent(DataSource.self, forKey: CustomQuery.CodingKeys.dataSource)
         self.descending = try container.decodeIfPresent(Bool.self, forKey: CustomQuery.CodingKeys.descending)
         self.baseFilters = try container.decodeIfPresent(BaseFilters.self, forKey: CustomQuery.CodingKeys.baseFilters)
+        self.testMode = try container.decodeIfPresent(Bool.self, forKey: CustomQuery.CodingKeys.testMode)
         self.filter = try container.decodeIfPresent(Filter.self, forKey: CustomQuery.CodingKeys.filter)
+        self.appID = try container.decodeIfPresent(UUID.self, forKey: CustomQuery.CodingKeys.appID)
         self.relativeIntervals = try container.decodeIfPresent([RelativeTimeInterval].self, forKey: CustomQuery.CodingKeys.relativeIntervals)
         self.granularity = try container.decode(QueryGranularity.self, forKey: CustomQuery.CodingKeys.granularity)
         self.aggregations = try container.decodeIfPresent([Aggregator].self, forKey: CustomQuery.CodingKeys.aggregations)
@@ -162,6 +187,5 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         else {
             self.intervals = try container.decodeIfPresent([QueryTimeInterval].self, forKey: CustomQuery.CodingKeys.intervals)
         }
-        
     }
 }

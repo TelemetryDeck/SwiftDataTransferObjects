@@ -147,32 +147,28 @@ final class FunnelQueryGenerationTests: XCTestCase {
         let generatedTinyQuery = try FunnelQueryGenerator.generateFunnelQuery(
             steps: steps,
             stepNames: stepNames,
-            filter: nil,
-            appID: "79167A27-EBBF-4012-9974-160624E5D07B",
-            testMode: false
+            filter: nil
         )
-        
+
         XCTAssertEqual(tinyQuery.filter, generatedTinyQuery.filter)
         XCTAssertEqual(tinyQuery.aggregations, generatedTinyQuery.aggregations)
         XCTAssertEqual(tinyQuery.postAggregations, generatedTinyQuery.postAggregations)
-        
+
         XCTAssertEqual(tinyQuery, generatedTinyQuery)
 
         // Apparently sometimes the previous line says the queries are equal even if they are not,
         // let's double check by comparing the encoded JSON strings!
         XCTAssertEqual(String(data: try! JSONEncoder.telemetryEncoder.encode(tinyQuery), encoding: .utf8), String(data: try! JSONEncoder.telemetryEncoder.encode(generatedTinyQuery), encoding: .utf8))
     }
-    
+
     func testWithAdditionalFilters() throws {
         let additionalFilter = Filter.selector(.init(dimension: "something", value: "other"))
         let generatedTinyQuery = try FunnelQueryGenerator.generateFunnelQuery(
             steps: steps,
             stepNames: stepNames,
-            filter: additionalFilter,
-            appID: "B97579B6-FFB8-4AC5-AAA7-DA5796CC5DCE",
-            testMode: false
+            filter: additionalFilter
         )
-        
+
         let expectedFilter = Filter.and(.init(fields: [
             .selector(.init(dimension: "appID", value: "B97579B6-FFB8-4AC5-AAA7-DA5796CC5DCE")),
             .selector(.init(dimension: "isTestMode", value: "false")),
@@ -184,8 +180,7 @@ final class FunnelQueryGenerationTests: XCTestCase {
                 .selector(.init(dimension: "type", value: "conversion"))
             ]))
         ]))
-        
-        
+
         XCTAssertEqual(expectedFilter, generatedTinyQuery.filter)
         XCTAssertEqual(tinyQuery.aggregations, generatedTinyQuery.aggregations)
         XCTAssertEqual(tinyQuery.postAggregations, generatedTinyQuery.postAggregations)

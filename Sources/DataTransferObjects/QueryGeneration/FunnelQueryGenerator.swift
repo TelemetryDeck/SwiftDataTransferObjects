@@ -3,31 +3,14 @@ import Foundation
 public enum FunnelQueryGenerator {
     public static func generateFunnelQuery(
         steps: [Filter],
-        stepNames: [String],
-        filter: Filter?,
-        appID: String?,
-        testMode: Bool
+        stepNames: [String]?,
+        filter: Filter?
     ) throws -> CustomQuery {
+        let stepNames = stepNames ?? []
+
         // Generate Filter Statement
         let stepsFilters = Filter.or(.init(fields: steps))
-        let testModeFilter = Filter.selector(.init(dimension: "isTestMode", value: "\(testMode)"))
-        
-        var filterFields = [Filter]()
-        
-        if let appID = appID {
-            let appIDFilter = Filter.selector(.init(dimension: "appID", value: appID))
-            filterFields.append(appIDFilter)
-        }
-        
-        filterFields.append(testModeFilter)
-        
-        if let additionalFilter = filter {
-            filterFields.append(additionalFilter)
-        }
-        
-        filterFields.append(stepsFilters)
-        
-        let queryFilter = Filter.and(.init(fields: filterFields))
+        let queryFilter = filter && stepsFilters
 
         // Generate Aggregations
         let aggregationNamePrefix = "_funnel_step_"

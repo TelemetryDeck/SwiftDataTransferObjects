@@ -85,7 +85,7 @@ public indirect enum Filter: Codable, Hashable, Equatable {
     /// The column comparison filter is similar to the selector filter, but instead
     /// compares dimensions to each other.
     case columnComparison(FilterColumnComparison)
-    
+
     /// The Interval filter enables range filtering on columns that contain long
     /// millisecond values, with the boundaries specified as ISO 8601 time intervals.
     /// It is suitable for the __time column, long metric columns, and dimensions
@@ -156,5 +156,23 @@ public indirect enum Filter: Codable, Hashable, Equatable {
             try container.encode("not", forKey: .type)
             try not.encode(to: encoder)
         }
+    }
+
+    public static func &&(lhs: Filter, rhs: Filter) -> Filter {
+        return Filter.and(.init(fields: [lhs, rhs]))
+    }
+
+    public static func &&(lhs: Filter, rhs: Filter?) -> Filter {
+        guard let rhs = rhs else { return lhs }
+        return Filter.and(.init(fields: [lhs, rhs]))
+    }
+
+    public static func &&(lhs: Filter?, rhs: Filter) -> Filter {
+        guard let lhs = lhs else { return rhs }
+        return Filter.and(.init(fields: [lhs, rhs]))
+    }
+
+    public static func ||(lhs: Filter, rhs: Filter) -> Filter {
+        return Filter.or(.init(fields: [lhs, rhs]))
     }
 }
