@@ -19,6 +19,11 @@ public extension CustomQuery {
         // Make an editable copy of self
         var query = self
         
+        // Make sure either intervals or relative intervals are set
+        guard query.intervals != nil || query.relativeIntervals != nil else {
+            throw QueryGenerationError.keyMissing(reason: "Either 'relativeIntervals' or 'intervals' need to be set")
+        }
+        
         // Custom Query Types
         if query.queryType == .funnel {
             guard let steps = query.steps else { throw QueryGenerationError.keyMissing(reason: "Missing key 'steps'") }
