@@ -1,7 +1,7 @@
 import Foundation
 
 public extension CustomQuery {
-    enum QueryGenerationError: Error, String {
+    enum QueryGenerationError: Error {
         case notAllowed(reason: String)
         case notImplemented(reason: String)
         case keyMissing(reason: String)
