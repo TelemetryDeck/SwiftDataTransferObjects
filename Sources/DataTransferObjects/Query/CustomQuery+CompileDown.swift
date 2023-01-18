@@ -19,7 +19,7 @@ public extension CustomQuery {
         guard (self.compilationStatus ?? .notCompiled) == .notCompiled else {
             throw QueryGenerationError.compilationStatusError
         }
-        
+
         // Make an editable copy of self
         var query = self
 
@@ -36,10 +36,10 @@ public extension CustomQuery {
 
         // Apply base filters and data source
         query = try Self.applyBaseFilters(query: query, organizationAppIDs: organizationAppIDs, isSuperOrg: isSuperOrg)
-        
+
         // Update compilationStatus so the next steps in the pipeline are sure the query has been precompiled
         query.compilationStatus = .precompiled
-        
+
         return query
     }
 
@@ -54,7 +54,7 @@ public extension CustomQuery {
         guard self.compilationStatus == .precompiled else {
             throw QueryGenerationError.compilationStatusError
         }
-        
+
         // Make an editable copy of self
         var query = self
 
@@ -70,7 +70,7 @@ public extension CustomQuery {
         if let relativeIntervals = query.relativeIntervals {
             query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
         }
-        
+
         // Update compilationStatus so the next steps in the pipeline are sure the query has been compiled
         query.compilationStatus = .compiled
 

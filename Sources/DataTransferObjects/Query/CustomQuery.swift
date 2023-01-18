@@ -95,10 +95,10 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         case funnel
         // case retention
     }
-    
+
     public enum CompilationStatus: String, Codable, CaseIterable, Identifiable {
         public var id: String { rawValue }
-        
+
         case notCompiled
         case precompiled
         case compiled
