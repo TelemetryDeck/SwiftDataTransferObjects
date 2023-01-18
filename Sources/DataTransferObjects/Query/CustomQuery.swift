@@ -3,6 +3,7 @@ import Foundation
 /// Custom JSON based  query
 public struct CustomQuery: Codable, Hashable, Equatable {
     public init(queryType: CustomQuery.QueryType,
+                compilationStatus: CompilationStatus? = nil,
                 dataSource: String? = "telemetry-signals",
                 descending: Bool? = nil,
                 filter: Filter? = nil,
@@ -18,6 +19,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 steps: [Filter]? = nil, stepNames: [String]? = nil)
     {
         self.queryType = queryType
+        self.compilationStatus = compilationStatus
 
         if let dataSource = dataSource {
             self.dataSource = DataSource(type: .table, name: dataSource)
@@ -44,6 +46,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     }
 
     public init(queryType: CustomQuery.QueryType,
+                compilationStatus: CompilationStatus? = nil,
                 dataSource: DataSource?,
                 descending: Bool? = nil,
                 filter: Filter? = nil,
@@ -59,6 +62,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 steps: [Filter]? = nil, stepNames: [String]? = nil)
     {
         self.queryType = queryType
+        self.compilationStatus = compilationStatus
         self.dataSource = dataSource
         self.descending = descending
         self.baseFilters = baseFilters
@@ -91,8 +95,17 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         case funnel
         // case retention
     }
+    
+    public enum CompilationStatus: String, Codable, CaseIterable, Identifiable {
+        public var id: String { rawValue }
+        
+        case notCompiled
+        case precompiled
+        case compiled
+    }
 
     public var queryType: QueryType
+    public var compilationStatus: CompilationStatus?
     public var dataSource: DataSource? = .init(type: .table, name: "telemetry-signals")
     public var descending: Bool?
     public var baseFilters: BaseFilters?
@@ -132,6 +145,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(queryType)
+        hasher.combine(compilationStatus)
         hasher.combine(dataSource)
         hasher.combine(descending)
         hasher.combine(baseFilters)
@@ -161,6 +175,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         let container: KeyedDecodingContainer<CustomQuery.CodingKeys> = try decoder.container(keyedBy: CustomQuery.CodingKeys.self)
 
         self.queryType = try container.decode(CustomQuery.QueryType.self, forKey: CustomQuery.CodingKeys.queryType)
+        self.compilationStatus = try container.decodeIfPresent(CompilationStatus.self, forKey: CustomQuery.CodingKeys.compilationStatus)
         self.dataSource = try container.decodeIfPresent(DataSource.self, forKey: CustomQuery.CodingKeys.dataSource)
         self.descending = try container.decodeIfPresent(Bool.self, forKey: CustomQuery.CodingKeys.descending)
         self.baseFilters = try container.decodeIfPresent(BaseFilters.self, forKey: CustomQuery.CodingKeys.baseFilters)

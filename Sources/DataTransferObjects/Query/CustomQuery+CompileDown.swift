@@ -5,6 +5,7 @@ public extension CustomQuery {
         case notAllowed(reason: String)
         case notImplemented(reason: String)
         case keyMissing(reason: String)
+        case compilationStatusError
     }
 
     /// Compiles almost all TelemetryDeck-properties down into a regular query that can be enqueued in the Query Task Runner.
@@ -15,6 +16,10 @@ public extension CustomQuery {
     ///
     /// @see compileToRunnableQuery
     func precompile(organizationAppIDs: [UUID], isSuperOrg: Bool) throws -> CustomQuery {
+        guard (self.compilationStatus ?? .notCompiled) == .notCompiled else {
+            throw QueryGenerationError.compilationStatusError
+        }
+        
         // Make an editable copy of self
         var query = self
 
@@ -31,14 +36,10 @@ public extension CustomQuery {
 
         // Apply base filters and data source
         query = try Self.applyBaseFilters(query: query, organizationAppIDs: organizationAppIDs, isSuperOrg: isSuperOrg)
-
-        // Set all telemetrydeck properties to nil except relativeIntervals
-        // so that we can check in compileToRunnableQuery that all these have been set
-        query.appID = nil
-        query.testMode = nil
-        query.steps = nil
-        query.stepNames = nil
-
+        
+        // Update compilationStatus so the next steps in the pipeline are sure the query has been precompiled
+        query.compilationStatus = .precompiled
+        
         return query
     }
 
@@ -50,6 +51,10 @@ public extension CustomQuery {
     ///
     /// @see precompile
     func compileToRunnableQuery() throws -> CustomQuery {
+        guard self.compilationStatus == .precompiled else {
+            throw QueryGenerationError.compilationStatusError
+        }
+        
         // Make an editable copy of self
         var query = self
 
@@ -65,6 +70,9 @@ public extension CustomQuery {
         if let relativeIntervals = query.relativeIntervals {
             query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
         }
+        
+        // Update compilationStatus so the next steps in the pipeline are sure the query has been compiled
+        query.compilationStatus = .compiled
 
         return query
     }

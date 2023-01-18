@@ -117,4 +117,38 @@ final class CompileDownTests: XCTestCase {
         let query3 = CustomQuery(queryType: .timeseries, dataSource: "some-data-source", baseFilters: .noFilter, relativeIntervals: relativeIntervals, granularity: .all)
         XCTAssertEqual(try query3.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: true).dataSource, DataSource.init("some-data-source"))
     }
+    
+    func testThrowsIfNeitherIntervalsNorRelativeIntervalsSet() throws {
+        let query = CustomQuery(queryType: .timeseries, baseFilters: .noFilter, intervals: nil, relativeIntervals: nil, granularity: .all)
+        
+        XCTAssertThrowsError(try query.precompile(organizationAppIDs: [], isSuperOrg: false))
+    }
+    
+    func testCompilationFailsIfNoPrecompilation() throws {
+        let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
+        XCTAssertThrowsError(try query.compileToRunnableQuery())
+    }
+    
+    func testIntervalsAreCreated() throws {
+        let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
+        let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        
+        XCTAssertNotNil(compiledQuery.intervals)
+        XCTAssertFalse(compiledQuery.intervals!.isEmpty)
+    }
+    
+    func testCompilationStatusIsSetCorrectly() throws {
+        let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
+        let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+    
+        XCTAssertEqual(precompiledQuery.compilationStatus, .precompiled)
+        XCTAssertEqual(compiledQuery.compilationStatus, .compiled)
+    }
+    
+    func testThrowsIfCompilationStatusNotSetCorrectly() throws {
+        let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
+        XCTAssertThrowsError(try query.compileToRunnableQuery())
+    }
 }
