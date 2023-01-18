@@ -120,7 +120,7 @@ extension CustomQuery {
 
     // Given a list of app UUIDs, generates a Filter object that restricts a query to only apps with either of the given IDs
     static func appIDFilter(for organizationAppIDs: [UUID]) throws -> Filter {
-        guard organizationAppIDs.count > 0 else {
+        guard !organizationAppIDs.isEmpty else {
             throw QueryGenerationError.keyMissing(reason: "Missing organization app IDs")
         }
 
