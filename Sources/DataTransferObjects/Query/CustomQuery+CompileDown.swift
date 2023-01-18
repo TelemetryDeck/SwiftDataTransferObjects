@@ -57,14 +57,6 @@ public extension CustomQuery {
         // Make an editable copy of self
         var query = self
 
-        // Check if all telemetrydeck properties are set to nil, or throw.
-        // This is a precaution to make it more likely that precompile
-        // has been run on this query at some point in the past
-        // which, may I remind you, gentle reader, is a requirement.
-        guard query.appID == nil, query.testMode == nil, query.steps == nil, query.stepNames == nil else {
-            throw CustomQuery.QueryGenerationError.notAllowed(reason: "Not all precompilation steps have completed.")
-        }
-
         // Compile relative Time intervals
         if let relativeIntervals = query.relativeIntervals {
             query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
