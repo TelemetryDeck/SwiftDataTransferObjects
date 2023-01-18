@@ -1,9 +1,7 @@
-
-
 extension CustomQuery {
     func precompiledFunnelQuery() throws -> CustomQuery {
         var query = self
-        
+
         guard let steps = steps else { throw QueryGenerationError.keyMissing(reason: "Missing key 'steps'") }
         let stepNames = stepNames ?? []
 
@@ -24,8 +22,7 @@ extension CustomQuery {
                 ))
             )))
         }
-        
-        
+
         // Generate Post-Agregations
         var postAggregations = [PostAggregator]()
         for index in steps.indices {
@@ -50,7 +47,7 @@ extension CustomQuery {
                 ))
             )))
         }
-        
+
         // Combine query
         query.queryType = .groupBy
         query.filter = queryFilter
@@ -60,7 +57,6 @@ extension CustomQuery {
         return query
     }
 }
-
 
 fileprivate extension Array {
     subscript(safe index: Index, default defaultValue: Element) -> Element {

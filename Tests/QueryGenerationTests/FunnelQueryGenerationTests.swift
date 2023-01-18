@@ -1,8 +1,6 @@
 @testable import DataTransferObjects
 import XCTest
 
-// swiftlint:disable force_try
-
 final class FunnelQueryGenerationTests: XCTestCase {
     let steps: [Filter] = [
         .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
@@ -183,7 +181,7 @@ final class FunnelQueryGenerationTests: XCTestCase {
 
         let startingQuery = CustomQuery(queryType: .funnel, relativeIntervals: relativeTimeIntervals, granularity: .all, steps: steps, stepNames: stepNames)
         let generatedTinyQuery = try startingQuery.precompiledFunnelQuery()
-        
+
         XCTAssertEqual(startingQuery.relativeIntervals, generatedTinyQuery.relativeIntervals)
     }
 }
