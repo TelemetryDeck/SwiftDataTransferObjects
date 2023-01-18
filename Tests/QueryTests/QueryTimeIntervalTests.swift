@@ -10,10 +10,9 @@ final class QueryTimeIntervalTests: XCTestCase {
       ]
     }
     """
-    
+
     .filter { !$0.isWhitespace }
     .data(using: .utf8)!
-    
 
     func testDecodingQueryTimeInterval() throws {
         _ = try JSONDecoder.telemetryDecoder.decode(QueryTimeIntervalsContainer.self, from: exampleData)

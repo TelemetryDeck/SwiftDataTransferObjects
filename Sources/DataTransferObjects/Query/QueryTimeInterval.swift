@@ -5,7 +5,7 @@ public struct QueryTimeIntervalsContainer: Codable, Hashable, Equatable {
     public enum ContainerType: String, Codable, Hashable, Equatable {
         case intervals
     }
-    
+
     public let type: ContainerType
     public let intervals: [QueryTimeInterval]
 }
@@ -49,7 +49,7 @@ public struct QueryTimeInterval: Codable, Hashable, Equatable {
         self.beginningDate = beginningDate
         self.endDate = endDate
     }
-    
+
     public init(dateInterval: DateInterval) {
         self.beginningDate = dateInterval.start
         self.endDate = dateInterval.end

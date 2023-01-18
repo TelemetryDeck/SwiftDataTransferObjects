@@ -106,7 +106,7 @@ class QueryResultTests: XCTestCase {
             "max": DoubleWrapper(-Double.infinity),
             "min": DoubleWrapper(Double.infinity),
         ])
-        
+
         XCTAssertEqual(decodedResult.last?.result, [
             "mean": DoubleWrapper(938.24),
             "max": DoubleWrapper(5775.11),

@@ -19,14 +19,14 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
     case longLeast(GreatestLeastPostAggregator)
     case hyperUniqueCardinality(HyperUniqueCardinalityPostAggregator)
     case expression(ExpressionPostAggregator)
-    
+
     // From DataSketches ThetaSketches
     case thetaSketchEstimate(ThetaSketchEstimatePostAggregator)
     case thetaSketchSetOp(ThetaSketchSetOpPostAggregator)
-    
+
     // Not implemented by design
     // - JavaScript post-aggregator
-    
+
     enum CodingKeys: String, CodingKey {
         case type
     }
@@ -34,7 +34,7 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let type = try values.decode(String.self, forKey: .type)
-        
+
         switch type {
         case "arithmetic":
             self = .arithmetic(try ArithmetricPostAggregator(from: decoder))
@@ -66,10 +66,10 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type: \(type)", underlyingError: nil))
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case let .arithmetic(postAggregator):
             try container.encode("arithmetic", forKey: .type)
@@ -174,9 +174,9 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
     public let name: String
 
     public let fn: MathematicalFunction
-    
+
     public let fields: [PostAggregator]
-    
+
     public let ordering: PostAggregatorOrdering?
 }
 
@@ -193,12 +193,12 @@ public struct FieldAccessPostAggregator: Codable, Hashable {
         self.name = name
         self.fieldName = fieldName
     }
-    
+
     public let type: PostAggregatorType
-    
+
     /// The output name for the aggregated value
     public let name: String?
-    
+
     /// An aggregator name
     public let fieldName: String
 }
@@ -210,12 +210,12 @@ public struct ConstantPostAggregator: Codable, Hashable {
         self.name = name
         self.value = value
     }
-    
+
     public let type: PostAggregatorType
-    
+
     /// The output name for the aggregated value
     public let name: String
-    
+
     /// The value to return
     public let value: Double
 }
@@ -226,9 +226,9 @@ public struct GreatestLeastPostAggregator: Codable, Hashable {
         self.name = name
         self.fields = fields
     }
-    
+
     public let type: PostAggregatorType
-    
+
     /// The output name for the aggregated value
     public let name: String
 
@@ -244,14 +244,14 @@ public struct ExpressionPostAggregator: Codable, Hashable {
         self.expression = expression
         self.ordering = ordering
     }
-    
+
     public let type: PostAggregatorType
-    
+
     /// The output name for the aggregated value
     public let name: String
-    
+
     public let expression: String
-    
+
     public let ordering: PostAggregatorOrdering?
 }
 
@@ -262,7 +262,7 @@ public struct HyperUniqueCardinalityPostAggregator: Codable, Hashable {
         self.name = name
         self.fieldName = fieldName
     }
-    
+
     public let type: PostAggregatorType
     public let name: String?
     public let fieldName: String
@@ -275,7 +275,7 @@ public struct ThetaSketchEstimatePostAggregator: Codable, Hashable {
         self.name = name
         self.field = field
     }
-    
+
     public let type: PostAggregatorType
     public let name: String?
     public let field: PostAggregator
@@ -288,13 +288,13 @@ public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
         self.func = `func`
         self.fields = fields
     }
-    
+
     public enum SketchOperation: String, Codable, Hashable {
         case union = "UNION"
         case intersect = "INTERSECT"
         case not = "NOT"
     }
-    
+
     public let type: PostAggregatorType
     public let name: String?
     public let `func`: SketchOperation

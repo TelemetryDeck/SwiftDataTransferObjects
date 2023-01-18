@@ -144,7 +144,7 @@ final class CustomQueryTests: XCTestCase {
         XCTAssertTrue(decodedOutput.replaceMissingValue)
         XCTAssertEqual(expectedOutput, decodedOutput)
     }
-    
+
     func testExpandedGranularityDefinition() throws {
         let exampleJSON = """
         {
@@ -180,8 +180,7 @@ final class CustomQueryTests: XCTestCase {
         """
         .filter { !$0.isWhitespace }
         .data(using: .utf8)!
-        
-                
+
         let regexQuery = CustomQuery(
             queryType: .groupBy,
             dataSource: "telemetry-signals",
@@ -199,7 +198,7 @@ final class CustomQueryTests: XCTestCase {
 
         XCTAssertEqual(regexQuery.granularity, decodedQuery.granularity)
     }
-    
+
     func testExpandedDataSourceDefinition() throws {
         let exampleJSON = """
         {
@@ -235,8 +234,7 @@ final class CustomQueryTests: XCTestCase {
         """
         .filter { !$0.isWhitespace }
         .data(using: .utf8)!
-        
-                
+
         let regexQuery = CustomQuery(
             queryType: .groupBy,
             dataSource: "telemetry-signals",
@@ -254,7 +252,7 @@ final class CustomQueryTests: XCTestCase {
 
         XCTAssertEqual(regexQuery.dataSource, decodedQuery.dataSource)
     }
-    
+
     func testMinimalCustomQueryForFunnels() throws {
         // just ensuring this compiles
         _ = CustomQuery(

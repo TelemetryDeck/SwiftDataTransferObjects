@@ -1,4 +1,3 @@
-
 import DataTransferObjects
 import XCTest
 
@@ -6,10 +5,10 @@ final class CompileDownTests: XCTestCase {
     let relativeIntervals = [
         RelativeTimeInterval(beginningDate: .init(.beginning, of: .month, adding: 0), endDate: .init(.end, of: .month, adding: 0))
     ]
-    
+
     let appID1 = UUID()
     let appID2 = UUID()
-    
+
     func testFunnel() throws {
         let steps: [Filter] = [
             .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
@@ -17,30 +16,30 @@ final class CompileDownTests: XCTestCase {
             .selector(.init(dimension: "type", value: "paywallSeen")),
             .selector(.init(dimension: "type", value: "conversion"))
         ]
-        
+
         let query = CustomQuery(queryType: .funnel, relativeIntervals: relativeIntervals, granularity: .all, steps: steps)
-        
+
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        
+
         // Exact query generation is in FunnelQueryGenerationTests,
         // here we're just making sure we're jumping into the correct paths.
         XCTAssertEqual(precompiledQuery.queryType, .groupBy)
-        
+
         XCTAssertNil(precompiledQuery.steps)
         XCTAssertNil(precompiledQuery.stepNames)
     }
-    
+
     func testFailIfNoIntervals() throws {
         // this query has neither a relativeIntervals nor an intervals property
         let query = CustomQuery(queryType: .timeseries, granularity: .all)
-        
+
         XCTAssertThrowsError(try query.precompile(organizationAppIDs: [UUID(), UUID()], isSuperOrg: false))
     }
-    
+
     func testBaseFiltersThisOrganization() throws {
         let query = CustomQuery(queryType: .timeseries, baseFilters: .thisOrganization, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        
+
         XCTAssertEqual(
             precompiledQuery.filter,
             .and(.init(fields: [
@@ -60,17 +59,17 @@ final class CompileDownTests: XCTestCase {
             ))
         )
     }
-    
+
     func testBaseFiltersThisApp() throws {
         // this should fail because the query does not have an appID
         let queryFailing = CustomQuery(queryType: .timeseries, baseFilters: .thisApp, relativeIntervals: relativeIntervals, granularity: .all)
         XCTAssertThrowsError(try queryFailing.precompile(organizationAppIDs: [], isSuperOrg: false))
-        
+
         // This should succeed because an app ID is provided
         let appID = UUID()
         let query = CustomQuery(queryType: .timeseries, appID: appID, baseFilters: .thisApp, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        
+
         XCTAssertEqual(
             precompiledQuery.filter,
             .and(.init(fields: [
@@ -79,11 +78,11 @@ final class CompileDownTests: XCTestCase {
             ]))
         )
     }
-    
+
     func testBaseFiltersExampleData() throws {
         let query = CustomQuery(queryType: .timeseries, baseFilters: .exampleData, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        
+
         XCTAssertEqual(
             precompiledQuery.filter,
             .and(.init(fields: [
@@ -92,28 +91,28 @@ final class CompileDownTests: XCTestCase {
             ]))
         )
     }
-    
+
     func testBaseFiltersNoFilter() throws {
         let query = CustomQuery(queryType: .timeseries, baseFilters: .noFilter, relativeIntervals: relativeIntervals, granularity: .all)
-        
+
         // this should fail because isSuperOrg is not set to true
         XCTAssertThrowsError(try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false))
-        
+
         // this should succeed because isSuperOrg is set to true
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: true)
-        
+
         XCTAssertNil(precompiledQuery.filter)
     }
-    
+
     func testDataSource() throws {
         // No datasource means data source is telemetry-signals
         let query1 = CustomQuery(queryType: .timeseries, baseFilters: .thisOrganization, relativeIntervals: relativeIntervals, granularity: .all)
         XCTAssertEqual(try query1.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false).dataSource, DataSource.init("telemetry-signals"))
-        
+
         // Specified datasource but not noFilter + super org will be replaced by telemetry-signals
         let query2 = CustomQuery(queryType: .timeseries, dataSource: "some-data-source", baseFilters: .thisOrganization, relativeIntervals: relativeIntervals, granularity: .all)
         XCTAssertEqual(try query2.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false).dataSource, DataSource.init("telemetry-signals"))
-        
+
         // Specified datasource will be retained if super org is set
         let query3 = CustomQuery(queryType: .timeseries, dataSource: "some-data-source", baseFilters: .noFilter, relativeIntervals: relativeIntervals, granularity: .all)
         XCTAssertEqual(try query3.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: true).dataSource, DataSource.init("some-data-source"))

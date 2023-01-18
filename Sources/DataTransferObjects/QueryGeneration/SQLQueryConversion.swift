@@ -5,7 +5,7 @@ public struct SQLQueryConversionRequest: Codable {
     public init(query: String) {
         self.query = query
     }
-    
+
     public let query: String
 }
 
@@ -17,9 +17,9 @@ public struct SQLQueryConversionResponseItem: Codable, Equatable {
     public init(plan: String) {
         self.PLAN = plan
     }
-    
+
     public let PLAN: String
-    
+
     public func getQuery() throws -> CustomQuery {
         guard let planData = PLAN.data(using: .utf8) else {
             throw DecodingError.dataCorrupted(.init(
@@ -28,9 +28,9 @@ public struct SQLQueryConversionResponseItem: Codable, Equatable {
                 underlyingError: nil
             ))
         }
-        
-        let planItems = try JSONDecoder.telemetryDecoder.decode([PlanContainerItem].self, from:planData )
-        
+
+        let planItems = try JSONDecoder.telemetryDecoder.decode([PlanContainerItem].self, from: planData )
+
         guard let firstPlanItem = planItems.first else {
             throw DecodingError.dataCorrupted(.init(
                 codingPath: [],
@@ -38,13 +38,13 @@ public struct SQLQueryConversionResponseItem: Codable, Equatable {
                 underlyingError: nil
             ))
         }
-        
+
         var query = firstPlanItem.query
-        
+
         query.dataSource = DataSource.init("telemetry-signals")
         query.context = nil
         query.intervals = nil
-        
+
         return query
     }
 }

@@ -173,14 +173,14 @@ public enum DTOv2 {
             case customQuery
             case funnel
         }
-        
+
         public var id: UUID
         public var groupID: UUID
 
         /// order in which insights appear in the apps (if not expanded)
         public var order: Double?
         public var title: String
-        
+
         /// What kind of insight is this?
         public var type: InsightType
 

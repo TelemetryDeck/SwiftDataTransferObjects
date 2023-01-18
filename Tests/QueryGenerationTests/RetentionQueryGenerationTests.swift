@@ -114,13 +114,13 @@ final class RetentionQueryGenerationTests: XCTestCase {
             ),
         ]
     )
-    
+
     func testThrowsWhenDatesTooClose() {
         let begin_august = Date(iso8601String: "2022-08-01T00:00:00.000Z")!
         let mid_august = Date(iso8601String: "2022-08-15T00:00:00.000Z")!
         let end_august = Date(iso8601String: "2022-08-31T23:59:59.999Z")!
         let end_september = Date(iso8601String: "2022-09-30T23:59:59.999Z")!
-        
+
         XCTAssertThrowsError(try RetentionQueryGenerator.generateRetentionQuery(appID: "", testMode: false, beginDate: begin_august, endDate: mid_august))
         XCTAssertThrowsError(try RetentionQueryGenerator.generateRetentionQuery(appID: "", testMode: false, beginDate: begin_august, endDate: end_august))
         XCTAssertNoThrow(try RetentionQueryGenerator.generateRetentionQuery(appID: "", testMode: false, beginDate: begin_august, endDate: end_september))
@@ -134,11 +134,11 @@ final class RetentionQueryGenerationTests: XCTestCase {
             beginDate: Date(iso8601String: "2022-08-01T00:00:00.000Z")!,
             endDate: Date(iso8601String: "2022-09-30T00:00:00.000Z")!
         )
-        
+
         XCTAssertEqual(tinyQuery, generatedTinyQuery)
-        
+
         XCTAssertEqual(String(data: try! JSONEncoder.telemetryEncoder.encode(tinyQuery), encoding: .utf8), String(data: try! JSONEncoder.telemetryEncoder.encode(generatedTinyQuery), encoding: .utf8))
-        
+
 //        let aggregationNames = generatedTinyQuery.aggregations!.map { agg in
 //            switch agg {
 //            case .filtered(let filteredAgg):

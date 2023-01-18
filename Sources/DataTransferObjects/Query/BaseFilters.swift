@@ -7,12 +7,12 @@ import Foundation
 public enum BaseFilters: String, Codable, Hashable, Equatable {
     /// Attach test mode filter and filter for all apps of the executing user's organization
     case thisOrganization
-    
+
     /// Attach test mode filter and filter for the app the insight lives in
     ///
     /// This fails if the query does not belong to an insight.
     case thisApp
-    
+
     /// Attach test mode filter and filter for the example app's data
     ///
     /// The server will execute this query as if the owner of the Example App
@@ -21,7 +21,7 @@ public enum BaseFilters: String, Codable, Hashable, Equatable {
     ///
     /// This is great for showing a demo of the environment.
     case exampleData
-    
+
     /// Only available for super org, do not specify any filters
     ///
     /// This is used internally for admin dashboards. The server will

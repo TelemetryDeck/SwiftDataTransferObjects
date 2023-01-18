@@ -18,11 +18,11 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 steps: [Filter]? = nil, stepNames: [String]? = nil)
     {
         self.queryType = queryType
-        
+
         if let dataSource = dataSource {
             self.dataSource = DataSource(type: .table, name: dataSource)
         }
-        
+
         self.descending = descending
         self.baseFilters = baseFilters
         self.testMode = testMode
@@ -42,7 +42,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.steps = steps
         self.stepNames = stepNames
     }
-    
+
     public init(queryType: CustomQuery.QueryType,
                 dataSource: DataSource?,
                 descending: Bool? = nil,
@@ -86,7 +86,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         case timeseries
         case groupBy
         case topN
-        
+
         // derived types
         case funnel
         // case retention // TODO
@@ -98,10 +98,10 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var baseFilters: BaseFilters?
     public var testMode: Bool?
     public var filter: Filter?
-    
+
     /// Used by baseFilter.thisApp, the appID to use for the appID filter
     public var appID: UUID?
-    
+
     public var intervals: [QueryTimeInterval]?
 
     /// If a relative intervals are set, their calculated output replaces the regular intervals
@@ -123,10 +123,10 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
     /// Only for groupBy Queries: A list of dimensions to do the groupBy over, if queryType is groupBy
     public var dimensions: [DimensionSpec]?
-    
+
     /// Only for funnel Queries: A list of filters that form the steps of the funnel
     public var steps: [Filter]?
-    
+
     /// Only for funnel Queries: An optional List of names for the funnel steps
     public var stepNames: [String]?
 
@@ -156,10 +156,10 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public static func == (lhs: CustomQuery, rhs: CustomQuery) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container: KeyedDecodingContainer<CustomQuery.CodingKeys> = try decoder.container(keyedBy: CustomQuery.CodingKeys.self)
-        
+
         self.queryType = try container.decode(CustomQuery.QueryType.self, forKey: CustomQuery.CodingKeys.queryType)
         self.dataSource = try container.decodeIfPresent(DataSource.self, forKey: CustomQuery.CodingKeys.dataSource)
         self.descending = try container.decodeIfPresent(Bool.self, forKey: CustomQuery.CodingKeys.descending)
@@ -179,12 +179,10 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dimensions = try container.decodeIfPresent([DimensionSpec].self, forKey: CustomQuery.CodingKeys.dimensions)
         self.steps = try container.decodeIfPresent([Filter].self, forKey: CustomQuery.CodingKeys.steps)
         self.stepNames = try container.decodeIfPresent([String].self, forKey: CustomQuery.CodingKeys.stepNames)
-        
+
         if let intervals = try? container.decode(QueryTimeIntervalsContainer.self, forKey: CustomQuery.CodingKeys.intervals) {
             self.intervals = intervals.intervals
-        }
-        
-        else {
+        } else {
             self.intervals = try container.decodeIfPresent([QueryTimeInterval].self, forKey: CustomQuery.CodingKeys.intervals)
         }
     }

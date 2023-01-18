@@ -89,13 +89,13 @@ final class AggregatorTests: XCTestCase {
         ]
         """
         .filter { !$0.isWhitespace }
-        
+
         let exampleAggregators = [Aggregator.cardinality(.init(name: "a0", fields: ["clientUser"], round: true))]
-        
+
         XCTAssertEqual(try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleAggregatorsString.data(using: .utf8)!), exampleAggregators)
-        
+
         XCTAssertEqual(String(data: try JSONEncoder.telemetryEncoder.encode(exampleAggregators), encoding: .utf8)!, exampleAggregatorsString)
-        
+
     }
 
     func testFilteredAggregatorDecoding() throws {

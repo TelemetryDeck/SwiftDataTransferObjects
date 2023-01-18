@@ -65,7 +65,7 @@ public extension DTOv1 {
         public var sessionID: String?
         public var type: String
         public var payload: String
-        public var floatValue: Double? = nil
+        public var floatValue: Double?
         public var isTestMode: String
 
         public func toSignal() -> Signal {
