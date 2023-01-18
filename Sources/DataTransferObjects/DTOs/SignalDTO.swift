@@ -29,7 +29,17 @@ public extension DTOv1 {
     }
 
     struct Signal: Codable, Hashable {
-        public init(appID: UUID? = nil, count: Int? = nil, receivedAt: Date, clientUser: String, sessionID: String? = nil, type: String, payload: [String: String]? = nil, floatValue: Double? = nil, isTestMode: Bool) {
+        public init(
+            appID: UUID? = nil,
+            count: Int? = nil,
+            receivedAt: Date,
+            clientUser: String,
+            sessionID: String? = nil,
+            type: String,
+            payload: [String: String]? = nil,
+            floatValue: Double? = nil,
+            isTestMode: Bool
+        ) {
             self.appID = appID
             self.count = count
             self.receivedAt = receivedAt

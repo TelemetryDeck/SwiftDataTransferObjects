@@ -28,7 +28,7 @@ public enum FunnelQueryGenerator {
 
         // Generate Post-Agregations
         var postAggregations = [PostAggregator]()
-        for (index, _) in steps.enumerated() {
+        for index in steps.indices {
             if index == 0 {
                 postAggregations.append(.thetaSketchEstimate(.init(
                     name: "\(index)_\(stepNames[safe: index, default: "\(aggregationNamePrefix)\(index)"])",

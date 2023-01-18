@@ -89,7 +89,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
         // derived types
         case funnel
-        // case retention // TODO
+        // case retention
     }
 
     public var queryType: QueryType

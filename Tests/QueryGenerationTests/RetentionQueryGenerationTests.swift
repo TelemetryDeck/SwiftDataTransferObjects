@@ -5,6 +5,8 @@
 //  Created by Daniel Jilg on 28.11.22.
 //
 
+// swiftlint:disable force_try
+
 import DataTransferObjects
 import XCTest
 

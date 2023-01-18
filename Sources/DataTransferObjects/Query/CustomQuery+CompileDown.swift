@@ -29,11 +29,6 @@ public extension CustomQuery {
             query = try FunnelQueryGenerator.generateFunnelQuery(steps: steps, stepNames: query.stepNames, filter: query.filter)
         }
 
-        // TODO:
-        // if query.queryType == .retention {
-        //     query = RetentionQueryGenerator.generateRetentionQuery
-        // }
-
         // Apply base filters and data source
         query = try Self.applyBaseFilters(query: query, organizationAppIDs: organizationAppIDs, isSuperOrg: isSuperOrg)
 

@@ -27,11 +27,9 @@ public enum QueryGranularity: String, Codable, Hashable, CaseIterable {
             type = try keyedContainer.decode(String.self, forKey: .type)
         }
 
-        for possibleCase in Self.allCases {
-            if type == possibleCase.rawValue {
-                self = possibleCase
-                return
-            }
+        for possibleCase in Self.allCases where type == possibleCase.rawValue {
+            self = possibleCase
+            return
         }
 
         throw DecodingError.dataCorrupted(.init(

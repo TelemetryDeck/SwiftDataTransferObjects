@@ -158,21 +158,21 @@ public indirect enum Filter: Codable, Hashable, Equatable {
         }
     }
 
-    public static func &&(lhs: Filter, rhs: Filter) -> Filter {
+    public static func && (lhs: Filter, rhs: Filter) -> Filter {
         return Filter.and(.init(fields: [lhs, rhs]))
     }
 
-    public static func &&(lhs: Filter, rhs: Filter?) -> Filter {
+    public static func && (lhs: Filter, rhs: Filter?) -> Filter {
         guard let rhs = rhs else { return lhs }
         return Filter.and(.init(fields: [lhs, rhs]))
     }
 
-    public static func &&(lhs: Filter?, rhs: Filter) -> Filter {
+    public static func && (lhs: Filter?, rhs: Filter) -> Filter {
         guard let lhs = lhs else { return rhs }
         return Filter.and(.init(fields: [lhs, rhs]))
     }
 
-    public static func ||(lhs: Filter, rhs: Filter) -> Filter {
+    public static func || (lhs: Filter, rhs: Filter) -> Filter {
         return Filter.or(.init(fields: [lhs, rhs]))
     }
 }

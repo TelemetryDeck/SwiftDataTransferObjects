@@ -14,7 +14,7 @@ public enum RetentionQueryGenerator {
     }
 
     public static func generateRetentionQuery(appID: String, testMode: Bool, beginDate: Date, endDate: Date) throws -> CustomQuery {
-        // TODO: what do we do if beginDate and endDate are less than 1m apart?
+        // If beginDate and endDate are less than 1m apart, this does not make sense as a query
         let components = Calendar.current.dateComponents([.month], from: beginDate, to: endDate)
         if (components.month ?? 0) < 1 {
             throw RetentionQueryGeneratorErrors.datesTooClose
@@ -31,20 +31,18 @@ public enum RetentionQueryGenerator {
         }
 
         for row in months {
-            for column in months {
-                if column >= row {
-                    postAggregators.append(postAggregatorBetween(interval1: row, interval2: column))
-                }
+            for column in months where column >= row {
+                postAggregators.append(postAggregatorBetween(interval1: row, interval2: column))
             }
         }
 
-        // Combine query 
+        // Combine query
         return CustomQuery(
             queryType: .groupBy,
             dataSource: "telemetry-signals",
             filter: .and(.init(fields: [
                 .selector(.init(dimension: "appID", value: appID)),
-                .selector(.init(dimension: "isTestMode", value: testMode ? "true": "false"))
+                .selector(.init(dimension: "isTestMode", value: testMode ? "true" : "false"))
             ])),
             intervals: [QueryTimeInterval(beginningDate: beginDate, endDate: endDate)],
             granularity: .all,
@@ -115,7 +113,8 @@ public enum RetentionQueryGenerator {
                     .fieldAccess(.init(type: .fieldAccess, fieldName: "_\(title(for: interval2))"))
                 ]
             )
-            ))
+            )
+        )
         )
     }
 }
