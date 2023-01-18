@@ -71,6 +71,10 @@ public extension CustomQuery {
             query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
         }
 
+        guard query.intervals != nil && !query.intervals!.isEmpty else {
+            throw QueryGenerationError.keyMissing(reason: "Either 'relativeIntervals' or 'intervals' need to be set")
+        }
+
         // Update compilationStatus so the next steps in the pipeline are sure the query has been compiled
         query.compilationStatus = .compiled
 
