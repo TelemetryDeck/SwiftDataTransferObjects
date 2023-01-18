@@ -30,8 +30,7 @@ public extension CustomQuery {
 
         // Custom Query Types
         if query.queryType == .funnel {
-            guard let steps = query.steps else { throw QueryGenerationError.keyMissing(reason: "Missing key 'steps'") }
-            query = try FunnelQueryGenerator.generateFunnelQuery(steps: steps, stepNames: query.stepNames, filter: query.filter)
+            query = try self.precompiledFunnelQuery()
         }
 
         // Apply base filters and data source
@@ -81,7 +80,6 @@ public extension CustomQuery {
         return query
     }
 }
-
 extension CustomQuery {
     static func applyBaseFilters(query: CustomQuery, organizationAppIDs: [UUID]?, isSuperOrg: Bool) throws -> CustomQuery {
         // make an editable copy of the query

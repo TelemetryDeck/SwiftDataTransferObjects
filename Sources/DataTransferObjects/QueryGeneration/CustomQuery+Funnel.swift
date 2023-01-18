@@ -1,11 +1,10 @@
-import Foundation
 
-public enum FunnelQueryGenerator {
-    public static func generateFunnelQuery(
-        steps: [Filter],
-        stepNames: [String]?,
-        filter: Filter?
-    ) throws -> CustomQuery {
+
+extension CustomQuery {
+    func precompiledFunnelQuery() throws -> CustomQuery {
+        var query = self
+        
+        guard let steps = steps else { throw QueryGenerationError.keyMissing(reason: "Missing key 'steps'") }
         let stepNames = stepNames ?? []
 
         // Generate Filter Statement
@@ -25,7 +24,8 @@ public enum FunnelQueryGenerator {
                 ))
             )))
         }
-
+        
+        
         // Generate Post-Agregations
         var postAggregations = [PostAggregator]()
         for index in steps.indices {
@@ -50,20 +50,19 @@ public enum FunnelQueryGenerator {
                 ))
             )))
         }
-
+        
         // Combine query
-        return CustomQuery(
-            queryType: .groupBy,
-            dataSource: "telemetry-signals",
-            filter: queryFilter,
-            granularity: .all,
-            aggregations: aggregations,
-            postAggregations: postAggregations
-        )
+        query.queryType = .groupBy
+        query.filter = queryFilter
+        query.aggregations = aggregations
+        query.postAggregations = postAggregations
+
+        return query
     }
 }
 
-private extension Array {
+
+fileprivate extension Array {
     subscript(safe index: Index, default defaultValue: Element) -> Element {
         return indices.contains(index) ? self[index] : defaultValue
     }

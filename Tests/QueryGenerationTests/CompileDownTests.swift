@@ -24,9 +24,6 @@ final class CompileDownTests: XCTestCase {
         // Exact query generation is in FunnelQueryGenerationTests,
         // here we're just making sure we're jumping into the correct paths.
         XCTAssertEqual(precompiledQuery.queryType, .groupBy)
-
-        XCTAssertNil(precompiledQuery.steps)
-        XCTAssertNil(precompiledQuery.stepNames)
     }
 
     func testFailIfNoIntervals() throws {
