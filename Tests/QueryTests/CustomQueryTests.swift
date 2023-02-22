@@ -259,10 +259,9 @@ final class CustomQueryTests: XCTestCase {
             queryType: .funnel,
             granularity: .all,
             steps: [
-                .selector(.init(dimension: "something", value: "one")),
-                .selector(.init(dimension: "other", value: "two")),
-            ],
-            stepNames: ["Step One", "Step Two"]
+                .init(filter: .selector(.init(dimension: "something", value: "one")), name: "Step One"),
+                .init(filter: .selector(.init(dimension: "other", value: "two")), name: "Step Twp"),
+            ]
         )
     }
 }

@@ -16,7 +16,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
                 dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil,
-                steps: [Filter]? = nil, stepNames: [String]? = nil)
+                steps: [FunnelStep]? = nil)
     {
         self.queryType = queryType
         self.compilationStatus = compilationStatus
@@ -42,7 +42,6 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dimension = dimension
         self.dimensions = dimensions
         self.steps = steps
-        self.stepNames = stepNames
     }
 
     public init(queryType: CustomQuery.QueryType,
@@ -59,7 +58,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
                 dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil,
-                steps: [Filter]? = nil, stepNames: [String]? = nil)
+                steps: [FunnelStep]? = nil)
     {
         self.queryType = queryType
         self.compilationStatus = compilationStatus
@@ -81,7 +80,6 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dimension = dimension
         self.dimensions = dimensions
         self.steps = steps
-        self.stepNames = stepNames
     }
 
     public enum QueryType: String, Codable, CaseIterable, Identifiable {
@@ -138,7 +136,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var dimensions: [DimensionSpec]?
 
     /// Only for funnel Queries: A list of filters that form the steps of the funnel
-    public var steps: [Filter]?
+    public var steps: [FunnelStep]?
 
     /// Only for funnel Queries: An optional List of names for the funnel steps
     public var stepNames: [String]?
@@ -192,7 +190,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dimension = try container.decodeIfPresent(DimensionSpec.self, forKey: CustomQuery.CodingKeys.dimension)
         self.metric = try container.decodeIfPresent(TopNMetricSpec.self, forKey: CustomQuery.CodingKeys.metric)
         self.dimensions = try container.decodeIfPresent([DimensionSpec].self, forKey: CustomQuery.CodingKeys.dimensions)
-        self.steps = try container.decodeIfPresent([Filter].self, forKey: CustomQuery.CodingKeys.steps)
+        self.steps = try container.decodeIfPresent([FunnelStep].self, forKey: CustomQuery.CodingKeys.steps)
         self.stepNames = try container.decodeIfPresent([String].self, forKey: CustomQuery.CodingKeys.stepNames)
 
         if let intervals = try? container.decode(QueryTimeIntervalsContainer.self, forKey: CustomQuery.CodingKeys.intervals) {

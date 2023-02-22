@@ -3,16 +3,18 @@ extension CustomQuery {
         var query = self
 
         guard let steps = steps else { throw QueryGenerationError.keyMissing(reason: "Missing key 'steps'") }
-        let stepNames = stepNames ?? []
+        
+        let stepFilters = steps.compactMap({ $0.filter })
+        let stepNames = steps.compactMap({ $0.name })
 
         // Generate Filter Statement
-        let stepsFilters = Filter.or(.init(fields: steps))
+        let stepsFilters = Filter.or(.init(fields: stepFilters))
         let queryFilter = filter && stepsFilters
 
         // Generate Aggregations
         let aggregationNamePrefix = "_funnel_step_"
         var aggregations = [Aggregator]()
-        for (index, step) in steps.enumerated() {
+        for (index, step) in stepFilters.enumerated() {
             aggregations.append(.filtered(.init(
                 filter: step,
                 aggregator: .thetaSketch(.init(

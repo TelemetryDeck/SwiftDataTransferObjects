@@ -10,13 +10,15 @@ final class CompileDownTests: XCTestCase {
     let appID2 = UUID()
 
     func testFunnel() throws {
-        let steps: [Filter] = [
-            .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
-            .selector(.init(dimension: "type", value: "dataEntered")),
-            .selector(.init(dimension: "type", value: "paywallSeen")),
-            .selector(.init(dimension: "type", value: "conversion"))
+        
+        
+        let steps: [FunnelStep] = [
+            .init(filter: .selector(.init(dimension: "type", value: "appLaunchedRegularly")), name: "Regular Launch"),
+            .init(filter: .selector(.init(dimension: "type", value: "dataEntered")), name: "Data Entered"),
+            .init(filter: .selector(.init(dimension: "type", value: "paywallSeen")), name: "Paywall Presented"),
+            .init(filter: .selector(.init(dimension: "type", value: "conversion")), name: "Conversion"),
         ]
-
+        
         let query = CustomQuery(queryType: .funnel, relativeIntervals: relativeIntervals, granularity: .all, steps: steps)
 
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)

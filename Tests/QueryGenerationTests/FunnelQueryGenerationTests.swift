@@ -2,20 +2,13 @@
 import XCTest
 
 final class FunnelQueryGenerationTests: XCTestCase {
-    let steps: [Filter] = [
-        .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
-        .selector(.init(dimension: "type", value: "dataEntered")),
-        .selector(.init(dimension: "type", value: "paywallSeen")),
-        .selector(.init(dimension: "type", value: "conversion"))
+    let steps: [FunnelStep] = [
+        .init(filter: .selector(.init(dimension: "type", value: "appLaunchedRegularly")), name: "Regular Launch"),
+        .init(filter: .selector(.init(dimension: "type", value: "dataEntered")), name: "Data Entered"),
+        .init(filter: .selector(.init(dimension: "type", value: "paywallSeen")), name: "Paywall Presented"),
+        .init(filter: .selector(.init(dimension: "type", value: "conversion")), name: "Conversion"),
     ]
-
-    let stepNames: [String] = [
-        "Regular Launch",
-        "Data Entered",
-        "Paywall Presented",
-        "Conversion"
-    ]
-
+    
     let tinyQuery = CustomQuery(
         queryType: .groupBy,
         dataSource: "telemetry-signals",
@@ -142,7 +135,7 @@ final class FunnelQueryGenerationTests: XCTestCase {
     )
 
     func testExample() throws {
-        let startingQuery = CustomQuery(queryType: .funnel, granularity: .all, steps: steps, stepNames: stepNames)
+        let startingQuery = CustomQuery(queryType: .funnel, granularity: .all, steps: steps)
         let generatedTinyQuery = try startingQuery.precompiledFunnelQuery()
 
         XCTAssertEqual(tinyQuery.filter, generatedTinyQuery.filter)
@@ -153,7 +146,7 @@ final class FunnelQueryGenerationTests: XCTestCase {
     func testWithAdditionalFilters() throws {
         let additionalFilter = Filter.selector(.init(dimension: "something", value: "other"))
 
-        let startingQuery = CustomQuery(queryType: .funnel, filter: additionalFilter, granularity: .all, steps: steps, stepNames: stepNames)
+        let startingQuery = CustomQuery(queryType: .funnel, filter: additionalFilter, granularity: .all, steps: steps)
         let generatedTinyQuery = try startingQuery.precompiledFunnelQuery()
 
         let expectedFilter = Filter.and(.init(fields: [
@@ -179,7 +172,7 @@ final class FunnelQueryGenerationTests: XCTestCase {
             )
         ]
 
-        let startingQuery = CustomQuery(queryType: .funnel, relativeIntervals: relativeTimeIntervals, granularity: .all, steps: steps, stepNames: stepNames)
+        let startingQuery = CustomQuery(queryType: .funnel, relativeIntervals: relativeTimeIntervals, granularity: .all, steps: steps)
         let generatedTinyQuery = try startingQuery.precompiledFunnelQuery()
 
         XCTAssertEqual(startingQuery.relativeIntervals, generatedTinyQuery.relativeIntervals)
