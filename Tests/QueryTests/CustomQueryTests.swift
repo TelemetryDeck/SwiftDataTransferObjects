@@ -145,6 +145,36 @@ final class CustomQueryTests: XCTestCase {
         XCTAssertEqual(expectedOutput, decodedOutput)
     }
     
+    
+    func testRegisteredLookupExtractionFunctionEncodingDefault() throws {
+        let input = ExtractionFunction.registeredLookup(.init(lookup: "apps", retainMissingValue: true))
+
+        let expectedOutput = """
+        {"lookup":"apps","retainMissingValue":true,"type":"registeredLookup"}
+        """
+
+        let encodedOutput = try JSONEncoder.telemetryEncoder.encode(input)
+
+        XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
+    }
+
+    func testRegisteredLookupExtractionFunctionDecodingDefault() throws {
+        let input = """
+        {
+          "type": "registeredLookup",
+          "lookup": "apps",
+          "retainMissingValue": true
+        }
+        """
+        .data(using: .utf8)!
+
+        let expectedOutput = ExtractionFunction.registeredLookup(.init(lookup: "apps", retainMissingValue: true))
+
+        let decodedOutput = try JSONDecoder.telemetryDecoder.decode(ExtractionFunction.self, from: input)
+
+        XCTAssertEqual(expectedOutput, decodedOutput)
+    }
+    
     func testInlineLookupExtractionFunctionEncodingDefault() throws {
         let input = ExtractionFunction.inlineLookup(InlineLookupExtractionFunction.init(lookupMap: ["foo": "bar", "baz":"bat"]))
 
@@ -208,6 +238,28 @@ final class CustomQueryTests: XCTestCase {
         let expectedOutput = ExtractionFunction.inlineLookup(.init(lookupMap: ["foo": "bar", "baz":"bat"], retainMissingValue: false, injective: false, replaceMissingValueWith: "MISSING"))
 
         let decodedOutput = try JSONDecoder.telemetryDecoder.decode(ExtractionFunction.self, from: input)
+
+        XCTAssertEqual(expectedOutput, decodedOutput)
+    }
+    
+    func testRegisteredLookupDimensionDecoding() throws {
+        let input = """
+        {
+            "dimension": "appID",
+            "extractionFn": {
+              "type": "registeredLookup",
+              "lookup": "apps",
+              "retainMissingValue": true
+            },
+            "outputName": "App",
+            "type": "extraction"
+          }
+        """
+        .data(using: .utf8)!
+        
+        let expectedOutput = DimensionSpec.extraction(.init(dimension: "appID", outputName: "App", extractionFn: .registeredLookup(.init(lookup: "apps", retainMissingValue: true))))
+        
+        let decodedOutput = try JSONDecoder.telemetryDecoder.decode(DimensionSpec.self, from: input)
 
         XCTAssertEqual(expectedOutput, decodedOutput)
     }

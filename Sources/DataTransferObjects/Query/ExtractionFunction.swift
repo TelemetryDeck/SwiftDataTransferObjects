@@ -4,6 +4,7 @@ import Foundation
 public indirect enum ExtractionFunction: Codable, Equatable, Hashable {
     case regex(RegularExpressionExtractionFunction)
     case inlineLookup(InlineLookupExtractionFunction)
+    case registeredLookup(RegisteredLookupExtractionFunction)
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -18,6 +19,8 @@ public indirect enum ExtractionFunction: Codable, Equatable, Hashable {
             self = .regex(try RegularExpressionExtractionFunction(from: decoder))
         case "lookup":
             self = .inlineLookup(try InlineLookupExtractionFunction(from: decoder))
+        case "registeredLookup":
+            self = .registeredLookup(try RegisteredLookupExtractionFunction(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
@@ -33,6 +36,9 @@ public indirect enum ExtractionFunction: Codable, Equatable, Hashable {
         case let .inlineLookup(inlineLookupFunction):
             try container.encode("lookup", forKey: .type)
             try inlineLookupFunction.encode(to: encoder)
+        case let .registeredLookup(registeredLookupFunction):
+            try container.encode("registeredLookup", forKey: .type)
+            try registeredLookupFunction.encode(to: encoder)
         }
     }
 }
@@ -76,26 +82,36 @@ public struct RegularExpressionExtractionFunction: Codable, Equatable, Hashable 
 ///
 /// It is illegal to set retainMissingValue = true and also specify a replaceMissingValueWith.
 public struct InlineLookupExtractionFunction: Codable, Equatable, Hashable {
-    public init(lookupMap: [String : String], retainMissingValue: Bool = true, injective: Bool = true, replaceMissingValueWith: String? = nil) {
+    public init(lookupMap: [String: String], retainMissingValue: Bool = true, injective: Bool = true, replaceMissingValueWith: String? = nil) {
         self.lookup = Lookup(map: lookupMap)
         self.retainMissingValue = retainMissingValue
         self.injective = injective
         self.replaceMissingValueWith = replaceMissingValueWith
     }
-    
+
     public struct Lookup: Codable, Equatable, Hashable {
-        public init(type: String = "map", map: [String : String]) {
+        public init(type: String = "map", map: [String: String]) {
             self.type = type
             self.map = map
         }
-        
+
         public let type: String
         public let map: [String: String]
     }
-    
+
     public let lookup: Lookup
     public let retainMissingValue: Bool
     public let injective: Bool
     public let replaceMissingValueWith: String?
 }
 
+/// The "registeredLookup" extraction function lets you refer to a lookup that has been registered in the cluster-wide configuration.
+public struct RegisteredLookupExtractionFunction: Codable, Equatable, Hashable {
+    public init(lookup: String, retainMissingValue: Bool) {
+        self.lookup = lookup
+        self.retainMissingValue = retainMissingValue
+    }
+
+    public let lookup: String
+    public let retainMissingValue: Bool
+}
