@@ -144,6 +144,73 @@ final class CustomQueryTests: XCTestCase {
         XCTAssertTrue(decodedOutput.replaceMissingValue)
         XCTAssertEqual(expectedOutput, decodedOutput)
     }
+    
+    func testInlineLookupExtractionFunctionEncodingDefault() throws {
+        let input = ExtractionFunction.inlineLookup(InlineLookupExtractionFunction.init(lookupMap: ["foo": "bar", "baz":"bat"]))
+
+        let expectedOutput = """
+        {"injective":true,"lookup":{"map":{"baz":"bat","foo":"bar"},"type":"map"},"retainMissingValue":true,"type":"lookup"}
+        """
+
+        let encodedOutput = try JSONEncoder.telemetryEncoder.encode(input)
+
+        XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
+    }
+
+    func testInlineLookupExtractionFunctionDecodingDefault() throws {
+        let input = """
+        {
+          "type":"lookup",
+          "lookup":{
+            "type":"map",
+            "map":{"foo":"bar", "baz":"bat"}
+          },
+          "retainMissingValue":true,
+          "injective":true
+        }
+        """
+        .data(using: .utf8)!
+
+        let expectedOutput = ExtractionFunction.inlineLookup(.init(lookupMap: ["foo": "bar", "baz":"bat"]))
+
+        let decodedOutput = try JSONDecoder.telemetryDecoder.decode(ExtractionFunction.self, from: input)
+
+        XCTAssertEqual(expectedOutput, decodedOutput)
+    }
+    
+    func testInlineLookupExtractionFunctionEncodingNonInjective() throws {
+        let input = ExtractionFunction.inlineLookup(.init(lookupMap: ["foo": "bar", "baz":"bat"], retainMissingValue: false, injective: false, replaceMissingValueWith: "MISSING"))
+
+        let expectedOutput = """
+        {"injective":false,"lookup":{"map":{"baz":"bat","foo":"bar"},"type":"map"},"replaceMissingValueWith":"MISSING","retainMissingValue":false,"type":"lookup"}
+        """
+
+        let encodedOutput = try JSONEncoder.telemetryEncoder.encode(input)
+
+        XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
+    }
+
+    func testInlineLookupExtractionFunctionDecodingNonInjective() throws {
+        let input = """
+        {
+          "type":"lookup",
+          "lookup":{
+            "type":"map",
+            "map":{"foo":"bar", "baz":"bat"}
+          },
+          "retainMissingValue":false,
+          "injective":false,
+          "replaceMissingValueWith":"MISSING"
+        }
+        """
+        .data(using: .utf8)!
+
+        let expectedOutput = ExtractionFunction.inlineLookup(.init(lookupMap: ["foo": "bar", "baz":"bat"], retainMissingValue: false, injective: false, replaceMissingValueWith: "MISSING"))
+
+        let decodedOutput = try JSONDecoder.telemetryDecoder.decode(ExtractionFunction.self, from: input)
+
+        XCTAssertEqual(expectedOutput, decodedOutput)
+    }
 
     func testExpandedGranularityDefinition() throws {
         let exampleJSON = """
