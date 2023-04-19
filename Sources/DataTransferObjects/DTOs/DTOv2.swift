@@ -15,6 +15,7 @@ public enum DTOv2 {
         public var updatedAt: Date?
         public var isSuperOrg: Bool
         public var stripeCustomerID: String?
+        public var stripePriceID: String?
         public var stripeMaxSignals: Int64?
         public var maxSignalsMultiplier: Double?
         public var resolvedMaxSignals: Int64
@@ -32,6 +33,7 @@ public enum DTOv2 {
             updatedAt: Date?,
             isSuperOrg: Bool,
             stripeCustomerID: String?,
+            stripePriceID: String?,
             stripeMaxSignals: Int64?,
             maxSignalsMultiplier: Double?,
             resolvedMaxSignals: Int64,
@@ -49,6 +51,7 @@ public enum DTOv2 {
             self.updatedAt = updatedAt
             self.isSuperOrg = isSuperOrg
             self.stripeCustomerID = stripeCustomerID
+            self.stripePriceID = stripePriceID
             self.stripeMaxSignals = stripeMaxSignals
             self.maxSignalsMultiplier = maxSignalsMultiplier
             self.resolvedMaxSignals = resolvedMaxSignals
