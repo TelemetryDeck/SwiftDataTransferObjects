@@ -1,6 +1,6 @@
 import Foundation
 
-public struct FunnelStep: Codable, Hashable, Equatable {
+public struct NamedFilter: Codable, Hashable, Equatable {
     public init(filter: Filter? = nil, name: String) {
         self.filter = filter
         self.name = name
