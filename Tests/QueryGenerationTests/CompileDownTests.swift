@@ -10,8 +10,6 @@ final class CompileDownTests: XCTestCase {
     let appID2 = UUID()
 
     func testFunnel() throws {
-        
-        
         let steps: [NamedFilter] = [
             .init(filter: .selector(.init(dimension: "type", value: "appLaunchedRegularly")), name: "Regular Launch"),
             .init(filter: .selector(.init(dimension: "type", value: "dataEntered")), name: "Data Entered"),

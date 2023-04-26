@@ -16,7 +16,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
                 dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil,
-                steps: [NamedFilter]? = nil)
+                steps: [NamedFilter]? = nil,
+                cohorts: [NamedFilter]? = nil, successCriteria: [NamedFilter]? = nil)
     {
         self.queryType = queryType
         self.compilationStatus = compilationStatus
@@ -42,6 +43,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dimension = dimension
         self.dimensions = dimensions
         self.steps = steps
+        self.cohorts = cohorts
+        self.successCriteria = successCriteria
     }
 
     public init(queryType: CustomQuery.QueryType,
@@ -58,7 +61,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
                 limit: Int? = nil, context: QueryContext? = nil,
                 threshold: Int? = nil, metric: TopNMetricSpec? = nil,
                 dimension: DimensionSpec? = nil, dimensions: [DimensionSpec]? = nil,
-                steps: [NamedFilter]? = nil)
+                steps: [NamedFilter]? = nil,
+                cohorts: [NamedFilter]? = nil, successCriteria: [NamedFilter]? = nil)
     {
         self.queryType = queryType
         self.compilationStatus = compilationStatus
@@ -80,6 +84,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.dimension = dimension
         self.dimensions = dimensions
         self.steps = steps
+        self.cohorts = cohorts
+        self.successCriteria = successCriteria
     }
 
     public enum QueryType: String, Codable, CaseIterable, Identifiable {
@@ -91,6 +97,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
         // derived types
         case funnel
+        case experiment
         // case retention
     }
 
@@ -134,12 +141,15 @@ public struct CustomQuery: Codable, Hashable, Equatable {
 
     /// Only for groupBy Queries: A list of dimensions to do the groupBy over, if queryType is groupBy
     public var dimensions: [DimensionSpec]?
-
+    
     /// Only for funnel Queries: A list of filters that form the steps of the funnel
     public var steps: [NamedFilter]?
-
-    /// Only for funnel Queries: An optional List of names for the funnel steps
-    public var stepNames: [String]?
+    
+    /// Only for experiment Queries: A list of filters that form the cohorts in the experiment.
+    public var cohorts: [NamedFilter]?
+    
+    /// Only for experiment Queries: A list of filters that form the success criteria in the experiment.
+    public var successCriteria: [NamedFilter]?
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(queryType)
@@ -162,7 +172,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         hasher.combine(dimensions)
         hasher.combine(dimension)
         hasher.combine(steps)
-        hasher.combine(stepNames)
+        hasher.combine(cohorts)
+        hasher.combine(successCriteria)
     }
 
     public static func == (lhs: CustomQuery, rhs: CustomQuery) -> Bool {
@@ -191,7 +202,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.metric = try container.decodeIfPresent(TopNMetricSpec.self, forKey: CustomQuery.CodingKeys.metric)
         self.dimensions = try container.decodeIfPresent([DimensionSpec].self, forKey: CustomQuery.CodingKeys.dimensions)
         self.steps = try container.decodeIfPresent([NamedFilter].self, forKey: CustomQuery.CodingKeys.steps)
-        self.stepNames = try container.decodeIfPresent([String].self, forKey: CustomQuery.CodingKeys.stepNames)
+        self.cohorts = try container.decodeIfPresent([NamedFilter].self, forKey: CustomQuery.CodingKeys.cohorts)
+        self.successCriteria = try container.decodeIfPresent([NamedFilter].self, forKey: CustomQuery.CodingKeys.successCriteria)
 
         if let intervals = try? container.decode(QueryTimeIntervalsContainer.self, forKey: CustomQuery.CodingKeys.intervals) {
             self.intervals = intervals.intervals
