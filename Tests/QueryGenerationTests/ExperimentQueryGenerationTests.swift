@@ -2,62 +2,43 @@
 import XCTest
 
 final class ExperimentQueryGenerationTests: XCTestCase {
-    let cohort1: NamedFilter =
-        .init(filter: .selector(.init(dimension: "type", value: "payScreenALaunched")), name: "Payscreen A")
+    let cohort1: NamedFilter = .init(filter: .selector(.init(dimension: "type", value: "payScreenALaunched")), name: "Payscreen A")
     let cohort2: NamedFilter = .init(filter: .selector(.init(dimension: "type", value: "payScreenBLaunched")), name: "Payscreen B")
-    
 
     let successCriterion: NamedFilter = .init(filter: .selector(.init(dimension: "type", value: "paymentSucceeded")), name: "Payment Succeeded")
 
     let tinyQuery = CustomQuery(
         queryType: .groupBy,
         dataSource: "telemetry-signals",
-        filter:
-        .or(.init(fields: [
-            .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
-            .selector(.init(dimension: "type", value: "dataEntered")),
-            .selector(.init(dimension: "type", value: "paywallSeen")),
-            .selector(.init(dimension: "type", value: "conversion"))
-
-        ])),
+        filter: .selector(.init(dimension: "appID", value: "8044464F-C327-4ADF-8143-4A0FC1F00896")),
         granularity: .all,
         aggregations: [
             .filtered(.init(
-                filter: .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
+                filter: .selector(.init(dimension: "type", value: "appCreated")),
                 aggregator: .thetaSketch(
                     .init(
                         type: AggregatorType.thetaSketch,
-                        name: "_funnel_step_0",
+                        name: "_cohort_0",
                         fieldName: "clientUser"
                     )
                 )
             )),
             .filtered(.init(
-                filter: .selector(.init(dimension: "type", value: "dataEntered")),
+                filter: .selector(.init(dimension: "type", value: "view")),
                 aggregator: .thetaSketch(
                     .init(
                         type: AggregatorType.thetaSketch,
-                        name: "_funnel_step_1",
+                        name: "_cohort_1",
                         fieldName: "clientUser"
                     )
                 )
             )),
             .filtered(.init(
-                filter: .selector(.init(dimension: "type", value: "paywallSeen")),
+                filter: .selector(.init(dimension: "type", value: "pricingPlanSelected")),
                 aggregator: .thetaSketch(
                     .init(
                         type: AggregatorType.thetaSketch,
-                        name: "_funnel_step_2",
-                        fieldName: "clientUser"
-                    )
-                )
-            )),
-            .filtered(.init(
-                filter: .selector(.init(dimension: "type", value: "conversion")),
-                aggregator: .thetaSketch(
-                    .init(
-                        type: AggregatorType.thetaSketch,
-                        name: "_funnel_step_3",
+                        name: "_success_0",
                         fieldName: "clientUser"
                     )
                 )
@@ -65,71 +46,59 @@ final class ExperimentQueryGenerationTests: XCTestCase {
         ],
         postAggregations: [
             .thetaSketchEstimate(.init(
-                name: "0_Regular Launch",
-                field: .fieldAccess(.init(
-                    type: .fieldAccess,
-                    fieldName: "_funnel_step_0"
-                ))
-            )),
-            .thetaSketchEstimate(.init(
-                name: "1_Data Entered",
+                name: "_cohort_0_success_0",
                 field: .thetaSketchSetOp(.init(
                     func: .intersect,
                     fields: [
                         .fieldAccess(.init(
                             type: .fieldAccess,
-                            fieldName: "_funnel_step_0"
+                            fieldName: "_cohort_0"
                         )),
                         .fieldAccess(.init(
                             type: .fieldAccess,
-                            fieldName: "_funnel_step_1"
+                            fieldName: "_success_0"
                         ))
                     ]
                 ))
             )),
             .thetaSketchEstimate(.init(
-                name: "2_Paywall Presented",
+                name: "_cohort_1_success_0",
                 field: .thetaSketchSetOp(.init(
                     func: .intersect,
                     fields: [
                         .fieldAccess(.init(
                             type: .fieldAccess,
-                            fieldName: "_funnel_step_0"
+                            fieldName: "_cohort_1"
                         )),
                         .fieldAccess(.init(
                             type: .fieldAccess,
-                            fieldName: "_funnel_step_1"
-                        )),
-                        .fieldAccess(.init(
-                            type: .fieldAccess,
-                            fieldName: "_funnel_step_2"
+                            fieldName: "_success_0"
                         ))
                     ]
                 ))
             )),
-            .thetaSketchEstimate(.init(
-                name: "3_Conversion",
-                field: .thetaSketchSetOp(.init(
-                    func: .intersect,
-                    fields: [
-                        .fieldAccess(.init(
-                            type: .fieldAccess,
-                            fieldName: "_funnel_step_0"
-                        )),
-                        .fieldAccess(.init(
-                            type: .fieldAccess,
-                            fieldName: "_funnel_step_1"
-                        )),
-                        .fieldAccess(.init(
-                            type: .fieldAccess,
-                            fieldName: "_funnel_step_2"
-                        )),
-                        .fieldAccess(.init(
-                            type: .fieldAccess,
-                            fieldName: "_funnel_step_3"
-                        ))
-                    ]
+            .zscore2sample(.init(
+                name: "zscore",
+                sample1Size: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_0"
+                )),
+                successCount1: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_0_success_0"
+                )),
+                sample2Size: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_1"
+                )),
+                successCount2: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_1_success_0"
                 ))
+            )),
+            .pvalue2tailedZtest(.init(
+                name: "pvalue",
+                zScore: .fieldAccess(.init(type: .fieldAccess, fieldName: "zscore"))
             ))
         ]
     )
