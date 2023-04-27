@@ -129,6 +129,11 @@ public indirect enum Filter: Codable, Hashable, Equatable {
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
     }
+    
+    /// Empty Filter that basically catches everthing
+    public static var empty: Filter {
+        Filter.not(.init(field: .selector(.init(dimension: "appID", value: "0"))))
+    }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

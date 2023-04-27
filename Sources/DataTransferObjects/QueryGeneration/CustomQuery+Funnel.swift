@@ -12,12 +12,10 @@ extension CustomQuery {
         let aggregationNamePrefix = "_funnel_step_"
         var aggregations = [Aggregator]()
         
-        // Empty Filter that basically catches everthing. We use this when an actual filter has not been set in a step.
-        let emptyFilter = Filter.not(.init(field: .selector(.init(dimension: "appID", value: "0"))))
         
         for (index, step) in steps.enumerated() {
             aggregations.append(.filtered(.init(
-                filter: step.filter ?? emptyFilter,
+                filter: step.filter ?? Filter.empty,
                 aggregator: .thetaSketch(.init(
                     type: .thetaSketch,
                     name: "\(aggregationNamePrefix)\(index)",

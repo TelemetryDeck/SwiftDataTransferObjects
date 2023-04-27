@@ -32,6 +32,10 @@ public extension CustomQuery {
         if query.queryType == .funnel {
             query = try self.precompiledFunnelQuery()
         }
+        
+        else if query.queryType == .experiment {
+            query = try self.precompiledExperimentQuery()
+        }
 
         // Apply base filters and data source
         query = try Self.applyBaseFilters(query: query, organizationAppIDs: organizationAppIDs, isSuperOrg: isSuperOrg)
