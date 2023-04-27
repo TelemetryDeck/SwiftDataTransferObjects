@@ -23,6 +23,10 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
     // From DataSketches ThetaSketches
     case thetaSketchEstimate(ThetaSketchEstimatePostAggregator)
     case thetaSketchSetOp(ThetaSketchSetOpPostAggregator)
+    
+    // From druid-stats
+    case zscore2sample(ZScore2SamplePostAggregator)
+    case pvalue2tailedZtest(PValue2TailedZTestPostAggregator)
 
     // Not implemented by design
     // - JavaScript post-aggregator
@@ -41,7 +45,7 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
         case "fieldAccess":
             self = .fieldAccess(try FieldAccessPostAggregator(from: decoder))
         case "finalizingFieldAccess":
-            self = .fieldAccess(try FieldAccessPostAggregator(from: decoder))
+            self = .finalizingFieldAccess(try FieldAccessPostAggregator(from: decoder))
         case "constant":
             self = .constant(try ConstantPostAggregator(from: decoder))
         case "doubleGreatest":
@@ -62,6 +66,10 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
             self = .thetaSketchEstimate(try ThetaSketchEstimatePostAggregator(from: decoder))
         case "thetaSketchSetOp":
             self = .thetaSketchSetOp(try ThetaSketchSetOpPostAggregator(from: decoder))
+        case "zscore2sample":
+            self = .zscore2sample(try ZScore2SamplePostAggregator(from: decoder))
+        case "pvalue2tailedZtest":
+            self = .pvalue2tailedZtest(try PValue2TailedZTestPostAggregator(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type: \(type)", underlyingError: nil))
         }
@@ -110,6 +118,12 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
         case let .thetaSketchSetOp(postAggregator):
             try container.encode("thetaSketchOp", forKey: .type)
             try postAggregator.encode(to: encoder)
+        case let .zscore2sample(postAggregator):
+            try container.encode("zscore2sample", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .pvalue2tailedZtest(postAggregator):
+            try container.encode("pvalue2tailedZtest", forKey: .type)
+            try postAggregator.encode(to: encoder)
         }
     }
 }
@@ -128,6 +142,8 @@ public enum PostAggregatorType: String, Codable, Hashable {
     case hyperUniqueCardinality
     case thetaSketchEstimate
     case thetaSketchSetOp
+    case zscore2sample
+    case pvalue2tailedZtest
 }
 
 public enum PostAggregatorOrdering: String, Codable, Hashable {
@@ -299,4 +315,49 @@ public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
     public let name: String?
     public let `func`: SketchOperation
     public let fields: [PostAggregator]
+}
+
+/// Calculates the z-score using two-sample z-test
+///
+/// Calculates the z-score using two-sample z-test while
+/// converting binary variables (e.g. success or not) to
+/// continuous variables (e.g. conversion rate).
+///
+/// Highly useful for A/B Tests and similar experiments.
+///
+/// @see https://medium.com/paypal-tech/democratizing-experimentation-data-for-product-innovations-8b6e1cf40c27#DemocratizingExperimentationScience-Druid
+public struct ZScore2SamplePostAggregator: Codable, Hashable {
+    public init(name: String, sample1Size: PostAggregator, successCount1: PostAggregator, sample2Size: PostAggregator, successCount2: PostAggregator) {
+        self.type = .zscore2sample
+        self.name = name
+        self.sample1Size = sample1Size
+        self.successCount1 = successCount1
+        self.sample2Size = sample2Size
+        self.successCount2 = successCount2
+    }
+    
+    public let type: PostAggregatorType
+    public let name: String
+    public let sample1Size: PostAggregator
+    public let successCount1: PostAggregator
+    public let sample2Size: PostAggregator
+    public let successCount2: PostAggregator
+}
+
+/// Calculate p-value of two-sided z-test from zscore
+///
+/// pvalue2tailedZtest(zscore) - the input is a z-score which can be
+/// calculated using the zscore2sample post aggregator
+///
+/// @see https://medium.com/paypal-tech/democratizing-experimentation-data-for-product-innovations-8b6e1cf40c27#DemocratizingExperimentationScience-Druid
+public struct PValue2TailedZTestPostAggregator: Codable, Hashable {
+    public init(name: String, zScore: PostAggregator) {
+        self.type = .pvalue2tailedZtest
+        self.name = name
+        self.zScore = zScore
+    }
+    
+    public let type: PostAggregatorType
+    public let name: String
+    public let zScore: PostAggregator
 }

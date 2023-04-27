@@ -179,4 +179,86 @@ final class PostAggregatorTests: XCTestCase {
             ))
         ])
     }
+
+    func testZScore2SampleCodable() throws {
+        let example = """
+        [{
+            "name": "zscore",
+            "sample1Size": {
+              "fieldName": "_cohort_0",
+              "type": "finalizingFieldAccess"
+            },
+            "sample2Size": {
+              "fieldName": "_cohort_1",
+              "type": "finalizingFieldAccess"
+            },
+            "successCount1": {
+              "fieldName": "_cohort_0_success_0",
+              "type": "finalizingFieldAccess"
+            },
+            "successCount2": {
+              "fieldName": "_cohort_1_success_0",
+              "type": "finalizingFieldAccess"
+            },
+            "type": "zscore2sample"
+          }]
+        """
+        .filter { !$0.isWhitespace }
+        
+        
+        let postAggregators = [
+            PostAggregator.zscore2sample(.init(
+                name: "zscore",
+                sample1Size: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_0"
+                )),
+                successCount1: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_0_success_0"
+                )),
+                sample2Size: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_1"
+                )),
+                successCount2: .finalizingFieldAccess(.init(
+                    type: .finalizingFieldAccess,
+                    fieldName: "_cohort_1_success_0"
+                ))
+            ))
+        ]
+
+        let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: example.data(using: .utf8)!)
+        XCTAssertEqual(decodedAggregators, postAggregators)
+        
+        let encodedAggregators = try JSONEncoder.telemetryEncoder.encode(postAggregators)
+        XCTAssertEqual(String(data: encodedAggregators, encoding: .utf8), example)
+    }
+    
+    func testPValueCodable() throws {
+        let example = """
+        [{
+            "name": "pvalue",
+            "type": "pvalue2tailedZtest",
+            "zScore": {
+              "fieldName": "zscore",
+              "type": "fieldAccess"
+            }
+          }]
+        """
+        .filter { !$0.isWhitespace }
+        
+        let postAggregators = [
+            PostAggregator.pvalue2tailedZtest(.init(
+                name: "pvalue",
+                zScore: .fieldAccess(.init(type: .fieldAccess, fieldName: "zscore"))
+            ))
+        ]
+
+        let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: example.data(using: .utf8)!)
+        XCTAssertEqual(decodedAggregators, postAggregators)
+        
+        let encodedAggregators = try JSONEncoder.telemetryEncoder.encode(postAggregators)
+        XCTAssertEqual(String(data: encodedAggregators, encoding: .utf8), example)
+    }
 }
