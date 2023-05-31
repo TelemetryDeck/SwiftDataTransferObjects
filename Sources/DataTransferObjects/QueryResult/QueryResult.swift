@@ -43,12 +43,12 @@ public enum QueryResult: Codable, Hashable, Equatable {
 }
 
 public struct TimeSeriesQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [TimeSeriesQueryResultRow], isRestricted: Bool? = nil) {
+    public init(rows: [TimeSeriesQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
         self.rows = rows
-        self.isRestricted = isRestricted
+        self.restrictions = restrictions
     }
 
-    public let isRestricted: Bool?
+    public let restrictions: [QueryTimeInterval]?
     public let rows: [TimeSeriesQueryResultRow]
 }
 
@@ -118,12 +118,12 @@ public struct TimeSeriesQueryResultRow: Codable, Hashable, Equatable {
 /// GroupBy queries return an array of JSON objects, where each object represents a grouping as described in the group-by query.
 /// For example, we can query for the daily average of a dimension for the past month grouped by another dimension.
 public struct GroupByQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [GroupByQueryResultRow], isRestricted: Bool? = nil) {
-        self.isRestricted = isRestricted
+    public init(rows: [GroupByQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
+        self.restrictions = restrictions
         self.rows = rows
     }
 
-    public let isRestricted: Bool?
+    public let restrictions: [QueryTimeInterval]?
     public let rows: [GroupByQueryResultRow]
 }
 
@@ -145,12 +145,12 @@ public struct GroupByQueryResultRow: Codable, Hashable, Equatable {
 /// TopNs are much faster and resource efficient than GroupBys for this use case. These types of queries take a topN query
 ///  object and return an array of JSON objects where each object represents a value asked for by the topN query.
 public struct TopNQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [TopNQueryResultRow], isRestricted: Bool? = nil) {
+    public init(rows: [TopNQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
         self.rows = rows
-        self.isRestricted = isRestricted
+        self.restrictions = restrictions
     }
 
-    public let isRestricted: Bool?
+    public let restrictions: [QueryTimeInterval]?
     public let rows: [TopNQueryResultRow]
 }
 

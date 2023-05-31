@@ -9,7 +9,7 @@ import DataTransferObjects
 import XCTest
 
 class QueryResultTests: XCTestCase {
-    let randomDate = Date(timeIntervalSinceReferenceDate: 656_510_400) // Thursday, October 21, 2021 2:00:00 PM GMT+02:00
+    let randomDate = Date(timeIntervalSinceReferenceDate: 656510400) // Thursday, October 21, 2021 2:00:00 PM GMT+02:00
 
     func testEncodingTimeSeries() throws {
         let exampleQueryResult = QueryResult.timeSeries(
@@ -60,8 +60,11 @@ class QueryResultTests: XCTestCase {
     }
 
     func testDecodingGroupBy() throws {
-        let expectedResult = QueryResult.groupBy(GroupByQueryResult(rows: [GroupByQueryResultRow(timestamp: randomDate,
-                                                                                                 event: .init(metrics: ["count": 12], dimensions: ["abc": "def", "uno": "due"]))]))
+        let expectedResult = QueryResult.groupBy(GroupByQueryResult(
+            rows: [GroupByQueryResultRow(
+                timestamp: randomDate,
+                event: .init(metrics: ["count": 12], dimensions: ["abc": "def", "uno": "due"])
+            )]))
         let groupByResult = """
         {
         "rows": [
@@ -87,7 +90,7 @@ class QueryResultTests: XCTestCase {
 
         let decodedResult = try JSONDecoder.telemetryDecoder.decode(TimeSeriesQueryResultRow.self, from: exampleResult.data(using: .utf8)!)
 
-        XCTAssertEqual(decodedResult.result, ["d0": DoubleWrapper(1_609_459_200_000)])
+        XCTAssertEqual(decodedResult.result, ["d0": DoubleWrapper(1609459200000)])
     }
 
     func testDecodingInfinity() throws {
@@ -113,4 +116,37 @@ class QueryResultTests: XCTestCase {
             "min": DoubleWrapper(0.02),
         ])
     }
+
+    func testEncodingTimeSeriesWithRestricted() throws {
+        let exampleQueryResult = QueryResult.timeSeries(
+            TimeSeriesQueryResult(rows:
+                [
+                    TimeSeriesQueryResultRow(timestamp: randomDate - 3600, result: ["test": DoubleWrapper(11)]),
+                    TimeSeriesQueryResultRow(timestamp: randomDate, result: ["test": DoubleWrapper(12)]),
+                    TimeSeriesQueryResultRow(timestamp: randomDate, result: ["test": DoubleWrapper(Double.infinity)]),
+                    TimeSeriesQueryResultRow(timestamp: randomDate, result: ["test": DoubleWrapper(-Double.infinity)]),
+                ],
+                restrictions: [.init(beginningDate: randomDate - 3600 * 24 * 10, endDate: randomDate)])
+        )
+
+        let encodedQueryResult = try JSONEncoder.telemetryEncoder.encode(exampleQueryResult)
+
+        let expectedResult = """
+        {
+            "restrictions":["2021-10-11T12:00:00.000Z/2021-10-21T12:00:00.000Z"],
+            "rows": [
+                {"result":{"test":11},"timestamp":"2021-10-21T11:00:00+0000"},
+                {"result":{"test":12},"timestamp":"2021-10-21T12:00:00+0000"},
+                {"result":{"test":"Infinity"},"timestamp":"2021-10-21T12:00:00+0000"},
+                {"result":{"test":"-Infinity"},"timestamp":"2021-10-21T12:00:00+0000"}
+            ],
+            "type":"timeSeriesResult"
+        }
+        """
+        .filter { !$0.isWhitespace }
+
+        XCTAssertEqual(String(data: encodedQueryResult, encoding: .utf8)!, expectedResult)
+    }
 }
+
+
