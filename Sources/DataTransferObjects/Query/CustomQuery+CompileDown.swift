@@ -16,7 +16,7 @@ public extension CustomQuery {
     ///
     /// @see compileToRunnableQuery
     func precompile(organizationAppIDs: [UUID], isSuperOrg: Bool) throws -> CustomQuery {
-        guard (self.compilationStatus ?? .notCompiled) == .notCompiled else {
+        guard (compilationStatus ?? .notCompiled) == .notCompiled else {
             throw QueryGenerationError.compilationStatusError
         }
 
@@ -30,11 +30,9 @@ public extension CustomQuery {
 
         // Custom Query Types
         if query.queryType == .funnel {
-            query = try self.precompiledFunnelQuery()
-        }
-        
-        else if query.queryType == .experiment {
-            query = try self.precompiledExperimentQuery()
+            query = try precompiledFunnelQuery()
+        } else if query.queryType == .experiment {
+            query = try precompiledExperimentQuery()
         }
 
         // Apply base filters and data source
@@ -54,7 +52,7 @@ public extension CustomQuery {
     ///
     /// @see precompile
     func compileToRunnableQuery() throws -> CustomQuery {
-        guard self.compilationStatus == .precompiled else {
+        guard compilationStatus == .precompiled else {
             throw QueryGenerationError.compilationStatusError
         }
 
@@ -66,9 +64,11 @@ public extension CustomQuery {
             query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
         }
 
-        guard query.intervals != nil && !query.intervals!.isEmpty else {
+        guard query.intervals != nil, !query.intervals!.isEmpty else {
             throw QueryGenerationError.keyMissing(reason: "Either 'relativeIntervals' or 'intervals' need to be set")
         }
+        
+        // Add restrictionsFilter
 
         // Update compilationStatus so the next steps in the pipeline are sure the query has been compiled
         query.compilationStatus = .compiled
@@ -76,6 +76,7 @@ public extension CustomQuery {
         return query
     }
 }
+
 extension CustomQuery {
     static func applyBaseFilters(query: CustomQuery, organizationAppIDs: [UUID]?, isSuperOrg: Bool) throws -> CustomQuery {
         // make an editable copy of the query
