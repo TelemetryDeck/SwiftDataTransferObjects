@@ -382,4 +382,29 @@ final class CustomQueryTests: XCTestCase {
             ]
         )
     }
+
+    func testSampleFactorEncoding() throws {
+        let input = CustomQuery(queryType: .timeseries, sampleFactor: 10, granularity: .day)
+
+        let expectedOutput = """
+        {"dataSource":"telemetry-signals","granularity":"day","queryType":"timeseries","sampleFactor":10}
+        """
+
+        let encodedOutput = try JSONEncoder.telemetryEncoder.encode(input)
+
+        XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
+    }
+
+    func testSampleFactorDecoding() throws {
+        let input = """
+        {"dataSource":"telemetry-signals","granularity":"day","queryType":"timeseries","sampleFactor":10}
+        """
+        .data(using: .utf8)!
+
+        let expectedOutput = CustomQuery(queryType: .timeseries, sampleFactor: 10, granularity: .day)
+
+        let decodedOutput = try JSONDecoder.telemetryDecoder.decode(CustomQuery.self, from: input)
+
+        XCTAssertEqual(expectedOutput, decodedOutput)
+    }
 }

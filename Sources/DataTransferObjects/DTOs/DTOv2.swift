@@ -453,7 +453,7 @@ public enum DTOv2 {
 
     /// A short message that goes out to  users and is usually displayed in the app UI
     public struct StatusMessage: Identifiable, Codable {
-        public init(id: String, validFrom: Date, validUntil: Date?, title: String, description: String?, severity: Int?,  systemImageName: String?) {
+        public init(id: String, validFrom: Date, validUntil: Date?, title: String, description: String?, severity: Int?, systemImageName: String?) {
             self.id = id
             self.validFrom = validFrom
             self.validUntil = validUntil
@@ -468,7 +468,7 @@ public enum DTOv2 {
         public let validUntil: Date?
         public let title: String
         public let description: String?
-        
+
         /// 3 = bad, 2 = moderate, 1 = okay, 0 = info
         public let severity: Int?
         public let systemImageName: String?
