@@ -93,8 +93,19 @@ extension CustomQuery {
                 throw QueryGenerationError.notAllowed(reason: "The noFilter base filter is not implemented.")
             }
         } else {
-            query.dataSource = .init("telemetry-signals")
             query.context = QueryContext(timeout: "200000", skipEmptyBuckets: false)
+            
+            // Check sampling factor
+            switch query.sampleFactor {
+            case 10:
+                query.dataSource = .init("telemetry-signals-sample10")
+            case 100:
+                query.dataSource = .init("telemetry-signals-sample100")
+            case 1000:
+                query.dataSource = .init("telemetry-signals-sample1000")
+            default:
+                query.dataSource = .init("telemetry-signals")
+            }
         }
 
         // Apply filters according to the basefilters property
