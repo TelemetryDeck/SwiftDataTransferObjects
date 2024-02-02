@@ -94,7 +94,7 @@ extension CustomQuery {
             }
         } else {
             query.context = QueryContext(timeout: "200000", skipEmptyBuckets: false)
-            
+
             // Check sampling factor
             switch query.sampleFactor {
             case 10:

@@ -174,56 +174,56 @@ final class CompileDownTests: XCTestCase {
             .init(beginningDate: Date(iso8601String: "2023-05-14T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
         ])
     }
-    
+
     func testSampleFactor1() throws {
         let intervals: [QueryTimeInterval] = [
             .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
         ]
-        
+
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 1, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals")
     }
-    
+
     func testSampleFactor10() throws {
         let intervals: [QueryTimeInterval] = [
             .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
         ]
-        
+
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 10, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals-sample10")
     }
-    
+
     func testSampleFactor100() throws {
         let intervals: [QueryTimeInterval] = [
             .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
         ]
-        
+
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 100, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals-sample100")
     }
-    
+
     func testSampleFactor1000() throws {
         let intervals: [QueryTimeInterval] = [
             .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
         ]
-        
+
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 1000, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals-sample1000")
     }
-    
+
     func testIllegalSampleFactor() throws {
         let intervals: [QueryTimeInterval] = [
             .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
         ]
-        
+
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 42, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
