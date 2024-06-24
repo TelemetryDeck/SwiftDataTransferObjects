@@ -57,6 +57,59 @@ public struct FilterRegex: Codable, Hashable, Equatable {
     public let pattern: String
 }
 
+// The Range Filter can be used to filter on ranges of dimension values. It can be
+// used for comparison filtering like greater than, less than, greater than or equal
+// to, less than or equal to, and "between"
+public struct FilterRange: Codable, Hashable, Equatable {
+    public init(
+        column: String,
+        matchValueType: FilterRange.MatchValueType,
+        lower: String? = nil,
+        upper: String? = nil,
+        lowerOpen: Bool? = nil,
+        upperOpen: Bool? = nil
+    ) {
+        self.column = column
+        self.matchValueType = matchValueType
+        self.lower = lower
+        self.upper = upper
+        self.lowerOpen = lowerOpen
+        self.upperOpen = upperOpen
+    }
+
+    public enum MatchValueType: String, Codable, Hashable, Equatable {
+        case String = "STRING"
+        case Double = "DOUBLE"
+    }
+
+    /// Input column or virtual column name to filter on.
+    public let column: String
+
+    /// String specifying the type of bounds to match.
+    /// The matchValueType determines how TelemetryDeck interprets the matchValue to assist
+    /// in converting to the type of the matched column and also defines the type of
+    /// comparison used when matching values.
+    public let matchValueType: MatchValueType
+
+    /// Lower bound value to match.
+    ///
+    /// At least one of lower or upper must not be null.
+    public let lower: String?
+
+    /// Upper bound value to match.
+    ///
+    /// At least one of lower or upper must not be null.
+    public let upper: String?
+
+    /// Boolean indicating if lower bound is open in the interval of values defined by the
+    /// range (">" instead of ">=").
+    public let lowerOpen: Bool?
+
+    /// Boolean indicating if upper bound is open on the interval of values defined by the
+    /// range ("<" instead of "<=").
+    public let upperOpen: Bool?
+}
+
 // logical expression filters
 public struct FilterExpression: Codable, Hashable, Equatable {
     public init(fields: [Filter]) {
@@ -97,6 +150,11 @@ public indirect enum Filter: Codable, Hashable, Equatable {
     /// pattern can be any standard Java regular expression.
     case regex(FilterRegex)
 
+    // The Range Filter can be used to filter on ranges of dimension values. It can be
+    // used for comparison filtering like greater than, less than, greater than or equal
+    // to, less than or equal to, and "between"
+    case range(FilterRange)
+
     // logical expression filters
     case and(FilterExpression)
     case or(FilterExpression)
@@ -125,6 +183,8 @@ public indirect enum Filter: Codable, Hashable, Equatable {
             self = try .or(FilterExpression(from: decoder))
         case "not":
             self = try .not(FilterNot(from: decoder))
+        case "range":
+            self = try .range(FilterRange(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
@@ -151,6 +211,9 @@ public indirect enum Filter: Codable, Hashable, Equatable {
         case let .regex(regex):
             try container.encode("regex", forKey: .type)
             try regex.encode(to: encoder)
+        case let .range(range):
+            try container.encode("range", forKey: .type)
+            try range.encode(to: encoder)
         case let .and(and):
             try container.encode("and", forKey: .type)
             try and.encode(to: encoder)
