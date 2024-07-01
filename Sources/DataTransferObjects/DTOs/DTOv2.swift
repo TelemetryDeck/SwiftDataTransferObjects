@@ -205,6 +205,11 @@ public enum DTOv2 {
             case website
         }
 
+        public enum StartOfWeek: String, Codable, Hashable {
+            case sunday
+            case monday
+        }
+
         /// If true, the app should display demo content instead of
         public var showExampleData: Bool?
 
@@ -219,10 +224,14 @@ public enum DTOv2 {
         /// How should the overview page for this application be layouted?
         public var displayMode: DisplayMode?
 
-        public init(displayMode: DisplayMode? = nil, colorScheme: String? = nil, showExampleData: Bool? = nil) {
+        /// The start of week when filtering using weekly filters like 'This Week'.
+        public var startOfWeek: StartOfWeek?
+
+        public init(displayMode: DisplayMode? = nil, colorScheme: String? = nil, showExampleData: Bool? = nil, startOfWeek: StartOfWeek? = nil) {
             self.displayMode = displayMode ?? .app
             self.colorScheme = colorScheme
             self.showExampleData = showExampleData ?? false
+            self.startOfWeek = startOfWeek ?? .sunday
         }
     }
 

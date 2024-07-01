@@ -123,13 +123,13 @@ final class CompileDownTests: XCTestCase {
 
     func testCompilationFailsIfNoPrecompilation() throws {
         let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
-        XCTAssertThrowsError(try query.compileToRunnableQuery())
+        XCTAssertThrowsError(try query.compileToRunnableQuery(startWeekOnMonday: false))
     }
 
     func testIntervalsAreCreated() throws {
         let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
 
         XCTAssertNotNil(compiledQuery.intervals)
         XCTAssertFalse(compiledQuery.intervals!.isEmpty)
@@ -138,7 +138,7 @@ final class CompileDownTests: XCTestCase {
     func testCompilationStatusIsSetCorrectly() throws {
         let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
 
         XCTAssertEqual(precompiledQuery.compilationStatus, .precompiled)
         XCTAssertEqual(compiledQuery.compilationStatus, .compiled)
@@ -146,7 +146,7 @@ final class CompileDownTests: XCTestCase {
 
     func testThrowsIfCompilationStatusNotSetCorrectly() throws {
         let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
-        XCTAssertThrowsError(try query.compileToRunnableQuery())
+        XCTAssertThrowsError(try query.compileToRunnableQuery(startWeekOnMonday: false))
     }
 
     func testRestrictions() throws {
@@ -167,7 +167,7 @@ final class CompileDownTests: XCTestCase {
 
         let query = CustomQuery(queryType: .timeseries, restrictions: restrictions, intervals: intervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
 
         XCTAssertEqual(compiledQuery.restrictions, [
             .init(beginningDate: Date(iso8601String: "2023-03-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-04-02T00:00:00.000Z")!),
@@ -182,7 +182,7 @@ final class CompileDownTests: XCTestCase {
 
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 1, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals")
     }
 
@@ -193,7 +193,7 @@ final class CompileDownTests: XCTestCase {
 
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 10, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals-sample10")
     }
 
@@ -204,7 +204,7 @@ final class CompileDownTests: XCTestCase {
 
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 100, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals-sample100")
     }
 
@@ -215,7 +215,7 @@ final class CompileDownTests: XCTestCase {
 
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 1000, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals-sample1000")
     }
 
@@ -226,7 +226,7 @@ final class CompileDownTests: XCTestCase {
 
         let query = CustomQuery(queryType: .timeseries, sampleFactor: 42, intervals: intervals, granularity: .day)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
+        let compiledQuery = try precompiledQuery.compileToRunnableQuery(startWeekOnMonday: false)
         XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals")
     }
 }
