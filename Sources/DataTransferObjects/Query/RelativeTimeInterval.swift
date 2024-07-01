@@ -66,11 +66,14 @@ public struct RelativeDate: Codable, Hashable, Equatable {
 }
 
 public extension Date {
-    static func from(relativeDate: RelativeDate) -> Date {
+    static func from(relativeDate: RelativeDate, startWeekOnMonday: Bool) -> Date {
         var date = Date()
 
+        var calendar = date.calendar
+        calendar.firstWeekday = startWeekOnMonday ? 2 : 1 // 1 is Sunday, 2 is Monday
+        
         let calendarComponent = relativeDate.component.calendarComponent
-        date = date.calendar.date(byAdding: calendarComponent, value: relativeDate.offset, to: date) ?? date
+        date = calendar.date(byAdding: calendarComponent, value: relativeDate.offset, to: date) ?? date
 
         switch relativeDate.position {
         case .beginning:
@@ -84,10 +87,10 @@ public extension Date {
 }
 
 public extension QueryTimeInterval {
-    static func from(relativeTimeInterval: RelativeTimeInterval) -> QueryTimeInterval {
+    static func from(relativeTimeInterval: RelativeTimeInterval, startWeekOnMonday: Bool) -> QueryTimeInterval {
         QueryTimeInterval(
-            beginningDate: Date.from(relativeDate: relativeTimeInterval.beginningDate),
-            endDate: Date.from(relativeDate: relativeTimeInterval.endDate)
+            beginningDate: Date.from(relativeDate: relativeTimeInterval.beginningDate, startWeekOnMonday: startWeekOnMonday),
+            endDate: Date.from(relativeDate: relativeTimeInterval.endDate, startWeekOnMonday: startWeekOnMonday)
         )
     }
 }

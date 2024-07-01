@@ -51,7 +51,7 @@ public extension CustomQuery {
     /// @warn Both precompile AND compileToRunnableQuery need to be run before a query can safely be handed to Druid!
     ///
     /// @see precompile
-    func compileToRunnableQuery() throws -> CustomQuery {
+    func compileToRunnableQuery(startWeekOnMonday: Bool) throws -> CustomQuery {
         guard compilationStatus == .precompiled else {
             throw QueryGenerationError.compilationStatusError
         }
@@ -61,7 +61,7 @@ public extension CustomQuery {
 
         // Compile relative Time intervals
         if let relativeIntervals = query.relativeIntervals {
-            query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
+            query.intervals = relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0, startWeekOnMonday: startWeekOnMonday) }
         }
 
         guard query.intervals != nil, !query.intervals!.isEmpty else {

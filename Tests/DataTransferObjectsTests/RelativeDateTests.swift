@@ -134,26 +134,26 @@ final class RelativeDateTests: XCTestCase {
         let beginningOfLastMonthRelative = RelativeDate(.beginning, of: .month, adding: -1)
         let beginningOfLastMonthAbsolute = Date().calendar.date(byAdding: .month, value: -1, to: Date())!.beginning(of: .month)
 
-        XCTAssertEqual(beginningOfLastMonthAbsolute, Date.from(relativeDate: beginningOfLastMonthRelative))
+        XCTAssertEqual(beginningOfLastMonthAbsolute, Date.from(relativeDate: beginningOfLastMonthRelative, startWeekOnMonday: false))
 
         let endOfThisMonthRelative = RelativeDate(.end, of: .month, adding: 0)
         let endOfThisMonthAbsolute = Date().end(of: .month)
 
-        XCTAssertEqual(endOfThisMonthAbsolute, Date.from(relativeDate: endOfThisMonthRelative))
+        XCTAssertEqual(endOfThisMonthAbsolute, Date.from(relativeDate: endOfThisMonthRelative, startWeekOnMonday: false))
 
         let beginningOfNextWeekRelative = RelativeDate(.beginning, of: .week, adding: 1)
         let beginningOfNextWeekAbsolute = Date().calendar.date(byAdding: .weekOfYear, value: 1, to: Date())!.beginning(of: .weekOfYear)!
 
-        XCTAssertEqual(beginningOfNextWeekAbsolute, Date.from(relativeDate: beginningOfNextWeekRelative))
+        XCTAssertEqual(beginningOfNextWeekAbsolute, Date.from(relativeDate: beginningOfNextWeekRelative, startWeekOnMonday: false))
 
         let endOfTodayRelative = RelativeDate(.end, of: .day, adding: 0)
         let endOfTodayAbsolute = Date().end(of: .day)
 
-        XCTAssertEqual(endOfTodayAbsolute, Date.from(relativeDate: endOfTodayRelative))
+        XCTAssertEqual(endOfTodayAbsolute, Date.from(relativeDate: endOfTodayRelative, startWeekOnMonday: false))
 
         let in30HoursRelative = RelativeDate(.beginning, of: .hour, adding: 30)
         let in30HoursAbsolute = Date().startOfHour.adding(.hour, value: 30).startOfHour
 
-        XCTAssertEqual(in30HoursAbsolute, Date.from(relativeDate: in30HoursRelative))
+        XCTAssertEqual(in30HoursAbsolute, Date.from(relativeDate: in30HoursRelative, startWeekOnMonday: false))
     }
 }
