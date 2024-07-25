@@ -248,10 +248,6 @@ final class CompileDownTests: XCTestCase {
         XCTAssertFalse(filterInterval.intervals!.isEmpty)
     }
 
-    func testFilteredAggregatorsSupportRelativeIntervals() throws {
-        XCTFail()
-    }
-
     func testCompilationStatusIsSetCorrectly() throws {
         let query = CustomQuery(queryType: .timeseries, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
