@@ -33,13 +33,15 @@ public struct FilterColumnComparison: Codable, Hashable, Equatable {
 /// with numeric comparison. The Bound filters will have left-closed and
 /// right-open matching (i.e., start <= time < end).
 public struct FilterInterval: Codable, Hashable, Equatable {
-    public init(dimension: String, intervals: [QueryTimeInterval]) {
+    public init(dimension: String, intervals: [QueryTimeInterval]? = nil, relativeIntervals: [RelativeTimeInterval]? = nil) {
         self.dimension = dimension
         self.intervals = intervals
+        self.relativeIntervals = relativeIntervals
     }
 
     public let dimension: String
-    public let intervals: [QueryTimeInterval]
+    public let intervals: [QueryTimeInterval]?
+    public let relativeIntervals: [RelativeTimeInterval]?
 }
 
 /// The regular expression filter is similar to the selector filter, but using regular

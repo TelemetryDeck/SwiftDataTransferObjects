@@ -178,4 +178,50 @@ class FilterTests: XCTestCase {
         XCTAssertEqual(filterRange, decodedFilter)
         XCTAssertEqual(filterJSON, String(data: encodedFilterInterval, encoding: .utf8))
     }
+
+    func testFilterRelativeInterval() throws {
+        let exampleFilterIntervalString = """
+        {
+          "dimension": "__time",
+          "relativeIntervals": [
+            {
+              "beginningDate": {
+                "component": "day",
+                "offset": -30,
+                "position": "beginning"
+              },
+              "endDate": {
+                "component": "day",
+                "offset": 0,
+                "position": "end"
+              }
+            }
+          ],
+          "type": "interval"
+        }
+        """
+        .filter { !$0.isWhitespace }
+
+        let exampleFilterInterval = Filter.interval(
+            FilterInterval(
+                dimension: "__time",
+                relativeIntervals: [
+                    .init(
+                        beginningDate: .init(.beginning, of: .day, adding: -30),
+                        endDate: .init(.end, of: .day, adding: 0)
+                    )
+                ]
+            )
+        )
+
+        let decodedFilterInterval = try JSONDecoder.telemetryDecoder.decode(
+            Filter.self,
+            from: exampleFilterIntervalString.data(using: .utf8)!
+        )
+
+        let encodedFilterInterval = try JSONEncoder.telemetryEncoder.encode(exampleFilterInterval)
+
+        XCTAssertEqual(exampleFilterInterval, decodedFilterInterval)
+        XCTAssertEqual(exampleFilterIntervalString, String(data: encodedFilterInterval, encoding: .utf8))
+    }
 }
