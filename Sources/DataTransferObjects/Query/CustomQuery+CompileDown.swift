@@ -68,6 +68,16 @@ public extension CustomQuery {
             throw QueryGenerationError.keyMissing(reason: "Either 'relativeIntervals' or 'intervals' need to be set")
         }
 
+        // Compile relative intervals in Relative Interval filters
+        if let filter = query.filter {
+            query.filter = compileRelativeFilterInterval(filter: filter)
+        }
+
+        // Comppile relative intervals in Aggregators
+        if let aggregations = query.aggregations {
+            query.aggregations = aggregations.map { agg in compileRelativeIntervalFilterInAggregations(agg: agg) }
+        }
+
         // Add restrictionsFilter
         if let applicableRestrictions = Self.getApplicableRestrictions(from: query) {
             query.restrictions = applicableRestrictions
@@ -78,6 +88,50 @@ public extension CustomQuery {
         query.compilationStatus = .compiled
 
         return query
+    }
+
+    private func compileRelativeFilterInterval(filter: Filter) -> Filter {
+        switch filter {
+        case .selector:
+            return filter
+        case .columnComparison:
+            return filter
+        case .interval(let filterInterval):
+            if let relativeIntervals = filterInterval.relativeIntervals {
+                return Filter.interval(
+                    .init(
+                        dimension: filterInterval.dimension,
+                        intervals: relativeIntervals.map { QueryTimeInterval.from(relativeTimeInterval: $0) }
+                    )
+                )
+            } else {
+                return filter
+            }
+        case .regex:
+            return filter
+        case .range:
+            return filter
+        case .and(let filterExpression):
+            return Filter.and(.init(fields: filterExpression.fields.map { compileRelativeFilterInterval(filter: $0) }))
+        case .or(let filterExpression):
+            return Filter.or(.init(fields: filterExpression.fields.map { compileRelativeFilterInterval(filter: $0) }))
+        case .not(let filterNot):
+            return Filter.not(.init(field: compileRelativeFilterInterval(filter: filterNot.field)))
+        }
+    }
+
+    private func compileRelativeIntervalFilterInAggregations(agg: Aggregator) -> Aggregator {
+        switch agg {
+        case .filtered(let filteredAggregator):
+            return Aggregator.filtered(
+                .init(
+                    filter: compileRelativeFilterInterval(filter: filteredAggregator.filter),
+                    aggregator: compileRelativeIntervalFilterInAggregations(agg: filteredAggregator.aggregator)
+                )
+            )
+        default:
+            return agg
+        }
     }
 }
 
