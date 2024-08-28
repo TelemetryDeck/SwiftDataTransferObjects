@@ -535,6 +535,7 @@ public enum InsightDisplayMode: String, Codable {
     case experimentChart
     case matrix
     case sankey
+    case lineChartRace
 }
 
 public extension DTOv2.Insight {
