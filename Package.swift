@@ -48,5 +48,13 @@ let package = Package(
             name: "QueryGenerationTests",
             dependencies: ["DataTransferObjects"]
         ),
+        .testTarget(
+            name: "SupervisorTests",
+            dependencies: ["DataTransferObjects"]
+        ),
+        .testTarget(
+            name: "DataSchemaTests",
+            dependencies: ["DataTransferObjects"]
+        ),
     ]
 )
