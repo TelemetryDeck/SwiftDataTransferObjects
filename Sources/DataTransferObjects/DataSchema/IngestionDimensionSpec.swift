@@ -62,6 +62,7 @@ public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
     public let type: DimensionType?
     public let name: String
     public let createBitmapIndex: Bool?
+    public let multiValueHandling: MultiValueHandlingOption?
 }
 
 public struct IngestionDimensionSpecSpatialDimension: Codable, Hashable, Equatable {
