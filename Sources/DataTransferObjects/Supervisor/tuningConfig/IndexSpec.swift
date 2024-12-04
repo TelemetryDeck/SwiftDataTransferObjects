@@ -15,7 +15,7 @@ public struct IndexSpec: Codable, Hashable, Equatable {
         case auto
     }
 
-    public let bitap: IndexSpecBitmap?
+    public let bitmap: IndexSpecBitmap?
     public let dimensionCompression: CompressionType?
     public let stringDictionaryEncoding: StringDictionaryEncoding?
     public let metricCompression: CompressionType?

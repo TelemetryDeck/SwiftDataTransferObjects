@@ -11,7 +11,7 @@ public struct Supervisor: Codable, Hashable, Equatable {
     public let type: SupervisorType
 
     /// The container object for the supervisor configuration.
-    public let spec: SupervisorSpec
+    public let spec: SupervisorSpec?
 
     /// Indicates whether the supervisor is in a suspended state.
     public let suspended: Bool?

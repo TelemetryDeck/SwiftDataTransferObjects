@@ -91,4 +91,15 @@ public struct KinesisTuningConfig: Codable, Hashable, Equatable {
 
     /// When a parse exception occurs, Druid keeps track of the most recent parse exceptions. maxSavedParseExceptions limits the number of saved exception instances. These saved exceptions are available after the task finishes in the task completion report. Setting reportParseExceptions overrides this limit.
     public let maxSavedParseExceptions: Int?
+
+    /// Used by druid, but not documented
+    public let numPersistThreads: Int?
+
+    /// Used by druid, but not documented
+    public let appendableIndexSpec: AppendableIndexSpec?
+}
+
+public struct AppendableIndexSpec: Codable, Hashable, Equatable {
+    public let type: String
+    public let preserveExistingMetrics: Bool?
 }

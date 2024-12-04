@@ -2,20 +2,19 @@
 import XCTest
 
 final class SupervisorTests: XCTestCase {
-    func testDecodingDocsExample() throws {
-        XCTFail("not implemented")
+    let tdValueString = """
+    {
+      "type": "kinesis",
+      "context": null,
+      "suspended": false
     }
+    """
+    .filter { !$0.isWhitespace }
+
+    let testedType = Supervisor.self
 
     func testDecodingTelemetryDeckExample() throws {
-        XCTFail("not implemented")
-    }
-
-    func testEncodingDocsExample() throws {
-        XCTFail("not implemented")
-    }
-
-    func testEncodingTelemetryDeckExample() throws {
-        XCTFail("not implemented")
+        let decodedValue = try JSONDecoder.telemetryDecoder.decode(testedType, from: tdValueString.data(using: .utf8)!)
+        XCTAssertEqual(decodedValue.suspended, false)
     }
 }
-

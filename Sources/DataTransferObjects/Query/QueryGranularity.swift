@@ -21,31 +21,20 @@ public enum QueryGranularity: String, Codable, Hashable, CaseIterable {
 
         let singleValueContainer = try decoder.singleValueContainer()
         if let singleValueType = try? singleValueContainer.decode(String.self) {
-            if let granularity = QueryGranularity(rawValue: singleValueType.lowercased()) {
-                self = granularity
-            } else {
-                // 4
-                throw DecodingError
-                    .dataCorruptedError(
-                        in: singleValueContainer,
-                        debugDescription: "Cannot initialize QueryGranularity from invalid String value \(singleValueType)"
-                    )
-            }
-
             type = singleValueType
         } else {
             let keyedContainer = try decoder.container(keyedBy: CodingKeys.self)
             type = try keyedContainer.decode(String.self, forKey: .type)
         }
 
-        for possibleCase in Self.allCases where type == possibleCase.rawValue {
+        for possibleCase in Self.allCases where type.lowercased() == possibleCase.rawValue {
             self = possibleCase
             return
         }
 
         throw DecodingError.dataCorrupted(.init(
             codingPath: [],
-            debugDescription: "needs to be a string or a dict",
+            debugDescription: "QueryGranularity needs to be a string or a dict",
             underlyingError: nil
         ))
     }
