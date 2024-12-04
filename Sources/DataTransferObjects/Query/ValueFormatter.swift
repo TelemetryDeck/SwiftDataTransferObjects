@@ -1,4 +1,3 @@
-
 public struct ValueFormatter: Codable, Hashable, Equatable {
     public let locale: String?
     public let options: ValueFormatterOptions?

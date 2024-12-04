@@ -1,4 +1,3 @@
-// swiftlint:disable cyclomatic_complexity
 import DataTransferObjects
 import XCTest
 
@@ -177,7 +176,7 @@ final class CompileDownTests: XCTestCase {
         switch orFilter {
         case .or(let orFilterExpression):
             guard let intervalFilter = orFilterExpression.fields.first else {
-                XCTFail()
+                XCTFail("Filter is of wrong number")
                 return
             }
 
@@ -186,7 +185,7 @@ final class CompileDownTests: XCTestCase {
                 XCTAssertNotNil(filterInterval.intervals)
                 XCTAssertFalse(filterInterval.intervals!.isEmpty)
             default:
-                XCTFail()
+                XCTFail("Filter is of wrong number")
             }
         default:
             XCTFail("Filter is of wrong type")
@@ -219,17 +218,17 @@ final class CompileDownTests: XCTestCase {
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
 
         guard let aggregation = compiledQuery.aggregations?.first else {
-            XCTFail()
+            XCTFail("CompiledQuery has no aggregations")
             return
         }
 
         guard case .filtered(let filteredAggregator) = aggregation else {
-            XCTFail()
+            XCTFail("CompiledQuery has wrong type of aggregation")
             return
         }
 
         guard case .interval(let filterInterval) = filteredAggregator.filter else {
-            XCTFail()
+            XCTFail("CompiledQuery has wrong type of filter")
             return
         }
 

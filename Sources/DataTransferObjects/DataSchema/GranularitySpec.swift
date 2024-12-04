@@ -29,7 +29,8 @@ public struct GranularitySpec: Codable, Hashable, Equatable {
     /// will be rolled up if they have the exactly same timestamp.
     public let rollup: Bool?
 
-    /// A list of intervals defining time chunks for segments. Specify interval values using ISO8601 format. For example, ["2021-12-06T21:27:10+00:00/2021-12-07T00:00:00+00:00"]. If you omit the time, the time defaults to "00:00:00".
+    /// A list of intervals defining time chunks for segments. Specify interval values using ISO8601 format. For example,
+    /// ["2021-12-06T21:27:10+00:00/2021-12-07T00:00:00+00:00"]. If you omit the time, the time defaults to "00:00:00".
     ///
     /// Druid breaks the list up and rounds off the list values based on the segmentGranularity.
     ///
