@@ -54,9 +54,9 @@ public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
     }
 
     public enum MultiValueHandlingOption: String, Codable, Hashable, Equatable {
-        case array
-        case sorted_array
-        case sorted_set
+        case ARRAY
+        case SORTED_ARRAY
+        case SORTED_SET
     }
 
     public let type: DimensionType?
