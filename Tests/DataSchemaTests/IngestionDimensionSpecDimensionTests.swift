@@ -12,7 +12,7 @@ final class IngestionDimensionSpecDimensionTests: XCTestCase {
     let tdValueString = """
     {
         "createBitmapIndex": true,
-        "multiValueHandling": "SORTED_ARRAY",
+        "multiValueHandling": "sorted_array",
         "name": "TelemetryDeck.Device.modelName",
         "type": "string"
 
@@ -24,7 +24,7 @@ final class IngestionDimensionSpecDimensionTests: XCTestCase {
         type: .string,
         name: "TelemetryDeck.Device.modelName",
         createBitmapIndex: true,
-        multiValueHandling: .SORTED_ARRAY
+        multiValueHandling: .sorted_array
     )
 
     let testedType = IngestionDimensionSpecDimension.self

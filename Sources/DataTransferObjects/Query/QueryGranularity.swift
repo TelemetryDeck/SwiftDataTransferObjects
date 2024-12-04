@@ -21,6 +21,17 @@ public enum QueryGranularity: String, Codable, Hashable, CaseIterable {
 
         let singleValueContainer = try decoder.singleValueContainer()
         if let singleValueType = try? singleValueContainer.decode(String.self) {
+            if let granularity = QueryGranularity(rawValue: singleValueType.lowercased()) {
+                self = granularity
+            } else {
+                // 4
+                throw DecodingError
+                    .dataCorruptedError(
+                        in: singleValueContainer,
+                        debugDescription: "Cannot initialize QueryGranularity from invalid String value \(singleValueType)"
+                    )
+            }
+
             type = singleValueType
         } else {
             let keyedContainer = try decoder.container(keyedBy: CodingKeys.self)

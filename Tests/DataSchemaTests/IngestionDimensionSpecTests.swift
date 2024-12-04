@@ -43,7 +43,7 @@ final class IngestionDimensionSpecTests: XCTestCase {
           },
           {
             "createBitmapIndex": true,
-            "multiValueHandling": "SORTED_ARRAY",
+            "multiValueHandling": "sorted_array",
             "name": "type",
             "type": "string"
           },
@@ -68,11 +68,11 @@ final class IngestionDimensionSpecTests: XCTestCase {
 
     let tdValue = IngestionDimensionSpec(
         dimensions: [
-            .init(type: .string, name: "appID", createBitmapIndex: true, multiValueHandling: .SORTED_ARRAY),
-            .init(type: .string, name: "type", createBitmapIndex: true, multiValueHandling: .SORTED_ARRAY),
-            .init(type: .string, name: "clientUser", createBitmapIndex: true, multiValueHandling: .SORTED_ARRAY),
+            .init(type: .string, name: "appID", createBitmapIndex: true, multiValueHandling: .sorted_array),
+            .init(type: .string, name: "type", createBitmapIndex: true, multiValueHandling: .sorted_array),
+            .init(type: .string, name: "clientUser", createBitmapIndex: true, multiValueHandling: .sorted_array),
             .init(type: .float, name: "TelemetryDeck.Metrics.Swift.memoryMetrics.averageSuspendedMemory.standardDeviation",
-                  createBitmapIndex: false, multiValueHandling: .SORTED_ARRAY),
+                  createBitmapIndex: false, multiValueHandling: .sorted_array),
         ],
         dimensionExclusions: [
             "__time",
@@ -104,6 +104,12 @@ final class IngestionDimensionSpecTests: XCTestCase {
 
     func testEncodingTelemetryDeckExample() throws {
         let encodedValue = try JSONEncoder.telemetryEncoder.encode(tdValue)
-        XCTAssertEqual(tdValueString, String(data: encodedValue, encoding: .utf8)!)
+        XCTAssertEqual(
+            tdValueString.replacingOccurrences(of: "SORTED_ARRAY", with: "sorted_array"),
+            String(
+                data: encodedValue,
+                encoding: .utf8
+            )!
+        )
     }
 }

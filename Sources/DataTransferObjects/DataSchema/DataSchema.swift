@@ -12,4 +12,8 @@ public struct DataSchema: Codable, Hashable, Equatable {
     public let metricsSpec: [Aggregator]?
 
     public let granularitySpec: GranularitySpec?
+
+    public let transformSpec: TransformSpec?
+
+    public let dimensionsSpec: IngestionDimensionSpec?
 }

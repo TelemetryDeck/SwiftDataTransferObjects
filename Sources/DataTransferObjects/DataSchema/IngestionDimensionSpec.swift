@@ -54,9 +54,23 @@ public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
     }
 
     public enum MultiValueHandlingOption: String, Codable, Hashable, Equatable {
-        case ARRAY
-        case SORTED_ARRAY
-        case SORTED_SET
+        case array
+        case sorted_array
+        case sorted_set
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let rawString = try container.decode(String.self)
+
+            if let decodedValue = Self(rawValue: rawString.lowercased()) {
+                self = decodedValue
+            } else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Cannot initialize MultiValueHandlingOption from invalid String value \(rawString)"
+                )
+            }
+        }
     }
 
     public let type: DimensionType?
