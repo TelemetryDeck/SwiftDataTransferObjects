@@ -8,6 +8,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         compilationStatus: CompilationStatus? = nil,
         restrictions: [QueryTimeInterval]? = nil,
         dataSource: String? = nil,
+        virtualColumns: [VirtualColumn]? = nil,
         sampleFactor: Int? = nil,
         descending: Bool? = nil,
         filter: Filter? = nil,
@@ -41,6 +42,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
             self.dataSource = DataSource(type: .table, name: dataSource)
         }
 
+        self.virtualColumns = virtualColumns
         self.sampleFactor = sampleFactor
         self.descending = descending
         self.baseFilters = baseFilters
@@ -72,6 +74,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         compilationStatus: CompilationStatus? = nil,
         restrictions: [QueryTimeInterval]? = nil,
         dataSource: DataSource?,
+        virtualColumns: [VirtualColumn]? = nil,
         sampleFactor: Int? = nil,
         descending: Bool? = nil,
         filter: Filter? = nil,
@@ -101,6 +104,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.compilationStatus = compilationStatus
         self.restrictions = restrictions
         self.dataSource = dataSource
+        self.virtualColumns = virtualColumns
         self.sampleFactor = sampleFactor
         self.descending = descending
         self.baseFilters = baseFilters
@@ -158,6 +162,8 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var compilationStatus: CompilationStatus?
     public var restrictions: [QueryTimeInterval]?
     public var dataSource: DataSource?
+
+    public var virtualColumns: [VirtualColumn]?
 
     /// The sample factor to apply to this query
     ///
@@ -232,6 +238,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         hasher.combine(compilationStatus)
         hasher.combine(restrictions)
         hasher.combine(dataSource)
+        hasher.combine(virtualColumns)
         hasher.combine(sampleFactor)
         hasher.combine(descending)
         hasher.combine(baseFilters)
@@ -269,6 +276,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         compilationStatus = try container.decodeIfPresent(CompilationStatus.self, forKey: CustomQuery.CodingKeys.compilationStatus)
         restrictions = try container.decodeIfPresent([QueryTimeInterval].self, forKey: CustomQuery.CodingKeys.restrictions)
         dataSource = try container.decodeIfPresent(DataSource.self, forKey: CustomQuery.CodingKeys.dataSource)
+        virtualColumns = try container.decodeIfPresent([VirtualColumn].self, forKey: CustomQuery.CodingKeys.virtualColumns)
         sampleFactor = try container.decodeIfPresent(Int.self, forKey: CustomQuery.CodingKeys.sampleFactor)
         descending = try container.decodeIfPresent(Bool.self, forKey: CustomQuery.CodingKeys.descending)
         baseFilters = try container.decodeIfPresent(BaseFilters.self, forKey: CustomQuery.CodingKeys.baseFilters)
