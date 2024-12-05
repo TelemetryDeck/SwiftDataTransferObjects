@@ -69,19 +69,29 @@ public struct KinesisIOConfig: Codable, Hashable, Equatable {
     /// reaching their task duration. The period value specifies the maximum time between iterations. Defaults to PT30S
     public let period: String?
 
-    /// If a supervisor is managing a datasource for the first time, it obtains a set of starting sequence numbers from Kinesis. This flag determines whether a supervisor retrieves the earliest or latest sequence numbers in Kinesis. Under normal circumstances, subsequent tasks start from where the previous segments ended so this flag is only used on the first run.
+    /// If a supervisor is managing a datasource for the first time, it obtains a set of starting sequence numbers from Kinesis. This flag determines whether a supervisor retrieves the earliest or
+    /// latest sequence numbers in Kinesis. Under normal circumstances, subsequent tasks start from where the previous segments ended so this flag is only used on the first run.
     public let useEarliestSequenceNumber: Bool?
 
-    /// ISO 8601 period. The length of time to wait before declaring a publishing task as failed and terminating it. If the value is too low, tasks may never publish. The publishing clock for a task begins roughly after taskDuration elapses.
+    /// ISO 8601 period. The length of time to wait before declaring a publishing task as failed and terminating it. If the value is too low, tasks may never publish. The publishing clock for a task
+    /// begins roughly after taskDuration elapses.
     public let completionTimeout: String?
 
-    /// ISO 8601 period. Configures tasks to reject messages with timestamps earlier than this period before the task was created. For example, if this property is set to PT1H and the supervisor creates a task at 2016-01-01T12:00Z, Druid drops messages with timestamps earlier than 2016-01-01T11:00Z. This may help prevent concurrency issues if your data stream has late messages and you have multiple pipelines that need to operate on the same segments, such as a streaming and a nightly batch ingestion pipeline. You can specify only one of the late message rejection properties.
+    /// ISO 8601 period. Configures tasks to reject messages with timestamps earlier than this period before the task was created. For example, if this property is set to PT1H and the supervisor
+    /// creates a task at 2016-01-01T12:00Z, Druid drops messages with timestamps earlier than 2016-01-01T11:00Z. This may help prevent concurrency issues if your data stream has late messages and
+    /// you have multiple pipelines that need to operate on the same segments, such as a streaming and a nightly batch ingestion pipeline. You can specify only one of the late message rejection
+    /// properties.
     public let lateMessageRejectionPeriod: String?
 
-    /// ISO 8601 period.  Configures tasks to reject messages with timestamps later than this period after the task reached its task duration. For example, if this property is set to PT1H, the task duration is set to PT1H and the supervisor creates a task at 2016-01-01T12:00Z, Druid drops messages with timestamps later than 2016-01-01T14:00Z. Tasks sometimes run past their task duration, such as in cases of supervisor failover. Setting earlyMessageRejectionPeriod too low may cause Druid to drop messages unexpectedly whenever a task runs past its originally configured task duration.
+    /// ISO 8601 period.  Configures tasks to reject messages with timestamps later than this period after the task reached its task duration. For example, if this property is set to PT1H, the task
+    /// duration is set to PT1H and the supervisor creates a task at 2016-01-01T12:00Z, Druid drops messages with timestamps later than 2016-01-01T14:00Z. Tasks sometimes run past their task duration,
+    /// such as in cases of supervisor failover. Setting earlyMessageRejectionPeriod too low may cause Druid to drop messages unexpectedly whenever a task runs past its originally configured task
+    /// duration.
     public let earlyMessageRejectionPeriod: String?
 
-    /// ISO 8601 date time. Configures tasks to reject messages with timestamps earlier than this date time. For example, if this property is set to 2016-01-01T11:00Z and the supervisor creates a task at 2016-01-01T12:00Z, Druid drops messages with timestamps earlier than 2016-01-01T11:00Z. This can prevent concurrency issues if your data stream has late messages and you have multiple pipelines that need to operate on the same segments, such as a realtime and a nightly batch ingestion pipeline.
+    /// ISO 8601 date time. Configures tasks to reject messages with timestamps earlier than this date time. For example, if this property is set to 2016-01-01T11:00Z and the supervisor creates a
+    /// task at 2016-01-01T12:00Z, Druid drops messages with timestamps earlier than 2016-01-01T11:00Z. This can prevent concurrency issues if your data stream has late messages and you have multiple
+    /// pipelines that need to operate on the same segments, such as a realtime and a nightly batch ingestion pipeline.
     public let lateMessageRejectionStartDateTime: String?
 
     /// Defines auto scaling behavior for ingestion tasks. See Task autoscaler for more information.
@@ -91,7 +101,8 @@ public struct KinesisIOConfig: Codable, Hashable, Equatable {
 
     /// Improved Supervisor rolling restarts
     ///
-    /// The stopTaskCount config now prioritizes stopping older tasks first. As part of this change, you must also explicitly set a value for stopTaskCount. It no longer defaults to the same value as taskCount.
+    /// The stopTaskCount config now prioritizes stopping older tasks first. As part of this change, you must also explicitly set a value for stopTaskCount. It no longer defaults to the same value as
+    /// taskCount.
     ///
     /// See https://github.com/apache/druid/pull/15859
     public let stopTaskCount: Int?
