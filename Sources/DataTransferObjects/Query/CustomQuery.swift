@@ -12,6 +12,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         sampleFactor: Int? = nil,
         descending: Bool? = nil,
         filter: Filter? = nil,
+        having: HavingSpec? = nil,
         appID: UUID? = nil,
         baseFilters: BaseFilters? = nil,
         testMode: Bool? = nil,
@@ -48,6 +49,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.baseFilters = baseFilters
         self.testMode = testMode
         self.filter = filter
+        self.having = having
         self.appID = appID
         self.intervals = intervals
         self.relativeIntervals = relativeIntervals
@@ -78,6 +80,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         sampleFactor: Int? = nil,
         descending: Bool? = nil,
         filter: Filter? = nil,
+        having: HavingSpec? = nil,
         appID: UUID? = nil,
         baseFilters: BaseFilters? = nil,
         testMode: Bool? = nil,
@@ -110,6 +113,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.baseFilters = baseFilters
         self.testMode = testMode
         self.filter = filter
+        self.having = having
         self.appID = appID
         self.intervals = intervals
         self.relativeIntervals = relativeIntervals
@@ -175,6 +179,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var descending: Bool?
     public var baseFilters: BaseFilters?
     public var testMode: Bool?
+    public var having: HavingSpec?
     public var filter: Filter?
 
     /// Used by baseFilter.thisApp, the appID to use for the appID filter
