@@ -23,6 +23,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         postAggregations: [PostAggregator]? = nil,
         limit: Int? = nil,
         context: QueryContext? = nil,
+        chartConfiguration: ChartConfiguration? = nil,
         valueFormatter: ValueFormatter? = nil,
         threshold: Int? = nil,
         metric: TopNMetricSpec? = nil,
@@ -58,6 +59,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.postAggregations = postAggregations
         self.limit = limit
         self.context = context
+        self.chartConfiguration = chartConfiguration
         self.valueFormatter = valueFormatter
         self.threshold = threshold
         self.metric = metric
@@ -91,6 +93,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         postAggregations: [PostAggregator]? = nil,
         limit: Int? = nil,
         context: QueryContext? = nil,
+        chartConfiguration: ChartConfiguration? = nil,
         valueFormatter: ValueFormatter? = nil,
         threshold: Int? = nil,
         metric: TopNMetricSpec? = nil,
@@ -122,6 +125,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.postAggregations = postAggregations
         self.limit = limit
         self.context = context
+        self.chartConfiguration = chartConfiguration
         self.valueFormatter = valueFormatter
         self.threshold = threshold
         self.metric = metric
@@ -194,6 +198,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
     public var postAggregations: [PostAggregator]?
     public var limit: Int?
     public var context: QueryContext?
+    public var chartConfiguration: ChartConfiguration?
     public var valueFormatter: ValueFormatter?
 
     /// Only for topN Queries: An integer defining the N in the topN (i.e. how many results you want in the top list)
@@ -257,6 +262,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         hasher.combine(postAggregations)
         hasher.combine(limit)
         hasher.combine(context)
+        // chartConfiguration deliberately not included in hash, because we don't want to invalidate caches based on chart configuration
         hasher.combine(valueFormatter)
         hasher.combine(threshold)
         hasher.combine(metric)
@@ -294,6 +300,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         postAggregations = try container.decodeIfPresent([PostAggregator].self, forKey: CustomQuery.CodingKeys.postAggregations)
         limit = try container.decodeIfPresent(Int.self, forKey: CustomQuery.CodingKeys.limit)
         context = try container.decodeIfPresent(QueryContext.self, forKey: CustomQuery.CodingKeys.context)
+        chartConfiguration = try container.decodeIfPresent(ChartConfiguration.self, forKey: CustomQuery.CodingKeys.chartConfiguration)
         valueFormatter = try container.decodeIfPresent(ValueFormatter.self, forKey: CustomQuery.CodingKeys.valueFormatter)
         threshold = try container.decodeIfPresent(Int.self, forKey: CustomQuery.CodingKeys.threshold)
         dimension = try container.decodeIfPresent(DimensionSpec.self, forKey: CustomQuery.CodingKeys.dimension)

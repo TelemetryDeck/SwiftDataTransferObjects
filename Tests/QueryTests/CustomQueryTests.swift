@@ -437,4 +437,32 @@ final class CustomQueryTests: XCTestCase {
 
         XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
     }
+
+    func testChartConfiguration() throws {
+        let customQuery = CustomQuery(
+            queryType: .timeseries,
+            dataSource: "telemetry-signals",
+            granularity: .all,
+            chartConfiguration: .init(displayMode: .barChart, darkMode: false)
+        )
+
+        let encodedCustomQuery = """
+        {
+            "chartConfiguration": {
+                "darkMode": false,
+                "displayMode": "barChart"
+            },
+            "dataSource": "telemetry-signals",
+            "granularity": "all",
+            "queryType": "timeseries"
+        }
+        """
+        .filter { !$0.isWhitespace }
+
+        let encoded = try JSONEncoder.telemetryEncoder.encode(customQuery)
+        XCTAssertEqual(String(data: encoded, encoding: .utf8)!, encodedCustomQuery)
+
+        let decoded = try JSONDecoder.telemetryDecoder.decode(CustomQuery.self, from: encoded)
+        XCTAssertEqual(customQuery, decoded)
+    }
 }
