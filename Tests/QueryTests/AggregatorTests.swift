@@ -30,6 +30,7 @@ final class AggregatorTests: XCTestCase {
     [
         {
           "type": "filtered",
+          "name": "_namedFilteredAggregator",
           "filter": {
             "type": "selector",
             "dimension": "type",
@@ -115,7 +116,8 @@ final class AggregatorTests: XCTestCase {
                             name: "newSessionBegan",
                             fieldName: "clientUser"
                         )
-                    )
+                    ),
+                    name: "_namedFilteredAggregator"
                 )
             ),
             .filtered(
@@ -142,5 +144,93 @@ final class AggregatorTests: XCTestCase {
                 )
             ),
         ])
+    }
+
+    func testFilteredAggregatorEncoding() throws {
+        let aggregators: [Aggregator] = [
+            .filtered(
+                .init(
+                    filter: .selector(
+                        .init(
+                            dimension: "type",
+                            value: "newSessionBegan"
+                        )
+                    ),
+                    aggregator: .thetaSketch(
+                        .init(
+                            type: .thetaSketch,
+                            name: "newSessionBegan",
+                            fieldName: "clientUser"
+                        )
+                    ),
+                    name: "_namedFilteredAggregator"
+                )
+            ),
+            .filtered(
+                .init(
+                    filter: .and(
+                        .init(
+                            fields: [
+                                .selector(
+                                    .init(
+                                        dimension: "type",
+                                        value: "InsightShown"
+                                    )
+                                ),
+                            ]
+                        )
+                    ),
+                    aggregator: .thetaSketch(
+                        .init(
+                            type: .thetaSketch,
+                            name: "InsightShown",
+                            fieldName: "clientUser"
+                        )
+                    )
+                )
+            ),
+        ]
+
+        let encodedAggregators = try JSONEncoder.telemetryEncoder.encode(aggregators)
+
+        let expectedEncodedAggregators = """
+        [
+            {
+              "aggregator": {
+                "fieldName": "clientUser",
+                "name": "newSessionBegan",
+                "type": "thetaSketch"
+              },
+              "filter": {
+                "dimension": "type",
+                "type": "selector",
+                "value": "newSessionBegan"
+              },
+              "name": "_namedFilteredAggregator",
+              "type": "filtered"
+            },
+            {
+              "aggregator": {
+                "fieldName": "clientUser",
+                "name": "InsightShown",
+                "type": "thetaSketch"
+              },
+              "filter": {
+                "fields": [
+                  {
+                    "dimension": "type",
+                    "type": "selector",
+                    "value": "InsightShown"
+                  }
+                ],
+                "type": "and"
+              },
+              "type": "filtered"
+            }
+          ]
+        """
+        .filter { !$0.isWhitespace }
+
+        XCTAssertEqual(String(data: encodedAggregators, encoding: .utf8)!, expectedEncodedAggregators)
     }
 }

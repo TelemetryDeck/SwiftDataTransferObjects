@@ -381,10 +381,11 @@ public enum AggregatorType: String, Codable, Hashable {
 ///
 /// Note: If only the filtered results are required, consider putting the filter on the query itself, which will be much faster since it does not require scanning all the data.
 public struct FilteredAggregator: Codable, Hashable {
-    public init(filter: Filter, aggregator: Aggregator) {
+    public init(filter: Filter, aggregator: Aggregator, name: String? = nil) {
         type = .filtered
         self.filter = filter
         self.aggregator = aggregator
+        self.name = name
     }
 
     public let type: AggregatorType
@@ -392,4 +393,6 @@ public struct FilteredAggregator: Codable, Hashable {
     public let filter: Filter
 
     public let aggregator: Aggregator
+
+    public let name: String?
 }
