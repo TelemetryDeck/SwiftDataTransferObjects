@@ -14,9 +14,9 @@
         "package": "DateOperations",
         "repositoryURL": "https://github.com/TelemetryDeck/SwiftDateOperations.git",
         "state": {
-          "branch": null,
-          "revision": "9baf08c95057688deffe1f14dfcc871ba2ef38d2",
-          "version": "1.0.3"
+          "branch": "feature/iso8601calendar",
+          "revision": "c73376a265b5be180b81a445dba4d9167fc450a6",
+          "version": null
         }
       }
     ]

@@ -156,4 +156,15 @@ final class RelativeDateTests: XCTestCase {
 
         XCTAssertEqual(in30HoursAbsolute, Date.from(relativeDate: in30HoursRelative))
     }
+
+    func testWeekBeginsOnMonday() throws {
+        let beginningOfNextWeekRelative = RelativeDate(.beginning, of: .week, adding: 1)
+        let beginningOfNextWeekAbsolute = Date.from(relativeDate: beginningOfNextWeekRelative)
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        let weekDay = dateFormatter.string(from: beginningOfNextWeekAbsolute)
+
+        XCTAssertEqual("Monday", weekDay)
+    }
 }
