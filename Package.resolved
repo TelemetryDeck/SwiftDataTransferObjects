@@ -2,21 +2,30 @@
   "object": {
     "pins": [
       {
+        "package": "swift-asn1",
+        "repositoryURL": "https://github.com/apple/swift-asn1.git",
+        "state": {
+          "branch": null,
+          "revision": "ae33e5941bb88d88538d0a6b19ca0b01e6c76dcf",
+          "version": "1.3.1"
+        }
+      },
+      {
         "package": "swift-crypto",
         "repositoryURL": "https://github.com/apple/swift-crypto.git",
         "state": {
           "branch": null,
-          "revision": "60f13f60c4d093691934dc6cfdf5f508ada1f894",
-          "version": "2.6.0"
+          "revision": "ff0f781cf7c6a22d52957e50b104f5768b50c779",
+          "version": "3.10.0"
         }
       },
       {
         "package": "DateOperations",
         "repositoryURL": "https://github.com/TelemetryDeck/SwiftDateOperations.git",
         "state": {
-          "branch": "feature/iso8601calendar",
-          "revision": "c73376a265b5be180b81a445dba4d9167fc450a6",
-          "version": null
+          "branch": null,
+          "revision": "6189e31bcdf673e18f16275e02f5e1003f914a02",
+          "version": "1.0.4"
         }
       }
     ]
