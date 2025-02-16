@@ -23,6 +23,12 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
     // From DataSketches ThetaSketches
     case thetaSketchEstimate(ThetaSketchEstimatePostAggregator)
     case thetaSketchSetOp(ThetaSketchSetOpPostAggregator)
+    case quantilesDoublesSketchToQuantile(QuantilesDoublesSketchToQuantilePostAggregator)
+    case quantilesDoublesSketchToQuantiles(QuantilesDoublesSketchToQuantilesPostAggregator)
+    case quantilesDoublesSketchToHistogram(QuantilesDoublesSketchToHistogramPostAggregator)
+    case quantilesDoublesSketchToRank(QuantilesDoublesSketchToRankPostAggregator)
+    case quantilesDoublesSketchToCDF(QuantilesDoublesSketchToCDFPostAggregator)
+    case quantilesDoublesSketchToString(QuantilesDoublesSketchToStringPostAggregator)
 
     // From druid-stats
     case zscore2sample(ZScore2SamplePostAggregator)
@@ -66,6 +72,18 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
             self = try .thetaSketchEstimate(ThetaSketchEstimatePostAggregator(from: decoder))
         case "thetaSketchSetOp":
             self = try .thetaSketchSetOp(ThetaSketchSetOpPostAggregator(from: decoder))
+        case "quantilesDoublesSketchToQuantile":
+            self = try .quantilesDoublesSketchToQuantile(QuantilesDoublesSketchToQuantilePostAggregator(from: decoder))
+        case "quantilesDoublesSketchToQuantiles":
+            self = try .quantilesDoublesSketchToQuantiles(QuantilesDoublesSketchToQuantilesPostAggregator(from: decoder))
+        case "quantilesDoublesSketchToHistogram":
+            self = try .quantilesDoublesSketchToHistogram(QuantilesDoublesSketchToHistogramPostAggregator(from: decoder))
+        case "quantilesDoublesSketchToRank":
+            self = try .quantilesDoublesSketchToRank(QuantilesDoublesSketchToRankPostAggregator(from: decoder))
+        case "quantilesDoublesSketchToCDF":
+            self = try .quantilesDoublesSketchToCDF(QuantilesDoublesSketchToCDFPostAggregator(from: decoder))
+        case "quantilesDoublesSketchToString":
+            self = try .quantilesDoublesSketchToString(QuantilesDoublesSketchToStringPostAggregator(from: decoder))
         case "zscore2sample":
             self = try .zscore2sample(ZScore2SamplePostAggregator(from: decoder))
         case "pvalue2tailedZtest":
@@ -118,6 +136,24 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
         case let .thetaSketchSetOp(postAggregator):
             try container.encode("thetaSketchOp", forKey: .type)
             try postAggregator.encode(to: encoder)
+        case let .quantilesDoublesSketchToQuantile(postAggregator):
+            try container.encode("quantilesDoublesSketchToQuantile", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .quantilesDoublesSketchToQuantiles(postAggregator):
+            try container.encode("quantilesDoublesSketchToQuantiles", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .quantilesDoublesSketchToHistogram(postAggregator):
+            try container.encode("quantilesDoublesSketchToHistogram", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .quantilesDoublesSketchToRank(postAggregator):
+            try container.encode("quantilesDoublesSketchToRank", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .quantilesDoublesSketchToCDF(postAggregator):
+            try container.encode("quantilesDoublesSketchToCDF", forKey: .type)
+            try postAggregator.encode(to: encoder)
+        case let .quantilesDoublesSketchToString(postAggregator):
+            try container.encode("quantilesDoublesSketchToString", forKey: .type)
+            try postAggregator.encode(to: encoder)
         case let .zscore2sample(postAggregator):
             try container.encode("zscore2sample", forKey: .type)
             try postAggregator.encode(to: encoder)
@@ -142,6 +178,12 @@ public enum PostAggregatorType: String, Codable, Hashable {
     case hyperUniqueCardinality
     case thetaSketchEstimate
     case thetaSketchSetOp
+    case quantilesDoublesSketchToQuantile
+    case quantilesDoublesSketchToQuantiles
+    case quantilesDoublesSketchToHistogram
+    case quantilesDoublesSketchToRank
+    case quantilesDoublesSketchToCDF
+    case quantilesDoublesSketchToString
     case zscore2sample
     case pvalue2tailedZtest
 }
@@ -360,4 +402,174 @@ public struct PValue2TailedZTestPostAggregator: Codable, Hashable {
     public let type: PostAggregatorType
     public let name: String
     public let zScore: PostAggregator
+}
+
+/// Quantile
+///
+/// This returns an approximation to the value that would be preceded by a given fraction of a hypothetical sorted version of the input
+/// stream.
+public struct QuantilesDoublesSketchToQuantilePostAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        field: PostAggregator,
+        fraction: Double
+    ) {
+        type = .quantilesDoublesSketchToQuantile
+        self.name = name
+        self.field = field
+        self.fraction = fraction
+    }
+
+    public let type: PostAggregatorType
+
+    /// output name
+    public let name: String
+
+    /// post aggregator that refers to a DoublesSketch (fieldAccess or another post aggregator)
+    public let field: PostAggregator
+
+    /// fractional position in the hypothetical sorted stream, number from 0 to 1 inclusive
+    public let fraction: Double
+}
+
+/// Quantiles
+///
+/// This returns an array of quantiles corresponding to a given array of fractions
+public struct QuantilesDoublesSketchToQuantilesPostAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        field: PostAggregator,
+        fractions: [Double]
+    ) {
+        type = .quantilesDoublesSketchToQuantiles
+        self.name = name
+        self.field = field
+        self.fractions = fractions
+    }
+
+    public let type: PostAggregatorType
+
+    /// output name
+    public let name: String
+
+    /// post aggregator that refers to a DoublesSketch (fieldAccess or another post aggregator)
+    public let field: PostAggregator
+
+    /// array of fractional positions in the hypothetical sorted stream, number from 0 to 1 inclusive
+    public let fractions: [Double]
+}
+
+/// Histogram
+///
+/// This returns an approximation to the histogram given an array of split points that define the histogram bins or a number of bins
+/// (not both). An array of m unique, monotonically increasing split points divide the real number line into m+1 consecutive disjoint
+/// intervals. The definition of an interval is inclusive of the left split point and exclusive of the right split point. If the
+/// number of bins is specified instead of split points, the interval between the minimum and maximum values is divided into the
+/// given number of equally-spaced bins.
+public struct QuantilesDoublesSketchToHistogramPostAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        field: PostAggregator,
+        splitPoints: [Double]? = nil,
+        numBins: Int? = nil
+    ) {
+        type = .quantilesDoublesSketchToHistogram
+        self.name = name
+        self.field = field
+        self.splitPoints = splitPoints
+        self.numBins = numBins
+    }
+
+    public let type: PostAggregatorType
+
+    /// output name
+    public let name: String
+
+    /// post aggregator that refers to a DoublesSketch (fieldAccess or another post aggregator)
+    public let field: PostAggregator
+
+    /// array of split points (optional)
+    public let splitPoints: [Double]?
+
+    /// <number of bins (optional, defaults to 10)
+    public let numBins: Int?
+}
+
+/// Rank
+///
+/// This returns an approximation to the rank of a given value that is the fraction of the distribution less than that value.
+public struct QuantilesDoublesSketchToRankPostAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        field: PostAggregator,
+        value: Double
+    ) {
+        type = .quantilesDoublesSketchToRank
+        self.name = name
+        self.field = field
+        self.value = value
+    }
+
+    public let type: PostAggregatorType
+
+    /// output name
+    public let name: String
+
+    /// post aggregator that refers to a DoublesSketch (fieldAccess or another post aggregator)
+    public let field: PostAggregator
+
+    /// value to rank
+    public let value: Double
+}
+
+/// CDF
+///
+/// This returns an approximation to the Cumulative Distribution Function given an array of split points that define the edges of the
+/// bins. An array of m unique, monotonically increasing split points divide the real number line into m+1 consecutive disjoint
+/// intervals. The definition of an interval is inclusive of the left split point and exclusive of the right split point. The resulting
+/// array of fractions can be viewed as ranks of each split point with one additional rank that is always 1.
+public struct QuantilesDoublesSketchToCDFPostAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        field: PostAggregator,
+        splitPoints: [Double]? = nil
+    ) {
+        type = .quantilesDoublesSketchToCDF
+        self.name = name
+        self.field = field
+        self.splitPoints = splitPoints
+    }
+
+    public let type: PostAggregatorType
+
+    /// output name
+    public let name: String
+
+    /// post aggregator that refers to a DoublesSketch (fieldAccess or another post aggregator)
+    public let field: PostAggregator
+
+    /// array of split points (optional)
+    public let splitPoints: [Double]?
+}
+
+/// Sketch Summary
+///
+/// This returns a summary of the sketch that can be used for debugging. This is the result of calling toString() method.
+public struct QuantilesDoublesSketchToStringPostAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        field: PostAggregator
+    ) {
+        type = .quantilesDoublesSketchToString
+        self.name = name
+        self.field = field
+    }
+
+    public let type: PostAggregatorType
+
+    /// output name
+    public let name: String
+
+    /// post aggregator that refers to a DoublesSketch (fieldAccess or another post aggregator)
+    public let field: PostAggregator
 }

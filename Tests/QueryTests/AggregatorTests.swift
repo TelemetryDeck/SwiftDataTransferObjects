@@ -71,6 +71,28 @@ final class AggregatorTests: XCTestCase {
         XCTAssertEqual(decodedAggregators, [Aggregator.thetaSketch(.init(type: .thetaSketch, name: "count", fieldName: "clientUser"))])
     }
 
+    func testQuantilesDoublesSketchAggregator() throws {
+        let stringRepresentation = """
+        [
+            {
+              "fieldName": "clientUser",
+              "k": 1024,
+              "name": "count",
+              "type": "quantilesDoublesSketch"
+            }
+          ]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [Aggregator.quantilesDoublesSketch(.init(name: "count", fieldName: "clientUser", k: 1024))]
+
+        let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedAggregators, swiftRepresentation)
+
+        let encodedAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedAggregators, encoding: .utf8)!, stringRepresentation)
+    }
+
     func testLongSumAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleDruidAggregatorsCountSum)
 

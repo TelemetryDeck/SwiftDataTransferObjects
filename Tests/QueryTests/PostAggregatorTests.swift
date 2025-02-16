@@ -260,4 +260,158 @@ final class PostAggregatorTests: XCTestCase {
         let encodedAggregators = try JSONEncoder.telemetryEncoder.encode(postAggregators)
         XCTAssertEqual(String(data: encodedAggregators, encoding: .utf8), example)
     }
+
+    func testQuantilesDoublesSketchToQuantilePostAggregator() throws {
+        let stringRepresentation = """
+        [{
+            "field":  { "fieldName" : "someFieldName", "name" : "someField", "type" : "fieldAccess" },
+            "fraction": 0.5,
+            "name": "testtest",
+            "type": "quantilesDoublesSketchToQuantile"
+        }]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [
+            PostAggregator.quantilesDoublesSketchToQuantile(.init(
+                name: "testtest",
+                field: .fieldAccess(.init(type: .fieldAccess, name: "someField", fieldName: "someFieldName")),
+                fraction: 0.5
+            )),
+        ]
+
+        let decodedPostAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedPostAggregators, swiftRepresentation)
+
+        let encodedPostAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedPostAggregators, encoding: .utf8)!, stringRepresentation)
+    }
+
+    func testQuantilesDoublesSketchToQuantilesPostAggregator() throws {
+        let stringRepresentation = """
+        [{
+            "field":  { "fieldName" : "someFieldName", "name" : "someField", "type" : "fieldAccess" },
+            "fractions": [0.25, 0.5, 0.75],
+            "name": "testtest",
+            "type": "quantilesDoublesSketchToQuantiles"
+        }]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [
+            PostAggregator.quantilesDoublesSketchToQuantiles(.init(
+                name: "testtest",
+                field: .fieldAccess(.init(type: .fieldAccess, name: "someField", fieldName: "someFieldName")),
+                fractions: [0.25, 0.5, 0.75]
+            )),
+        ]
+
+        let decodedPostAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedPostAggregators, swiftRepresentation)
+
+        let encodedPostAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedPostAggregators, encoding: .utf8)!, stringRepresentation)
+    }
+
+    func testQuantilesDoublesSketchToHistogramPostAggregator() throws {
+        let stringRepresentation = """
+        [{
+            "field":  { "fieldName" : "someFieldName", "name" : "someField", "type" : "fieldAccess" },
+            "name": "testtest",
+            "numBins": 25,
+            "type": "quantilesDoublesSketchToHistogram"
+        }]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [
+            PostAggregator.quantilesDoublesSketchToHistogram(.init(
+                name: "testtest",
+                field: .fieldAccess(.init(type: .fieldAccess, name: "someField", fieldName: "someFieldName")),
+                numBins: 25
+            )),
+        ]
+
+        let decodedPostAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedPostAggregators, swiftRepresentation)
+
+        let encodedPostAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedPostAggregators, encoding: .utf8)!, stringRepresentation)
+    }
+
+    func testQuantilesDoublesSketchToRankPostAggregator() throws {
+        let stringRepresentation = """
+        [{
+            "field":  { "fieldName" : "someFieldName", "name" : "someField", "type" : "fieldAccess" },
+            "name": "testtest",
+            "type": "quantilesDoublesSketchToRank",
+            "value": 1000
+        }]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [
+            PostAggregator.quantilesDoublesSketchToRank(.init(
+                name: "testtest",
+                field: .fieldAccess(.init(type: .fieldAccess, name: "someField", fieldName: "someFieldName")),
+                value: 1000
+            )),
+        ]
+
+        let decodedPostAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedPostAggregators, swiftRepresentation)
+
+        let encodedPostAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedPostAggregators, encoding: .utf8)!, stringRepresentation)
+    }
+
+    func testQuantilesDoublesSketchToCDFPostAggregator() throws {
+        let stringRepresentation = """
+        [{
+            "field":  { "fieldName" : "someFieldName", "name" : "someField", "type" : "fieldAccess" },
+            "name": "testtest",
+            "splitPoints": [0.25, 0.5, 0.75],
+            "type": "quantilesDoublesSketchToCDF"
+        }]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [
+            PostAggregator.quantilesDoublesSketchToCDF(.init(
+                name: "testtest",
+                field: .fieldAccess(.init(type: .fieldAccess, name: "someField", fieldName: "someFieldName")),
+                splitPoints: [0.25, 0.5, 0.75]
+            )),
+        ]
+
+        let decodedPostAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedPostAggregators, swiftRepresentation)
+
+        let encodedPostAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedPostAggregators, encoding: .utf8)!, stringRepresentation)
+    }
+
+    func testQuantilesDoublesSketchToStringPostAggregator() throws {
+        let stringRepresentation = """
+        [{
+            "field":  { "fieldName" : "someFieldName", "name" : "someField", "type" : "fieldAccess" },
+            "name": "testtest",
+            "type": "quantilesDoublesSketchToString"
+        }]
+        """
+        .filter { !$0.isWhitespace }
+
+        let swiftRepresentation = [
+            PostAggregator.quantilesDoublesSketchToString(.init(
+                name: "testtest",
+                field: .fieldAccess(.init(type: .fieldAccess, name: "someField", fieldName: "someFieldName"))
+            )),
+        ]
+
+        let decodedPostAggregators = try JSONDecoder.telemetryDecoder.decode([PostAggregator].self, from: stringRepresentation.data(using: .utf8)!)
+        XCTAssertEqual(decodedPostAggregators, swiftRepresentation)
+
+        let encodedPostAggregators = try JSONEncoder.telemetryEncoder.encode(swiftRepresentation)
+        XCTAssertEqual(String(data: encodedPostAggregators, encoding: .utf8)!, stringRepresentation)
+    }
 }

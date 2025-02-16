@@ -94,7 +94,7 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
     /// stringAny returns any string metric value.
     case stringAny(GenericAggregator)
 
-    // Approximate Aggregations
+    // DataSketches Aggregators
     /// This module provides Apache Druid aggregators based on Theta sketch from Apache DataSketches library.
     ///
     /// Note that sketch algorithms are approximate; see details in the "Accuracy" section of the datasketches doc.
@@ -108,6 +108,8 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
     ///
     /// https://druid.apache.org/docs/latest/development/extensions-core/datasketches-theta.html
     case thetaSketch(GenericAggregator)
+
+    case quantilesDoublesSketch(QuantilesDoublesSketchAggregator)
 
     // Miscellaneous Aggregations
 
@@ -181,6 +183,8 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
             self = try .stringAny(GenericAggregator(from: decoder))
         case "thetaSketch":
             self = try .thetaSketch(GenericAggregator(from: decoder))
+        case "quantilesDoublesSketch":
+            self = try .quantilesDoublesSketch(QuantilesDoublesSketchAggregator(from: decoder))
         case "filtered":
             self = try .filtered(FilteredAggregator(from: decoder))
 
@@ -267,6 +271,9 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
             try selector.encode(to: encoder)
         case let .thetaSketch(selector):
             try container.encode("thetaSketch", forKey: .type)
+            try selector.encode(to: encoder)
+        case let .quantilesDoublesSketch(selector):
+            try container.encode("quantilesDoublesSketch", forKey: .type)
             try selector.encode(to: encoder)
         case let .filtered(selector):
             try container.encode("filtered", forKey: .type)
@@ -368,6 +375,7 @@ public enum AggregatorType: String, Codable, Hashable {
     case longAny
     case stringAny
     case thetaSketch
+    case quantilesDoublesSketch
 
     case filtered
 
@@ -395,4 +403,52 @@ public struct FilteredAggregator: Codable, Hashable {
     public let aggregator: Aggregator
 
     public let name: String?
+}
+
+public struct QuantilesDoublesSketchAggregator: Codable, Hashable {
+    public init(
+        name: String,
+        fieldName: String,
+        k: Int? = nil,
+        maxStreamLength: Int? = nil,
+        shouldFinalize: Bool? = nil
+    ) {
+        type = .quantilesDoublesSketch
+        self.name = name
+        self.fieldName = fieldName
+        self.k = k
+        self.maxStreamLength = maxStreamLength
+        self.shouldFinalize = shouldFinalize
+    }
+
+    public let type: AggregatorType
+
+    /// String representing the output column to store sketch values.
+    public let name: String
+
+    /// A string for the name of the input field (can contain sketches or raw numeric values).
+    public let fieldName: String
+
+    /// Parameter that determines the accuracy and size of the sketch. Higher k means higher accuracy but more space to store
+    /// sketches. Must be a power of 2 from 2 to 32768.
+    ///
+    /// See [accuracy information](https://datasketches.apache.org/docs/Quantiles/OrigQuantilesSketch) in the DataSketches
+    ///  documentation for details.
+    ///
+    ///  Defaults to 128
+    public let k: Int?
+
+    /// This parameter defines the number of items that can be presented to each sketch before it may need to move from off-heap to
+    ///  on-heap memory. This is relevant to query types that use off-heap memory, including TopN and GroupBy. Ideally, should be
+    ///  set high enough such that most sketches can stay off-heap.
+    ///
+    ///   defaults to 1000000000
+    public let maxStreamLength: Int?
+
+    /// Return the final double type representing the estimate rather than the intermediate sketch type itself. In addition to
+    ///  controlling the finalization of this aggregator, you can control whether all aggregators are finalized with the query
+    ///  context parameters finalize and sqlFinalizeOuterSketches.
+    ///
+    ///  defaults to true
+    public let shouldFinalize: Bool?
 }
