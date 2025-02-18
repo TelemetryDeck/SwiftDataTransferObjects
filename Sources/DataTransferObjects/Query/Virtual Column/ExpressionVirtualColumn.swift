@@ -7,10 +7,8 @@ public struct ExpressionVirtualColumn: Codable, Hashable, Equatable {
         self.expression = expression
         self.outputType = outputType
     }
-    
+
     public let name: String
     public let expression: String
     public let outputType: String?
 }
-
-
