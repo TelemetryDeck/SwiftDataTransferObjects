@@ -413,6 +413,33 @@ final class CustomQueryTests: XCTestCase {
         XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
     }
 
+    func testTimeBoundaryQueryDecoding() throws {
+        let input = """
+         {
+           "queryType": "timeBoundary",
+           "dataSource": "wikipedia"
+         }
+        """.data(using: .utf8)!
+
+        let expectedOutput = CustomQuery(queryType: .timeBoundary, dataSource: "wikipedia")
+
+        let decodedOutput = try JSONDecoder.telemetryDecoder.decode(CustomQuery.self, from: input)
+
+        XCTAssertEqual(expectedOutput, decodedOutput)
+    }
+
+    func testTimeBoundaryQueryEncoding() throws {
+        let input = CustomQuery(queryType: .timeBoundary, dataSource: "wikipedia")
+
+        let expectedOutput = """
+        {"dataSource":"wikipedia","queryType":"timeBoundary"}
+        """
+
+        let encodedOutput = try JSONEncoder.telemetryEncoder.encode(input)
+
+        XCTAssertEqual(expectedOutput, String(data: encodedOutput, encoding: .utf8)!)
+    }
+
     func testChartConfiguration() throws {
         let customQuery = CustomQuery(
             queryType: .timeseries,
