@@ -142,6 +142,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         case groupBy
         case topN
         case scan
+        case timeBoundary
 
         // derived types
         case funnel
