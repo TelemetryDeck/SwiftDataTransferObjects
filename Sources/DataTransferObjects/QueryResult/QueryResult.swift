@@ -88,8 +88,13 @@ public enum DoubleWrapper: Codable, Hashable, Equatable {
         }
     }
 
-    enum CodingKeys: CodingKey {
-        case value
+    public var value: DoublePlusInfinity? {
+        switch self {
+        case let .single(doublePlusInfinity):
+            return doublePlusInfinity
+        default:
+            return nil
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
