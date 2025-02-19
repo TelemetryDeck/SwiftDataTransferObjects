@@ -162,6 +162,14 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
             try postAggregator.encode(to: encoder)
         }
     }
+
+    /// Precompile any convenience post-aggregators
+    func precompile() -> (aggregators: [Aggregator], postAggregators: [PostAggregator])? {
+        switch self {
+        default:
+            return nil
+        }
+    }
 }
 
 public enum PostAggregatorType: String, Codable, Hashable {

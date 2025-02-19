@@ -29,8 +29,8 @@ public extension CustomQuery {
         var query = self
 
         // Make sure either intervals or relative intervals are set
-        guard query.intervals != nil || query.relativeIntervals != nil else {
-            throw QueryGenerationError.keyMissing(reason: "Either 'relativeIntervals' or 'intervals' need to be set")
+        if query.intervals == nil && query.relativeIntervals == nil {
+            query.relativeIntervals = [.init(beginningDate: .init(.beginning, of: .day, adding: -30), endDate: .init(.end, of: .day, adding: 0))]
         }
 
         // Custom Query Types
@@ -39,6 +39,28 @@ public extension CustomQuery {
         } else if query.queryType == .experiment {
             query = try precompiledExperimentQuery()
         }
+
+        // Handle precompilable aggregators and post aggregators
+        var aggregations = [Aggregator]()
+        var postAggregations = [PostAggregator]()
+        for aggregator in query.aggregations ?? [] {
+            guard let compiled = aggregator.precompile() else {
+                aggregations.append(aggregator)
+                continue
+            }
+            aggregations.append(contentsOf: compiled.aggregators)
+            postAggregations.append(contentsOf: compiled.postAggregators)
+        }
+        for postAggregator in query.postAggregations ?? [] {
+            guard let compiled = postAggregator.precompile() else {
+                postAggregations.append(postAggregator)
+                continue
+            }
+            aggregations.append(contentsOf: compiled.aggregators)
+            postAggregations.append(contentsOf: compiled.postAggregators)
+        }
+        query.aggregations = aggregations
+        query.postAggregations = postAggregations
 
         // Apply base filters and data source
         query = try Self.applyBaseFilters(

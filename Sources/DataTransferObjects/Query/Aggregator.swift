@@ -197,6 +197,12 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
+        case let .userCount(selector):
+            try container.encode("userCount", forKey: .type)
+            try selector.encode(to: encoder)
+        case let .eventCount(selector):
+            try container.encode("eventCount", forKey: .type)
+            try selector.encode(to: encoder)
         case let .count(selector):
             try container.encode("count", forKey: .type)
             try selector.encode(to: encoder)

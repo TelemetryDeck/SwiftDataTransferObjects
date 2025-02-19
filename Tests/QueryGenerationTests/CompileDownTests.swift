@@ -26,13 +26,6 @@ final class CompileDownTests: XCTestCase {
         XCTAssertEqual(precompiledQuery.queryType, .groupBy)
     }
 
-    func testFailIfNoIntervals() throws {
-        // this query has neither a relativeIntervals nor an intervals property
-        let query = CustomQuery(queryType: .timeseries, granularity: .all)
-
-        XCTAssertThrowsError(try query.precompile(organizationAppIDs: [UUID(), UUID()], isSuperOrg: false))
-    }
-
     func testBaseFiltersThisOrganization() throws {
         let query = CustomQuery(queryType: .timeseries, baseFilters: .thisOrganization, relativeIntervals: relativeIntervals, granularity: .all)
         let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
