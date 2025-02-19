@@ -6,6 +6,11 @@ import Foundation
 ///
 /// https://druid.apache.org/docs/latest/querying/aggregations.html
 public indirect enum Aggregator: Codable, Hashable, Equatable {
+    // Convenience Aggregators
+    /// Counts the number of unique users in a query.
+    case userCount(UserCountAggregator)
+    case eventCount(EventCountAggregator)
+
     // Exact aggregations
 
     /// count computes the count of rows that match the filters.
@@ -133,6 +138,10 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
         let type = try values.decode(String.self, forKey: .type)
 
         switch type {
+        case "userCount":
+            self = try .userCount(UserCountAggregator(from: decoder))
+        case "eventCount":
+            self = try .eventCount(EventCountAggregator(from: decoder))
         case "count":
             self = try .count(CountAggregator(from: decoder))
         case "cardinality":
@@ -286,6 +295,18 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
             try selector.encode(to: encoder)
         }
     }
+
+    /// Precompile any convenience aggregators
+    func precompile() -> (aggregators: [Aggregator], postAggregators: [PostAggregator])? {
+        switch self {
+        case let .userCount(aggregator):
+            return aggregator.precompile()
+        case let .eventCount(aggregator):
+            return aggregator.precompile()
+        default:
+            return nil
+        }
+    }
 }
 
 public struct CountAggregator: Codable, Hashable {
@@ -356,6 +377,11 @@ public struct GenericTimeColumnAggregator: Codable, Hashable {
 }
 
 public enum AggregatorType: String, Codable, Hashable {
+    // Convenience Aggregators
+    case userCount
+    case eventCount
+
+    // Native Aggregators
     case count
     case cardinality
     case longSum
@@ -382,7 +408,6 @@ public enum AggregatorType: String, Codable, Hashable {
     case stringAny
     case thetaSketch
     case quantilesDoublesSketch
-
     case filtered
 
     // JavaScript aggregator missing
@@ -457,4 +482,38 @@ public struct QuantilesDoublesSketchAggregator: Codable, Hashable {
     ///
     ///  defaults to true
     public let shouldFinalize: Bool?
+}
+
+/// Convenience Aggregator that counts the number of unique users in a query.
+///
+/// Compiles to a theta sketch aggregator.
+public struct UserCountAggregator: Codable, Hashable, PrecompilableAggregator {
+    public init(name: String? = nil) {
+        self.name = name
+    }
+
+    public let name: String?
+
+    public func precompile() -> (aggregators: [Aggregator], postAggregators: [PostAggregator]) {
+        let aggregators = [Aggregator.thetaSketch(.init(type: .thetaSketch, name: name ?? "Users", fieldName: "clientUser"))]
+
+        return (aggregators: aggregators, postAggregators: [])
+    }
+}
+
+/// Convenience Aggregator that counts the number of unique events in a query.
+///
+/// Compiles to a longSum aggregator.
+public struct EventCountAggregator: Codable, Hashable, PrecompilableAggregator {
+    public init(name: String? = nil) {
+        self.name = name
+    }
+
+    public let name: String?
+
+    public func precompile() -> (aggregators: [Aggregator], postAggregators: [PostAggregator]) {
+        let aggregators = [Aggregator.longSum(.init(type: .longSum, name: "Events", fieldName: "count"))]
+
+        return (aggregators: aggregators, postAggregators: [])
+    }
 }
