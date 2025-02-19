@@ -64,8 +64,48 @@ public struct TimeSeriesQueryResult: Codable, Hashable, Equatable {
     public let rows: [TimeSeriesQueryResultRow]
 }
 
+/// Wrapper that can resolve either into a Double or an Array of Doubles
+public enum DoubleWrapper: Codable, Hashable, Equatable {
+    case single(DoublePlusInfinity)
+    case array([DoublePlusInfinity])
+
+    public init(_ double: Double) {
+        self = .single(DoublePlusInfinity(double))
+    }
+
+    public init(_ double: [Double]) {
+        self = .array(double.map(DoublePlusInfinity.init))
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if let doubleValue = try? container.decode(DoublePlusInfinity.self) {
+            self = .single(doubleValue)
+        } else {
+            let arrayValue = try container.decode([DoublePlusInfinity].self)
+            self = .array(arrayValue)
+        }
+    }
+
+    enum CodingKeys: CodingKey {
+        case value
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+
+        switch self {
+        case let .single(double):
+            try container.encode(double)
+        case let .array(array):
+            try container.encode(array)
+        }
+    }
+}
+
 /// Wrapper around the Double type that also accepts encoding and decoding as "Infinity" and "-Infinity"
-public struct DoubleWrapper: Codable, Hashable, Equatable {
+public struct DoublePlusInfinity: Codable, Hashable, Equatable {
     public let value: Double
 
     public init(_ doubleValue: Double) {

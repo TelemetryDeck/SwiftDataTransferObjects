@@ -41,6 +41,37 @@ class QueryResultTests: XCTestCase {
         XCTAssertEqual(String(data: encodedQueryResult, encoding: .utf8)!, expectedResult)
     }
 
+    func testEncodingMultiDimTimeSeries() throws {
+        let swiftResult = QueryResult.timeSeries(
+            TimeSeriesQueryResult(rows:
+                [
+                    TimeSeriesQueryResultRow(timestamp: randomDate - 3600, result: ["test": DoubleWrapper([11, 12, 13])]),
+                    TimeSeriesQueryResultRow(timestamp: randomDate, result: ["test": DoubleWrapper(12)]),
+                    TimeSeriesQueryResultRow(timestamp: randomDate, result: ["test": DoubleWrapper([Double.infinity, 31, 32])]),
+                ]
+            )
+        )
+
+
+        let stringResult = """
+        {
+            "rows": [
+                {"result":{"test":[11, 12, 13]},"timestamp":"2021-10-21T11:00:00+0000"},
+                {"result":{"test":12},"timestamp":"2021-10-21T12:00:00+0000"},
+                {"result":{"test":["Infinity", 31, 32]},"timestamp":"2021-10-21T12:00:00+0000"}
+            ],
+            "type":"timeSeriesResult"
+        }
+        """
+        .filter { !$0.isWhitespace }
+
+        let encodedQueryResult = try JSONEncoder.telemetryEncoder.encode(swiftResult)
+        let decodedQueryResult = try JSONDecoder.telemetryDecoder.decode(QueryResult.self, from: stringResult.data(using: .utf8)!)
+
+        XCTAssertEqual(stringResult, String(data: encodedQueryResult, encoding: .utf8)!)
+        XCTAssertEqual(swiftResult, decodedQueryResult)
+    }
+
     func testEncodingGroupBy() throws {
         let exampleQueryResult = QueryResult.groupBy(.init(rows: [GroupByQueryResultRow(timestamp: randomDate, event: .init(metrics: [:], dimensions: ["abc": "def", "uno": "due"]))]))
         let encodedQueryResult = try JSONEncoder.telemetryEncoder.encode(exampleQueryResult)
