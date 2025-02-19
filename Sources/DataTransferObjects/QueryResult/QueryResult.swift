@@ -88,10 +88,10 @@ public enum DoubleWrapper: Codable, Hashable, Equatable {
         }
     }
 
-    public var value: DoublePlusInfinity? {
+    public var doubleValue: Double? {
         switch self {
         case let .single(doublePlusInfinity):
-            return doublePlusInfinity
+            return doublePlusInfinity.value
         default:
             return nil
         }
