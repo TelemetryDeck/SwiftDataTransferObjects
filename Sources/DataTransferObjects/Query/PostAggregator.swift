@@ -499,7 +499,7 @@ public struct QuantilesDoublesSketchToHistogramPostAggregator: Codable, Hashable
     /// array of split points (optional)
     public let splitPoints: [Double]?
 
-    /// <number of bins (optional, defaults to 10)
+    /// Number of bins (optional, defaults to 10)
     public let numBins: Int?
 }
 
