@@ -19,7 +19,11 @@ final class ConvenienceAggregatorTests: XCTestCase {
     func testHistogramQueryGetsPrecompiled() throws {
         let query = CustomQuery(queryType: .timeseries, aggregations: [.histogram(.init())])
         let precompiled = try query.precompile(organizationAppIDs: [UUID()], isSuperOrg: false)
-        let expectedAggregations: [Aggregator] = [.quantilesDoublesSketch(.init(name: "_histogramSketch", fieldName: "floatValue", k: 1024, maxStreamLength: nil, shouldFinalize: nil))]
+        let expectedAggregations: [Aggregator] = [
+            .quantilesDoublesSketch(.init(name: "_histogramSketch", fieldName: "floatValue", k: 1024, maxStreamLength: nil, shouldFinalize: nil)),
+            .longMin(.init(type: .longMin, name: "_quantilesMinValue", fieldName: "floatValue")),
+            .longMax(.init(type: .longMax, name: "_quantilesMaxValue", fieldName: "floatValue")),
+        ]
         let expectedPostAggregations: [PostAggregator] = [.quantilesDoublesSketchToHistogram(
             .init(
                 name: "Histogram",
@@ -32,4 +36,3 @@ final class ConvenienceAggregatorTests: XCTestCase {
         XCTAssertEqual(precompiled.postAggregations, expectedPostAggregations)
     }
 }
-

@@ -568,7 +568,9 @@ public struct HistogramAggregator: Codable, Hashable, PrecompilableAggregator {
                     fieldName: fieldName ?? "floatValue",
                     k: k ?? 1024
                 )
-            )
+            ),
+            Aggregator.longMin(.init(type: .longMin, name: "_quantilesMinValue", fieldName: fieldName ?? "floatValue")),
+            Aggregator.longMax(.init(type: .longMax, name: "_quantilesMaxValue", fieldName: fieldName ?? "floatValue")),
         ]
 
         let postAggregators = [
@@ -579,7 +581,7 @@ public struct HistogramAggregator: Codable, Hashable, PrecompilableAggregator {
                     splitPoints: splitPoints,
                     numBins: numBins
                 )
-            )
+            ),
         ]
 
         return (aggregators: aggregators, postAggregators: postAggregators)
