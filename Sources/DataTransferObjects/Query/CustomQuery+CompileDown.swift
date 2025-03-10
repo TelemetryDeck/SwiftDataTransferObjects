@@ -25,6 +25,13 @@ public extension CustomQuery {
             throw QueryGenerationError.compilationStatusError
         }
 
+        // If we're not a super-org, disallow running groupBy and topN queries in hourly granularity
+        // because these currently produce misleading or wrong data sometimes.
+        // Remove this after the issue is fixed.
+        if !isSuperOrg, granularity == .hour, [.topN, .groupBy].contains(queryType) {
+            throw QueryGenerationError.notImplemented(reason: "This query can't be calculated in hourly granularity. Please choose daily or monthly instead.")
+        }
+
         // Make an editable copy of self
         var query = self
 

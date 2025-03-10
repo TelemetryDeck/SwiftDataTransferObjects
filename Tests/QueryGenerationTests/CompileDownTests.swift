@@ -314,4 +314,46 @@ final class CompileDownTests: XCTestCase {
         let compiledQuery = try precompiledQuery.compileToRunnableQuery()
         XCTAssertEqual(compiledQuery.dataSource?.name, "some-unknown-namespace")
     }
+
+    func testAllowsHourlyGranularityForTimeseries() throws {
+        let intervals: [QueryTimeInterval] = [
+            .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
+        ]
+        let query = CustomQuery(queryType: .timeseries, intervals: intervals, granularity: .hour)
+        XCTAssertNoThrow(try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false))
+    }
+
+    func testAllowsDailyGranularityForTopN() throws {
+        let intervals: [QueryTimeInterval] = [
+            .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
+        ]
+        let query = CustomQuery(queryType: .topN, intervals: intervals, granularity: .day)
+        XCTAssertNoThrow(try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false))
+    }
+
+    func testAllowsDailyGranularityForGroupBy() throws {
+        let intervals: [QueryTimeInterval] = [
+            .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
+        ]
+        let query = CustomQuery(queryType: .groupBy, intervals: intervals, granularity: .day)
+        XCTAssertNoThrow(try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false))
+    }
+
+    func testDisallowsHourlyQueriesForTopN() throws {
+        let intervals: [QueryTimeInterval] = [
+            .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
+        ]
+        let query = CustomQuery(queryType: .topN, intervals: intervals, granularity: .hour)
+
+        XCTAssertThrowsError(try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false))
+    }
+
+    func testDisallowsHourlyQueriesForGroupBy() throws {
+        let intervals: [QueryTimeInterval] = [
+            .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
+        ]
+        let query = CustomQuery(queryType: .groupBy, intervals: intervals, granularity: .hour)
+
+        XCTAssertThrowsError(try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false))
+    }
 }
