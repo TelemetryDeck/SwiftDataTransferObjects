@@ -41,7 +41,7 @@ final class VirtualColumnTests: XCTestCase {
         ],
         granularity: .all,
         aggregations: [
-            .thetaSketch(.init(type: .thetaSketch, name: "count", fieldName: "clientUser"))
+            .thetaSketch(.init(name: "count", fieldName: "clientUser"))
         ],
         threshold: 10,
         metric: .numeric(.init(metric: "count")),

@@ -1,5 +1,5 @@
 extension CustomQuery {
-    func precompiledFunnelQuery() throws -> CustomQuery {
+    func precompiledFunnelQuery(accuracy: Int? = nil) throws -> CustomQuery {
         var query = self
 
         guard let steps = steps else { throw QueryGenerationError.keyMissing(reason: "Missing key 'steps'") }
@@ -16,9 +16,9 @@ extension CustomQuery {
             aggregations.append(.filtered(.init(
                 filter: step.filter ?? Filter.empty,
                 aggregator: .thetaSketch(.init(
-                    type: .thetaSketch,
                     name: "\(aggregationNamePrefix)\(index)",
-                    fieldName: "clientUser"
+                    fieldName: "clientUser",
+                    size: accuracy
                 ))
             )))
         }

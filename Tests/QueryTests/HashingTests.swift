@@ -191,7 +191,7 @@ class HashingTests: XCTestCase {
             granularity: .day,
             aggregations: [
                 .count(.init(name: "signals")),
-                .thetaSketch(.init(type: .thetaSketch, name: "users", fieldName: "clientUser")),
+                .thetaSketch(.init(name: "users", fieldName: "clientUser")),
             ]
         )
 
@@ -203,7 +203,7 @@ class HashingTests: XCTestCase {
             granularity: .day,
             aggregations: [
                 .count(.init(name: "signals")),
-                .thetaSketch(.init(type: .thetaSketch, name: "users", fieldName: "clientUser")),
+                .thetaSketch(.init(name: "users", fieldName: "clientUser")),
             ]
         )
 

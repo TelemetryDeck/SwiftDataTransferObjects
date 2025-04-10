@@ -42,7 +42,10 @@ public extension CustomQuery {
 
         // Custom Query Types
         if query.queryType == .funnel {
-            query = try precompiledFunnelQuery()
+            // If a namespace is set, increase the accuracy of the funnel query (i.e. the size of the theta sketch).
+            // This helps increase accuracy for bigger customerrs who have their own namespace while hopefully keeping costs down in telemetry-signals.
+            // https://github.com/TelemetryDeck/SwiftDataTransferObjects/issues/55
+            query = try namespace == nil ? precompiledFunnelQuery() : precompiledFunnelQuery(accuracy: 65536)
         } else if query.queryType == .experiment {
             query = try precompiledExperimentQuery()
         }

@@ -22,7 +22,6 @@ class RetentionQueryTests: XCTestCase {
             )),
             aggregator: .thetaSketch(
                 .init(
-                    type: AggregatorType.thetaSketch,
                     name: "_august_clientUser_count",
                     fieldName: "clientUser"
                 )
@@ -40,7 +39,6 @@ class RetentionQueryTests: XCTestCase {
             )),
             aggregator: .thetaSketch(
                 .init(
-                    type: .thetaSketch,
                     name: "_september_clientUser_count",
                     fieldName: "clientUser"
                 )
@@ -58,7 +56,6 @@ class RetentionQueryTests: XCTestCase {
             )),
             aggregator: .thetaSketch(
                 .init(
-                    type: .thetaSketch,
                     name: "_october_clientUser_count",
                     fieldName: "clientUser"
                 )
@@ -76,7 +73,6 @@ class RetentionQueryTests: XCTestCase {
             )),
             aggregator: .thetaSketch(
                 .init(
-                    type: .thetaSketch,
                     name: "_november_clientUser_count",
                     fieldName: "clientUser"
                 )

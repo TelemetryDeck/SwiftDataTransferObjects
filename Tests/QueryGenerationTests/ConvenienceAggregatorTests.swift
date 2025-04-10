@@ -5,7 +5,7 @@ final class ConvenienceAggregatorTests: XCTestCase {
     func testUserCountQueryGetsPrecompiled() throws {
         let query = CustomQuery(queryType: .timeseries, aggregations: [.userCount(.init())])
         let precompiled = try query.precompile(organizationAppIDs: [UUID()], isSuperOrg: false)
-        let expectedAggregations: [Aggregator] = [.thetaSketch(.init(type: .thetaSketch, name: "Users", fieldName: "clientUser"))]
+        let expectedAggregations: [Aggregator] = [.thetaSketch(.init(name: "Users", fieldName: "clientUser"))]
         XCTAssertEqual(precompiled.aggregations, expectedAggregations)
     }
 

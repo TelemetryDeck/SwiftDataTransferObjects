@@ -26,7 +26,6 @@ final class FunnelQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "appLaunchedRegularly")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: AggregatorType.thetaSketch,
                         name: "_funnel_step_0",
                         fieldName: "clientUser"
                     )
@@ -36,7 +35,6 @@ final class FunnelQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "dataEntered")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: AggregatorType.thetaSketch,
                         name: "_funnel_step_1",
                         fieldName: "clientUser"
                     )
@@ -46,7 +44,6 @@ final class FunnelQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "paywallSeen")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: AggregatorType.thetaSketch,
                         name: "_funnel_step_2",
                         fieldName: "clientUser"
                     )
@@ -56,7 +53,6 @@ final class FunnelQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "conversion")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: AggregatorType.thetaSketch,
                         name: "_funnel_step_3",
                         fieldName: "clientUser"
                     )

@@ -94,7 +94,6 @@ public enum RetentionQueryGenerator {
                 intervals: [.init(dateInterval: interval)]
             )),
             aggregator: .thetaSketch(.init(
-                type: .thetaSketch,
                 name: "_\(title(for: interval))",
                 fieldName: "clientUser"
             ))

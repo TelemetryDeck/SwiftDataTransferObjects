@@ -68,7 +68,7 @@ final class AggregatorTests: XCTestCase {
     func testThetaSketchAggregatorDecoding() throws {
         let decodedAggregators = try JSONDecoder.telemetryDecoder.decode([Aggregator].self, from: exampleDruidAggregatorsThetaSketch)
 
-        XCTAssertEqual(decodedAggregators, [Aggregator.thetaSketch(.init(type: .thetaSketch, name: "count", fieldName: "clientUser"))])
+        XCTAssertEqual(decodedAggregators, [Aggregator.thetaSketch(.init(name: "count", fieldName: "clientUser"))])
     }
 
     func testQuantilesDoublesSketchAggregator() throws {
@@ -134,7 +134,6 @@ final class AggregatorTests: XCTestCase {
                     ),
                     aggregator: .thetaSketch(
                         .init(
-                            type: .thetaSketch,
                             name: "newSessionBegan",
                             fieldName: "clientUser"
                         )
@@ -158,7 +157,6 @@ final class AggregatorTests: XCTestCase {
                     ),
                     aggregator: .thetaSketch(
                         .init(
-                            type: .thetaSketch,
                             name: "InsightShown",
                             fieldName: "clientUser"
                         )
@@ -180,7 +178,6 @@ final class AggregatorTests: XCTestCase {
                     ),
                     aggregator: .thetaSketch(
                         .init(
-                            type: .thetaSketch,
                             name: "newSessionBegan",
                             fieldName: "clientUser"
                         )
@@ -204,7 +201,6 @@ final class AggregatorTests: XCTestCase {
                     ),
                     aggregator: .thetaSketch(
                         .init(
-                            type: .thetaSketch,
                             name: "InsightShown",
                             fieldName: "clientUser"
                         )

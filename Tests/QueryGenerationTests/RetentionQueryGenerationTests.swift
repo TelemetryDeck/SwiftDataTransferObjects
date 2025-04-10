@@ -36,7 +36,6 @@ final class RetentionQueryGenerationTests: XCTestCase {
                 )),
                 aggregator: .thetaSketch(
                     .init(
-                        type: AggregatorType.thetaSketch,
                         name: "_2022-08-01T00:00:00.000Z_2022-08-31T23:59:59.000Z",
                         fieldName: "clientUser"
                     )
@@ -54,7 +53,6 @@ final class RetentionQueryGenerationTests: XCTestCase {
                 )),
                 aggregator: .thetaSketch(
                     .init(
-                        type: .thetaSketch,
                         name: "_2022-09-01T00:00:00.000Z_2022-09-30T23:59:59.000Z",
                         fieldName: "clientUser"
                     )

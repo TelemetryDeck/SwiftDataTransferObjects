@@ -31,7 +31,6 @@ final class ExperimentQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "payScreenALaunched")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: .thetaSketch,
                         name: "cohort_1",
                         fieldName: "clientUser"
                     )
@@ -41,7 +40,6 @@ final class ExperimentQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "payScreenBLaunched")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: .thetaSketch,
                         name: "cohort_2",
                         fieldName: "clientUser"
                     )
@@ -51,7 +49,6 @@ final class ExperimentQueryGenerationTests: XCTestCase {
                 filter: .selector(.init(dimension: "type", value: "paymentSucceeded")),
                 aggregator: .thetaSketch(
                     .init(
-                        type: .thetaSketch,
                         name: "success",
                         fieldName: "clientUser"
                     )
@@ -64,7 +61,6 @@ final class ExperimentQueryGenerationTests: XCTestCase {
                 ])),
                 aggregator: .thetaSketch(
                     .init(
-                        type: .thetaSketch,
                         name: "users",
                         fieldName: "clientUser"
                     )

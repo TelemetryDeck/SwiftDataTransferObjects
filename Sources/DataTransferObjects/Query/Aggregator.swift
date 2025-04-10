@@ -118,7 +118,7 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
     /// querying faster.
     ///
     /// https://druid.apache.org/docs/latest/development/extensions-core/datasketches-theta.html
-    case thetaSketch(GenericAggregator)
+    case thetaSketch(ThetaSketchAggregator)
 
     case quantilesDoublesSketch(QuantilesDoublesSketchAggregator)
 
@@ -199,7 +199,7 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
         case "stringAny":
             self = try .stringAny(GenericAggregator(from: decoder))
         case "thetaSketch":
-            self = try .thetaSketch(GenericAggregator(from: decoder))
+            self = try .thetaSketch(ThetaSketchAggregator(from: decoder))
         case "quantilesDoublesSketch":
             self = try .quantilesDoublesSketch(QuantilesDoublesSketchAggregator(from: decoder))
         case "filtered":
@@ -424,7 +424,7 @@ public enum AggregatorType: String, Codable, Hashable {
     case quantilesDoublesSketch
     case filtered
 
-    // JavaScript aggregator missing
+    // JavaScript aggregator missing on purpose
 }
 
 /// A filtered aggregator wraps any given aggregator, but only aggregates the values for which the given dimension filter matches.
@@ -448,6 +448,41 @@ public struct FilteredAggregator: Codable, Hashable {
     public let aggregator: Aggregator
 
     public let name: String?
+}
+
+/// DataSketches Theta Sketch Aggregator
+///
+/// https://druid.apache.org/docs/latest/development/extensions-core/datasketches-theta/
+public struct ThetaSketchAggregator: Codable, Hashable {
+    public init(name: String, fieldName: String, size: Int? = nil, shouldFinalize: Bool? = nil) {
+        type = .thetaSketch
+        self.name = name
+        self.fieldName = fieldName
+        self.size = size
+        self.shouldFinalize = shouldFinalize
+    }
+
+    public let type: AggregatorType
+
+    /// String representing the output column to store sketch values.
+    public let name: String
+
+    /// A string for the name of the aggregator used at ingestion time.
+    public let fieldName: String
+
+    /// The maximum number of entries sketch object retains.
+    ///
+    /// Must be a power of 2. Higher size means higher accuracy but more space to store sketches. After you index with a particular size, Druid persists the sketch in segments.
+    /// At query time you must use a size greater or equal to the ingested size. See the DataSketches site for details. The default is recommended for the majority of use cases.
+    ///
+    /// Defaults to 16384
+    public let size: Int?
+
+    /// Return the final double type representing the estimate rather than the intermediate sketch type itself. In addition to controlling the finalization of this aggregator, you can control whether
+    /// all aggregators are finalized with the query context parameters finalize and sqlFinalizeOuterSketches.
+    ///
+    /// Defaults to true
+    public let shouldFinalize: Bool?
 }
 
 public struct QuantilesDoublesSketchAggregator: Codable, Hashable {
@@ -509,7 +544,7 @@ public struct UserCountAggregator: Codable, Hashable, PrecompilableAggregator {
     public let name: String?
 
     public func precompile() -> (aggregators: [Aggregator], postAggregators: [PostAggregator]) {
-        let aggregators = [Aggregator.thetaSketch(.init(type: .thetaSketch, name: name ?? "Users", fieldName: "clientUser"))]
+        let aggregators = [Aggregator.thetaSketch(.init(name: name ?? "Users", fieldName: "clientUser"))]
 
         return (aggregators: aggregators, postAggregators: [])
     }

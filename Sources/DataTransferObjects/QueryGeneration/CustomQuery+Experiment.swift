@@ -20,7 +20,6 @@ extension CustomQuery {
                 .filtered(.init(
                     filter: combined.1.filter ?? Filter.empty,
                     aggregator: .thetaSketch(.init(
-                        type: .thetaSketch,
                         name: combined.0,
                         fieldName: "clientUser"
                     ))
@@ -34,7 +33,6 @@ extension CustomQuery {
                 sample2.filter ?? Filter.empty,
             ])),
             aggregator: .thetaSketch(.init(
-                type: .thetaSketch,
                 name: "users",
                 fieldName: "clientUser"
             ))

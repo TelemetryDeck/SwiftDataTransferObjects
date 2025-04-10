@@ -58,7 +58,7 @@ final class CompileDownTests: XCTestCase {
         // This should succeed because an app ID is provided
         let appID = UUID()
         let query = CustomQuery(queryType: .timeseries, appID: appID, baseFilters: .thisApp, relativeIntervals: relativeIntervals, granularity: .all)
-        let precompiledQuery = try query.precompile(organizationAppIDs: [appID1, appID2], isSuperOrg: false)
+        let precompiledQuery = try query.precompile(organizationAppIDs: [appID, appID1, appID2], isSuperOrg: false)
 
         XCTAssertEqual(
             precompiledQuery.filter,
