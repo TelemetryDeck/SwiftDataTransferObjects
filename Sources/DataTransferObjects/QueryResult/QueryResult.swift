@@ -54,15 +54,7 @@ public enum QueryResult: Codable, Hashable, Equatable {
     }
 }
 
-public struct TimeSeriesQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [TimeSeriesQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
-        self.rows = rows
-        self.restrictions = restrictions
-    }
-
-    public let restrictions: [QueryTimeInterval]?
-    public let rows: [TimeSeriesQueryResultRow]
-}
+// MARK: - Query Result Types
 
 /// Wrapper that can resolve either into a String or an Array of Strings
 public enum StringWrapper: Codable, Hashable, Equatable {
@@ -205,106 +197,6 @@ public struct DoublePlusInfinity: Codable, Hashable, Equatable {
     }
 }
 
-/// Time series queries return an array of JSON objects, where each object represents a value as described in the time-series query.
-/// For instance, the daily average of a dimension for the last one month.
-public struct TimeSeriesQueryResultRow: Codable, Hashable, Equatable {
-    public init(timestamp: Date, result: [String: DoubleWrapper]) {
-        self.timestamp = timestamp
-        self.result = result
-    }
-
-    public let timestamp: Date?
-    public let result: [String: DoubleWrapper?]
-}
-
-/// GroupBy queries return an array of JSON objects, where each object represents a grouping as described in the group-by query.
-/// For example, we can query for the daily average of a dimension for the past month grouped by another dimension.
-public struct GroupByQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [GroupByQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
-        self.restrictions = restrictions
-        self.rows = rows
-    }
-
-    public let restrictions: [QueryTimeInterval]?
-    public let rows: [GroupByQueryResultRow]
-}
-
-public struct GroupByQueryResultRow: Codable, Hashable, Equatable {
-    public init(timestamp: Date, event: AdaptableQueryResultItem) {
-        version = "v1"
-        self.timestamp = timestamp
-        self.event = event
-    }
-
-    public let version: String
-    public let timestamp: Date
-    public let event: AdaptableQueryResultItem
-}
-
-/// TopN queries return a sorted set of results for the values in a given dimension according to some criteria.
-///
-/// Conceptually, they can be thought of as an approximate GroupByQuery over a single dimension with an Ordering spec.
-/// TopNs are much faster and resource efficient than GroupBys for this use case. These types of queries take a topN query
-///  object and return an array of JSON objects where each object represents a value asked for by the topN query.
-public struct TopNQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [TopNQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
-        self.rows = rows
-        self.restrictions = restrictions
-    }
-
-    public let restrictions: [QueryTimeInterval]?
-    public let rows: [TopNQueryResultRow]
-}
-
-public struct TopNQueryResultRow: Codable, Hashable, Equatable {
-    public init(timestamp: Date, result: [AdaptableQueryResultItem]) {
-        self.timestamp = timestamp
-        self.result = result
-    }
-
-    public let timestamp: Date
-    public let result: [AdaptableQueryResultItem]
-}
-
-public struct ScanQueryResult: Codable, Hashable, Equatable {
-    public init(rows: [ScanQueryResultRow], restrictions: [QueryTimeInterval]? = nil) {
-        self.restrictions = restrictions
-        self.rows = rows
-    }
-
-    public let restrictions: [QueryTimeInterval]?
-    public let rows: [ScanQueryResultRow]
-}
-
-public struct ScanQueryResultRow: Codable, Hashable, Equatable {
-    public init(
-        segmentId: String? = nil,
-        columns: [String],
-        events: [AdaptableQueryResultItem],
-        rowSignature: [ScanQueryRowSignatureRow]
-    ) {
-        self.segmentId = segmentId
-        self.columns = columns
-        self.events = events
-        self.rowSignature = rowSignature
-    }
-
-    public let segmentId: String?
-    public let columns: [String]
-    public let events: [AdaptableQueryResultItem]
-    public let rowSignature: [ScanQueryRowSignatureRow]
-}
-
-public struct ScanQueryRowSignatureRow: Codable, Hashable, Equatable {
-    public init(name: String, type: String) {
-        self.name = name
-        self.type = type
-    }
-
-    public let name: String
-    public let type: String?
-}
-
 /// Represents a JSON object that can contain string values (dimensions), double values (dimensions) and null values.
 public struct AdaptableQueryResultItem: Codable, Hashable, Equatable {
     public init(metrics: [String: DoubleWrapper], dimensions: [String: StringWrapper], nullValues: [String] = []) {
@@ -364,26 +256,6 @@ public struct AdaptableQueryResultItem: Codable, Hashable, Equatable {
             nil
         }
     }
-}
-
-public struct TimeBoundaryResult: Codable, Hashable, Equatable {
-    public init(rows: [TimeBoundaryResultRow], restrictions: [QueryTimeInterval]? = nil) {
-        self.restrictions = restrictions
-        self.rows = rows
-    }
-
-    public let restrictions: [QueryTimeInterval]?
-    public let rows: [TimeBoundaryResultRow]
-}
-
-public struct TimeBoundaryResultRow: Codable, Hashable, Equatable {
-    public init(timestamp: Date, result: [String: Date]) {
-        self.timestamp = timestamp
-        self.result = result
-    }
-
-    public let timestamp: Date
-    public let result: [String: Date]
 }
 
 // MARK: - Legacy Structs
