@@ -59,4 +59,72 @@ public struct QueryTimeInterval: Codable, Hashable, Equatable, Comparable {
         if lhs.beginningDate == rhs.beginningDate { return lhs.endDate < rhs.endDate }
         return lhs.beginningDate < rhs.beginningDate
     }
+
+    public func timeSegments(with granularity: QueryGranularity) throws -> [TimeSegment] {
+        var segments = [TimeSegment]()
+
+        var component: Calendar.Component
+        switch granularity {
+        case .hour:
+            component = .hour
+        case .day:
+            component = .day
+        case .month:
+            component = .month
+        case .year:
+            component = .year
+        default:
+            throw CustomQuery.QueryGenerationError.notImplemented(reason: "Granularity \(granularity) not implemented for windowed caching.")
+        }
+
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+
+        var currentDate: Date?
+        if component == .day {
+            currentDate = calendar.startOfDay(for: beginningDate)
+        } else {
+            var components: Set<Calendar.Component> {
+                switch component {
+                case .hour:
+                    return [.year, .month, .day, .hour]
+
+                case .month:
+                    return [.year, .month]
+
+                case .year:
+                    return [.year]
+
+                default:
+                    return []
+                }
+            }
+
+            guard !components.isEmpty else { throw CustomQuery.QueryGenerationError.notImplemented(reason: "Granularity \(granularity) not implemented for windowed caching.") }
+            currentDate = calendar.date(from: calendar.dateComponents(components, from: beginningDate))
+        }
+
+        guard var currentDate else {
+            throw CustomQuery.QueryGenerationError.notImplemented(reason: "Granularity \(granularity) not implemented for windowed caching.")
+        }
+
+        while currentDate < endDate {
+            let nextDate = calendar.date(byAdding: component, value: 1, to: currentDate)!
+            let segment = TimeSegment(beginningDate: currentDate, duration: granularity)
+            segments.append(segment)
+            currentDate = nextDate
+        }
+
+        return segments
+    }
+}
+
+public struct TimeSegment: Codable, Hashable, Equatable {
+    public init(beginningDate: Date, duration: QueryGranularity) {
+        self.beginningDate = beginningDate
+        self.duration = duration
+    }
+
+    public let beginningDate: Date
+    public let duration: QueryGranularity
 }

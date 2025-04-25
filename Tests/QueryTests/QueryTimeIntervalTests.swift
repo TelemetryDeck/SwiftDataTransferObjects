@@ -17,4 +17,25 @@ final class QueryTimeIntervalTests: XCTestCase {
     func testDecodingQueryTimeInterval() throws {
         _ = try JSONDecoder.telemetryDecoder.decode(QueryTimeIntervalsContainer.self, from: exampleData)
     }
+
+    func testTimeSegmentsWithGranularity() throws {
+        let timeInterval = QueryTimeInterval(
+            beginningDate: Date(iso8601String: "2022-07-28T17:21:00.000Z")!,
+            endDate: Date(iso8601String: "2022-08-03T11:30:00.000Z")!
+        )
+        let granularity = QueryGranularity.day
+        let segments = try timeInterval.timeSegments(with: granularity)
+        XCTAssertEqual(
+            segments,
+            [
+                .init(beginningDate: .init(iso8601String: "2022-07-28T00:00:00.000Z")!, duration: .day),
+                .init(beginningDate: .init(iso8601String: "2022-07-29T00:00:00.000Z")!, duration: .day),
+                .init(beginningDate: .init(iso8601String: "2022-07-30T00:00:00.000Z")!, duration: .day),
+                .init(beginningDate: .init(iso8601String: "2022-07-31T00:00:00.000Z")!, duration: .day),
+                .init(beginningDate: .init(iso8601String: "2022-08-01T00:00:00.000Z")!, duration: .day),
+                .init(beginningDate: .init(iso8601String: "2022-08-02T00:00:00.000Z")!, duration: .day),
+                .init(beginningDate: .init(iso8601String: "2022-08-03T00:00:00.000Z")!, duration: .day),
+            ]
+        )
+    }
 }
