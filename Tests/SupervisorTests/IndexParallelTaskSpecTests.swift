@@ -102,7 +102,7 @@ final class IndexParallelTaskSpecTests: XCTestCase {
                     )
                 ),
                 dataSchema: .init(
-                    dataSource: "com.goodsnooze",
+                    dataSource: "test.indexParallel",
                     timestampSpec: .init(
                         column: "__time",
                         format: .millis
