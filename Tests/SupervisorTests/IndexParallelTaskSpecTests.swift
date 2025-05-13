@@ -6,13 +6,24 @@ final class IndexParallelTaskSpecTests: XCTestCase {
     {
       "type": "index_parallel",
       "spec": {
+    
+        "context": {
+          "storeEmptyColumns": false
+        },
         "ioConfig": {
           "type": "index_parallel",
           "appendToExisting": false,
           "inputSource": {
             "type": "druid",
             "dataSource": "telemetry-signals",
-            "interval": "2025-01-01/3000"
+            "interval": "2025-01-01/3000",
+            "filter": {
+              "type": "or",
+              "fields": [
+                {"type": "selector","dimension": "appID","value": "73B9CA2A-30E6-46C9-B6B8-9034E68AAD21"},
+                {"type": "selector","dimension": "appID","value": "25D36DE5-FF0E-4456-9BA9-47B66BBB6BD6"}
+              ]
+            }
           },
           "inputFormat": {
             "type": "json"
@@ -23,8 +34,8 @@ final class IndexParallelTaskSpecTests: XCTestCase {
           "partitionsSpec": {
             "type": "hashed"
           },
-          "maxNumConcurrentSubTasks": 15,
-          "forceGuaranteedRollup": true
+          "maxNumConcurrentSubTasks": 5,
+          "forceGuaranteedRollup": false
         },
         "dataSchema": {
           "dataSource": "com.goodsnooze",
@@ -38,13 +49,7 @@ final class IndexParallelTaskSpecTests: XCTestCase {
             "segmentGranularity": "day"
           },
           "transformSpec": {
-            "filter": {
-              "type": "or",
-              "fields": [
-                {"type": "selector","dimension": "appID","value": "73B9CA2A-30E6-46C9-B6B8-9034E68AAD21"},
-                {"type": "selector","dimension": "appID","value": "25D36DE5-FF0E-4456-9BA9-47B66BBB6BD6"}
-              ]
-            }
+
           },
           "dimensionsSpec": {
             "dimensionExclusions": [
@@ -68,15 +73,52 @@ final class IndexParallelTaskSpecTests: XCTestCase {
         .init(
             id: nil,
             spec: .init(
-                ioConfig: .indexParrallel(
+                ioConfig:.indexParallel(
                     .init(
-                        inputFormat: <#T##InputFormat#>,
+                        inputFormat: .init(type: .json),
+                        inputSource: .druid(
+                            .init(
+                                dataSource: "telemetry-signals",
+                                interval: .init(
+                                    beginningDate: .init(iso8601String: "2025-01-01T00:00:00.000Z")!,
+                                    endDate: .init(iso8601String: "3000-01-01T00:00:00.000Z")!
+                                ),
+                                filter: .or(.init(fields: [
+                                    .selector(.init(dimension: "appID", value: "73B9CA2A-30E6-46C9-B6B8-9034E68AAD21")),
+                                    .selector(.init(dimension: "appID", value: "25D36DE5-FF0E-4456-9BA9-47B66BBB6BD6"))
+                                ]))
+                            )
+                        ),
                         appendToExisting: false,
-                        dropExisting: <#T##Bool?#>
+                        dropExisting: nil
                     )
                 ),
-                tuningConfig: <#T##TuningConfig?#>,
-                dataSchema: <#T##DataSchema?#>
+                tuningConfig: .indexParallel(
+                    .init(
+                        partitionsSpec: .hashed(.init()),
+                        forceGuaranteedRollup: false,
+                        maxNumConcurrentSubTasks: 5
+                    )
+                ),
+                dataSchema: .init(
+                    dataSource: "com.goodsnooze",
+                    timestampSpec: .init(
+                        column: "__time",
+                        format: .millis
+                    ),
+                    metricsSpec: [
+                        .longSum(.init(type: .longSum, name: "count", fieldName: "count"))
+                    ],
+                    granularitySpec: .init(
+                        segmentGranularity: .day,
+                        queryGranularity: .hour,
+                        rollup: true
+                    ),
+                    transformSpec: nil,
+                    dimensionsSpec: DimensionsSpec(
+                        dimensionExclusions: ["count"]
+                    )
+                )
             )
         )
     )

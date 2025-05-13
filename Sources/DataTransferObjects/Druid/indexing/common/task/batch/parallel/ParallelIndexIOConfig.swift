@@ -1,8 +1,17 @@
 /// https://druid.apache.org/docs/latest/ingestion/native-batch#ioconfig
 /// https://github.com/apache/druid/blob/master/indexing-service/src/main/java/org/apache/druid/indexing/common/task/batch/parallel/ParallelIndexIOConfig.java
 public struct ParallelIndexIOConfig: Codable, Hashable, Equatable {
+    public init(inputFormat: InputFormat, inputSource: InputSource? = nil, appendToExisting: Bool? = nil, dropExisting: Bool? = nil) {
+        self.inputFormat = inputFormat
+        self.inputSource = inputSource
+        self.appendToExisting = appendToExisting
+        self.dropExisting = dropExisting
+    }
+    
     /// inputFormat to specify how to parse input data.
     public let inputFormat: InputFormat
+
+    public let inputSource: InputSource?
 
     /// Creates segments as additional shards of the latest version
     ///

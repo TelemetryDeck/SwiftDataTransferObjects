@@ -1,7 +1,7 @@
 /// https://github.com/apache/druid/blob/master/server/src/main/java/org/apache/druid/segment/indexing/IOConfig.java
 public indirect enum IoConfig: Codable, Hashable, Equatable {
     case kinesis(KinesisIndexTaskIOConfig)
-    case indexParrallel(ParallelIndexIOConfig)
+    case indexParallel(ParallelIndexIOConfig)
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -15,7 +15,7 @@ public indirect enum IoConfig: Codable, Hashable, Equatable {
         case "kinesis":
             self = try .kinesis(KinesisIndexTaskIOConfig(from: decoder))
         case "index_parallel":
-            self = try .indexParrallel(ParallelIndexIOConfig(from: decoder))
+            self = try .indexParallel(ParallelIndexIOConfig(from: decoder))
 
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
@@ -29,7 +29,7 @@ public indirect enum IoConfig: Codable, Hashable, Equatable {
         case let .kinesis(ioConfig):
             try container.encode("kinesis", forKey: .type)
             try ioConfig.encode(to: encoder)
-        case let .indexParrallel(ioConfig):
+        case let .indexParallel(ioConfig):
             try container.encode("index_parallel", forKey: .type)
             try ioConfig.encode(to: encoder)
         }

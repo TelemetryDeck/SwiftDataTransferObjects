@@ -8,7 +8,7 @@ public struct DataSchema: Codable, Hashable, Equatable {
         metricsSpec: [Aggregator]? = nil,
         granularitySpec: GranularitySpec? = nil,
         transformSpec: TransformSpec? = nil,
-        dimensionsSpec: DimensionSpec? = nil
+        dimensionsSpec: DimensionsSpec? = nil
     ) {
         self.dataSource = dataSource
         self.timestampSpec = timestampSpec
@@ -33,5 +33,5 @@ public struct DataSchema: Codable, Hashable, Equatable {
 
     public let transformSpec: TransformSpec?
 
-    public let dimensionsSpec: DimensionSpec?
+    public let dimensionsSpec: DimensionsSpec?
 }

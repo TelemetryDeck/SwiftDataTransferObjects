@@ -2,7 +2,7 @@
 /// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/data/input/impl/DimensionsSpec.java
 public struct DimensionsSpec: Codable, Hashable, Equatable {
     public init(
-        dimensions: [IngestionDimensionSpecDimension],
+        dimensions: [IngestionDimensionSpecDimension]? = nil,
         dimensionExclusions: [String]? = nil,
         spatialDimensions: [IngestionDimensionSpecSpatialDimension]? = nil,
         includeAllDimensions: Bool? = nil,
@@ -24,7 +24,7 @@ public struct DimensionsSpec: Codable, Hashable, Equatable {
     ///
     /// As a best practice, put the most frequently filtered dimensions at the beginning of the dimensions list. In this case, it
     /// would also be good to consider partitioning by those same dimensions.
-    public let dimensions: [IngestionDimensionSpecDimension]
+    public let dimensions: [IngestionDimensionSpecDimension]?
 
     /// The names of dimensions to exclude from ingestion. Only names are supported here, not objects.
     ///
