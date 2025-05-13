@@ -1,5 +1,6 @@
+/// https://github.com/apache/druid/blob/master/server/src/main/java/org/apache/druid/segment/indexing/IOConfig.java
 public indirect enum IoConfig: Codable, Hashable, Equatable {
-    case kinesis(KinesisIOConfig)
+    case kinesis(KinesisIndexTaskIOConfig)
     // space for Kafka
 
     enum CodingKeys: String, CodingKey {
@@ -12,7 +13,7 @@ public indirect enum IoConfig: Codable, Hashable, Equatable {
 
         switch type {
         case "kinesis":
-            self = try .kinesis(KinesisIOConfig(from: decoder))
+            self = try .kinesis(KinesisIndexTaskIOConfig(from: decoder))
 
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))

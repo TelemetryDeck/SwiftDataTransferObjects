@@ -1,6 +1,7 @@
 /// https://druid.apache.org/docs/latest/ingestion/supervisor/#io-configuration
 /// https://druid.apache.org/docs/latest/ingestion/kinesis-ingestion#io-configuration
-public struct KinesisIOConfig: Codable, Hashable, Equatable {
+/// https://github.com/apache/druid/blob/master/extensions-core/kinesis-indexing-service/src/main/java/org/apache/druid/indexing/kinesis/KinesisIndexTaskIOConfig.java
+public struct KinesisIndexTaskIOConfig: Codable, Hashable, Equatable {
     public init(
         stream: String,
         inputFormat: InputFormat,
