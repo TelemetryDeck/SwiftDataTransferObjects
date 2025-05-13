@@ -526,7 +526,7 @@ final class SupervisorSpecTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
 
-    let testedType = SupervisorSpec.self
+    let testedType = ParallelIndexIngestionSpec.self
 
     func testDecodingTelemetryDeckExample() throws {
         let decodedValue = try JSONDecoder.telemetryDecoder.decode(testedType, from: tdValueString.data(using: .utf8)!)

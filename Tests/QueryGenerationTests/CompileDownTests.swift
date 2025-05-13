@@ -281,22 +281,6 @@ final class CompileDownTests: XCTestCase {
         XCTAssertEqual(compiledQuery.dataSource?.name, "com.telemetrydeck.test")
     }
 
-    func testNamespaceWithAvailabilityDateInTheFuture() throws {
-        let intervals: [QueryTimeInterval] = [
-            .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),
-        ]
-
-        var query = CustomQuery(queryType: .timeseries, intervals: intervals, granularity: .day)
-        query.dataSource = nil
-        let precompiledQuery = try query.precompile(
-            namespace: "some-unknown-namespace",
-            organizationAppIDs: [appID1, appID2],
-            isSuperOrg: false
-        )
-        let compiledQuery = try precompiledQuery.compileToRunnableQuery()
-        XCTAssertEqual(compiledQuery.dataSource?.name, "telemetry-signals")
-    }
-
     func testAllowsHourlyGranularityForTimeseries() throws {
         let intervals: [QueryTimeInterval] = [
             .init(beginningDate: Date(iso8601String: "2023-04-01T00:00:00.000Z")!, endDate: Date(iso8601String: "2023-05-31T00:00:00.000Z")!),

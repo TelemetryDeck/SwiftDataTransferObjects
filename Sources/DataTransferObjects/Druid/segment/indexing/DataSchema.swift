@@ -1,4 +1,6 @@
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec#dataschema
+///
+/// https://github.com/apache/druid/blob/master/server/src/main/java/org/apache/druid/segment/indexing/DataSchema.java
 public struct DataSchema: Codable, Hashable, Equatable {
     public init(
         dataSource: String,
@@ -6,7 +8,7 @@ public struct DataSchema: Codable, Hashable, Equatable {
         metricsSpec: [Aggregator]? = nil,
         granularitySpec: GranularitySpec? = nil,
         transformSpec: TransformSpec? = nil,
-        dimensionsSpec: IngestionDimensionSpec? = nil
+        dimensionsSpec: DimensionSpec? = nil
     ) {
         self.dataSource = dataSource
         self.timestampSpec = timestampSpec
@@ -31,5 +33,5 @@ public struct DataSchema: Codable, Hashable, Equatable {
 
     public let transformSpec: TransformSpec?
 
-    public let dimensionsSpec: IngestionDimensionSpec?
+    public let dimensionsSpec: DimensionSpec?
 }

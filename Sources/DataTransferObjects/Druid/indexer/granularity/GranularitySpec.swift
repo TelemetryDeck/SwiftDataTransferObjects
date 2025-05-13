@@ -1,4 +1,5 @@
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec/#granularityspec
+/// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/indexer/granularity/GranularitySpec.java
 public struct GranularitySpec: Codable, Hashable, Equatable {
     public init(
         type: GranularitySpec.GranularitySpecType? = nil,

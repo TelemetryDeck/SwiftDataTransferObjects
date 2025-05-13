@@ -1,6 +1,6 @@
 /// Datasource / Namespace Supervisor definition
 public struct Supervisor: Codable, Hashable, Equatable {
-    public init(type: Supervisor.SupervisorType, spec: SupervisorSpec? = nil, suspended: Bool? = nil) {
+    public init(type: Supervisor.SupervisorType, spec: ParallelIndexIngestionSpec? = nil, suspended: Bool? = nil) {
         self.type = type
         self.spec = spec
         self.suspended = suspended
@@ -17,7 +17,7 @@ public struct Supervisor: Codable, Hashable, Equatable {
     public let type: SupervisorType
 
     /// The container object for the supervisor configuration.
-    public let spec: SupervisorSpec?
+    public let spec: ParallelIndexIngestionSpec?
 
     /// Indicates whether the supervisor is in a suspended state.
     public let suspended: Bool?

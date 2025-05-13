@@ -7,6 +7,8 @@
 /// You can also set the expression name to __time to replace the value of the timestamp.
 ///
 /// Treat __time as a millisecond timestamp: the number of milliseconds since Jan 1, 1970 at midnight UTC.
+///
+/// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/data/input/impl/TimestampSpec.java
 public struct TimestampSpec: Codable, Hashable, Equatable {
     public init(
         column: String? = nil,
