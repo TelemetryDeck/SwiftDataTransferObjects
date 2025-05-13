@@ -15,7 +15,7 @@ final class IngestionDimensionSpecTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
 
-    let docsValue = IngestionDimensionSpec(
+    let docsValue = DimensionsSpec(
         dimensions: [
             .init(type: .long, name: "page", createBitmapIndex: nil, multiValueHandling: nil),
             .init(type: .long, name: "userId", createBitmapIndex: nil, multiValueHandling: nil),
@@ -66,7 +66,7 @@ final class IngestionDimensionSpecTests: XCTestCase {
     """
     .filter { !$0.isWhitespace }
 
-    let tdValue = IngestionDimensionSpec(
+    let tdValue = DimensionsSpec(
         dimensions: [
             .init(type: .string, name: "appID", createBitmapIndex: true, multiValueHandling: .sorted_array),
             .init(type: .string, name: "type", createBitmapIndex: true, multiValueHandling: .sorted_array),
@@ -85,7 +85,7 @@ final class IngestionDimensionSpecTests: XCTestCase {
         forceSegmentSortByTime: nil
     )
 
-    let testedType = IngestionDimensionSpec.self
+    let testedType = DimensionsSpec.self
 
     func testDecodingDocsExample() throws {
         let decodedValue = try JSONDecoder.telemetryDecoder.decode(testedType, from: docsValueString.data(using: .utf8)!)

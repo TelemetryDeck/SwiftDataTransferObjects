@@ -1,5 +1,6 @@
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec/#dimensionsspec
-public struct IngestionDimensionSpec: Codable, Hashable, Equatable {
+/// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/data/input/impl/DimensionsSpec.java
+public struct DimensionsSpec: Codable, Hashable, Equatable {
     public init(
         dimensions: [IngestionDimensionSpecDimension],
         dimensionExclusions: [String]? = nil,
