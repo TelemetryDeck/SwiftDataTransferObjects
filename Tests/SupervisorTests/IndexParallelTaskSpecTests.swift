@@ -68,7 +68,13 @@ final class IndexParallelTaskSpecTests: XCTestCase {
         .init(
             id: nil,
             spec: .init(
-                ioConfig: <#T##IoConfig?#>,
+                ioConfig: .indexParrallel(
+                    .init(
+                        inputFormat: <#T##InputFormat#>,
+                        appendToExisting: false,
+                        dropExisting: <#T##Bool?#>
+                    )
+                ),
                 tuningConfig: <#T##TuningConfig?#>,
                 dataSchema: <#T##DataSchema?#>
             )
