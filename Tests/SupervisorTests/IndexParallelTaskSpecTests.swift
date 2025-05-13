@@ -51,7 +51,7 @@ final class IndexParallelTaskSpecTests: XCTestCase {
                         ],
                         "type": "or"
                     },
-                    "interval": "2025-01-01T00:00:00.000Z/2025-01-05T00:00:00.000Z",
+                    "interval": "2025-01-01T00:00:00.000Z/3000-01-01T00:00:00.000Z",
                     "type": "druid"
                 },
                 "type": "index_parallel"
