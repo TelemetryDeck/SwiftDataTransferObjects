@@ -233,6 +233,14 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         return digest.compactMap { String(format: "%02x", $0) }.joined()
     }
 
+    // Return a hash value that is independent of the intervals or relative intervals.
+    public var intervalIndependentHash: String {
+        var query = self
+        query.intervals = nil
+        query.relativeIntervals = nil
+        return query.stableHashValue
+    }
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(queryType)
         hasher.combine(compilationStatus)
