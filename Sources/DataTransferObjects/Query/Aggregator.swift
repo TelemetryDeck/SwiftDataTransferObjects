@@ -5,7 +5,7 @@ import Foundation
 /// You can use aggregations at query time to summarize result data.
 ///
 /// https://druid.apache.org/docs/latest/querying/aggregations.html
-public indirect enum Aggregator: Codable, Hashable, Equatable {
+public indirect enum Aggregator: Codable, Hashable, Equatable, Sendable {
     // Convenience Aggregators
 
     /// Counts the number of unique users in a query.
@@ -322,7 +322,7 @@ public indirect enum Aggregator: Codable, Hashable, Equatable {
     }
 }
 
-public struct CountAggregator: Codable, Hashable {
+public struct CountAggregator: Codable, Hashable, Sendable {
     public init(name: String) {
         type = .count
         self.name = name
@@ -335,7 +335,7 @@ public struct CountAggregator: Codable, Hashable {
 }
 
 /// Calcluate the cardinality of a dimension (deprecated)
-public struct CardinalityAggregator: Codable, Hashable {
+public struct CardinalityAggregator: Codable, Hashable, Sendable {
     public init(name: String, fields: [String], byRow: Bool = false, round: Bool = true) {
         type = .cardinality
         self.name = name
@@ -353,7 +353,7 @@ public struct CardinalityAggregator: Codable, Hashable {
     public let round: Bool
 }
 
-public struct GenericAggregator: Codable, Hashable {
+public struct GenericAggregator: Codable, Hashable, Sendable {
     public init(type: AggregatorType, name: String, fieldName: String) {
         self.type = type
         self.name = name
@@ -369,7 +369,7 @@ public struct GenericAggregator: Codable, Hashable {
     public var fieldName: String
 }
 
-public struct GenericTimeColumnAggregator: Codable, Hashable {
+public struct GenericTimeColumnAggregator: Codable, Hashable, Sendable {
     public init(type: AggregatorType, name: String, fieldName: String, timeColumn: String? = nil) {
         self.type = type
         self.name = name
@@ -389,7 +389,7 @@ public struct GenericTimeColumnAggregator: Codable, Hashable {
     public let timeColumn: String?
 }
 
-public enum AggregatorType: String, Codable, Hashable {
+public enum AggregatorType: String, Codable, Hashable, Sendable {
     // Convenience Aggregators
     case userCount
     case eventCount
@@ -433,7 +433,7 @@ public enum AggregatorType: String, Codable, Hashable {
 /// queries, and use both results as part of post-aggregations.
 ///
 /// Note: If only the filtered results are required, consider putting the filter on the query itself, which will be much faster since it does not require scanning all the data.
-public struct FilteredAggregator: Codable, Hashable {
+public struct FilteredAggregator: Codable, Hashable, Sendable {
     public init(filter: Filter, aggregator: Aggregator, name: String? = nil) {
         type = .filtered
         self.filter = filter
@@ -453,7 +453,7 @@ public struct FilteredAggregator: Codable, Hashable {
 /// DataSketches Theta Sketch Aggregator
 ///
 /// https://druid.apache.org/docs/latest/development/extensions-core/datasketches-theta/
-public struct ThetaSketchAggregator: Codable, Hashable {
+public struct ThetaSketchAggregator: Codable, Hashable, Sendable {
     public init(name: String, fieldName: String, size: Int? = nil, shouldFinalize: Bool? = nil) {
         type = .thetaSketch
         self.name = name
@@ -485,7 +485,7 @@ public struct ThetaSketchAggregator: Codable, Hashable {
     public let shouldFinalize: Bool?
 }
 
-public struct QuantilesDoublesSketchAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         fieldName: String,
@@ -536,7 +536,7 @@ public struct QuantilesDoublesSketchAggregator: Codable, Hashable {
 /// Convenience Aggregator that counts the number of unique users in a query.
 ///
 /// Compiles to a theta sketch aggregator.
-public struct UserCountAggregator: Codable, Hashable, PrecompilableAggregator {
+public struct UserCountAggregator: Codable, Hashable, PrecompilableAggregator, Sendable {
     public init(name: String? = nil) {
         self.name = name
     }
@@ -553,7 +553,7 @@ public struct UserCountAggregator: Codable, Hashable, PrecompilableAggregator {
 /// Convenience Aggregator that counts the number of unique events in a query.
 ///
 /// Compiles to a longSum aggregator.
-public struct EventCountAggregator: Codable, Hashable, PrecompilableAggregator {
+public struct EventCountAggregator: Codable, Hashable, PrecompilableAggregator, Sendable {
     public init(name: String? = nil) {
         self.name = name
     }
@@ -568,7 +568,7 @@ public struct EventCountAggregator: Codable, Hashable, PrecompilableAggregator {
 }
 
 /// Convenience Aggregator that implements a histogram over floatValue using DataSketches Quantiles
-public struct HistogramAggregator: Codable, Hashable, PrecompilableAggregator {
+public struct HistogramAggregator: Codable, Hashable, PrecompilableAggregator, Sendable {
     public init(name: String? = nil, fieldName: String? = nil, splitPoints: [Double]? = nil, numBins: Int? = nil, k: Int? = nil) {
         self.name = name
         self.fieldName = fieldName

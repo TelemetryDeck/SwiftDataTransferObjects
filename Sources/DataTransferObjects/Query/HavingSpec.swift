@@ -5,7 +5,7 @@ import Foundation
 /// It is essentially the equivalent of the HAVING clause in SQL.
 ///
 /// The simplest having clause is a numeric filter. Numeric filters can be used as the base filters for more complex boolean expressions of filters.
-public indirect enum HavingSpec: Codable, Hashable, Equatable {
+public indirect enum HavingSpec: Codable, Hashable, Equatable, Sendable {
     /// Query filter HavingSpecs allow all query filters to be used in the Having part of the query.
     case filter(HavingFilter)
 
@@ -93,7 +93,7 @@ public indirect enum HavingSpec: Codable, Hashable, Equatable {
     }
 }
 
-public struct HavingFilter: Codable, Hashable, Equatable {
+public struct HavingFilter: Codable, Hashable, Equatable, Sendable {
     public init(filter: Filter) {
         self.filter = filter
     }
@@ -101,7 +101,7 @@ public struct HavingFilter: Codable, Hashable, Equatable {
     public let filter: Filter
 }
 
-public struct HavingEqualTo: Codable, Hashable, Equatable {
+public struct HavingEqualTo: Codable, Hashable, Equatable, Sendable {
     public init(aggregation: String, value: Double) {
         self.aggregation = aggregation
         self.value = value
@@ -111,7 +111,7 @@ public struct HavingEqualTo: Codable, Hashable, Equatable {
     public let value: Double
 }
 
-public struct HavingGreaterThan: Codable, Hashable, Equatable {
+public struct HavingGreaterThan: Codable, Hashable, Equatable, Sendable {
     public init(aggregation: String, value: Double) {
         self.aggregation = aggregation
         self.value = value
@@ -121,7 +121,7 @@ public struct HavingGreaterThan: Codable, Hashable, Equatable {
     public let value: Double
 }
 
-public struct HavingLessThan: Codable, Hashable, Equatable {
+public struct HavingLessThan: Codable, Hashable, Equatable, Sendable {
     public init(aggregation: String, value: Double) {
         self.aggregation = aggregation
         self.value = value
@@ -131,7 +131,7 @@ public struct HavingLessThan: Codable, Hashable, Equatable {
     public let value: Double
 }
 
-public struct HavingDimensionSelector: Codable, Hashable, Equatable {
+public struct HavingDimensionSelector: Codable, Hashable, Equatable, Sendable {
     public init(dimension: String, value: String) {
         self.dimension = dimension
         self.value = value
@@ -141,7 +141,7 @@ public struct HavingDimensionSelector: Codable, Hashable, Equatable {
     public let value: String
 }
 
-public struct HavingAnd: Codable, Hashable, Equatable {
+public struct HavingAnd: Codable, Hashable, Equatable, Sendable {
     public init(havingSpecs: [HavingSpec]) {
         self.havingSpecs = havingSpecs
     }
@@ -149,7 +149,7 @@ public struct HavingAnd: Codable, Hashable, Equatable {
     public let havingSpecs: [HavingSpec]
 }
 
-public struct HavingOr: Codable, Hashable, Equatable {
+public struct HavingOr: Codable, Hashable, Equatable, Sendable {
     public init(havingSpecs: [HavingSpec]) {
         self.havingSpecs = havingSpecs
     }
@@ -157,7 +157,7 @@ public struct HavingOr: Codable, Hashable, Equatable {
     public let havingSpecs: [HavingSpec]
 }
 
-public struct HavingNot: Codable, Hashable, Equatable {
+public struct HavingNot: Codable, Hashable, Equatable, Sendable {
     public init(havingSpec: HavingSpec) {
         self.havingSpec = havingSpec
     }

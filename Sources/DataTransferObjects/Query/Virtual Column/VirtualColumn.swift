@@ -1,4 +1,4 @@
-public indirect enum VirtualColumn: Codable, Hashable, Equatable {
+public indirect enum VirtualColumn: Codable, Hashable, Equatable, Sendable {
     case expression(ExpressionVirtualColumn)
     case listFiltered(ListFilteredVirtualColumn)
 

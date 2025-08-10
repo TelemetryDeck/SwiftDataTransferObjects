@@ -1,6 +1,6 @@
 import Foundation
 
-public enum StringComparators: String, Codable, Equatable, Hashable {
+public enum StringComparators: String, Codable, Equatable, Hashable, Sendable {
     /// Sorts values by converting Strings to their UTF-8 byte array representations and comparing lexicographically, byte-by-byte.
     case lexicographic
 

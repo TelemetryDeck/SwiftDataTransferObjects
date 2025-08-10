@@ -6,7 +6,7 @@ import Foundation
 ///
 /// If an etraction function is set, it returns dimension values transformed using the given
 /// extraction function.
-public indirect enum DimensionSpec: Codable, Equatable, Hashable {
+public indirect enum DimensionSpec: Codable, Equatable, Hashable, Sendable {
     case `default`(DefaultDimensionSpec)
     case extraction(ExtractionDimensionSpec)
 
@@ -42,13 +42,13 @@ public indirect enum DimensionSpec: Codable, Equatable, Hashable {
     }
 }
 
-public enum OutputType: String, Codable, Equatable, Hashable {
+public enum OutputType: String, Codable, Equatable, Hashable, Sendable {
     case string = "STRING"
     case long = "LONG"
     case float = "FLOAT"
 }
 
-public struct DefaultDimensionSpec: Codable, Equatable, Hashable {
+public struct DefaultDimensionSpec: Codable, Equatable, Hashable, Sendable {
     public init(dimension: String, outputName: String, outputType: OutputType? = nil) {
         self.dimension = dimension
         self.outputName = outputName
@@ -60,7 +60,7 @@ public struct DefaultDimensionSpec: Codable, Equatable, Hashable {
     public let outputType: OutputType?
 }
 
-public struct ExtractionDimensionSpec: Codable, Equatable, Hashable {
+public struct ExtractionDimensionSpec: Codable, Equatable, Hashable, Sendable {
     public init(dimension: String, outputName: String, outputType: OutputType? = nil, extractionFn: ExtractionFunction) {
         self.dimension = dimension
         self.outputName = outputName

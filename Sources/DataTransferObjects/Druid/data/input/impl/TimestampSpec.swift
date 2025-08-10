@@ -9,7 +9,7 @@
 /// Treat __time as a millisecond timestamp: the number of milliseconds since Jan 1, 1970 at midnight UTC.
 ///
 /// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/data/input/impl/TimestampSpec.java
-public struct TimestampSpec: Codable, Hashable, Equatable {
+public struct TimestampSpec: Codable, Hashable, Equatable, Sendable {
     public init(
         column: String? = nil,
         format: TimestampSpec.TimestampSpecFormat? = nil,
@@ -20,7 +20,7 @@ public struct TimestampSpec: Codable, Hashable, Equatable {
         self.missingValue = missingValue
     }
 
-    public enum TimestampSpecFormat: String, Codable, CaseIterable {
+    public enum TimestampSpecFormat: String, Codable, CaseIterable, Sendable {
         case iso
         case posix
         case millis

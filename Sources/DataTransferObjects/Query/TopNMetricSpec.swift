@@ -1,7 +1,7 @@
 import Foundation
 
 /// Specifies how topN values should be sorted.
-public indirect enum TopNMetricSpec: Codable, Equatable, Hashable {
+public indirect enum TopNMetricSpec: Codable, Equatable, Hashable, Sendable {
     case numeric(NumericTopNMetricSpec)
     case dimension(DimensionTopNMetricSpec)
     case inverted(InvertedTopNMetricSpec)
@@ -44,7 +44,7 @@ public indirect enum TopNMetricSpec: Codable, Equatable, Hashable {
 }
 
 /// The simplest metric specification is a String value indicating the metric to sort topN results by
-public struct NumericTopNMetricSpec: Codable, Equatable, Hashable {
+public struct NumericTopNMetricSpec: Codable, Equatable, Hashable, Sendable {
     public init(metric: String) {
         self.metric = metric
     }
@@ -54,7 +54,7 @@ public struct NumericTopNMetricSpec: Codable, Equatable, Hashable {
 }
 
 /// This metric specification sorts TopN results by dimension value
-public struct DimensionTopNMetricSpec: Codable, Equatable, Hashable {
+public struct DimensionTopNMetricSpec: Codable, Equatable, Hashable, Sendable {
     public init(ordering: StringComparators, previousStop: String? = nil) {
         self.ordering = ordering
         self.previousStop = previousStop
@@ -67,7 +67,7 @@ public struct DimensionTopNMetricSpec: Codable, Equatable, Hashable {
 }
 
 /// Sort dimension values in inverted order, i.e inverts the order of the delegate metric spec. It can be used to sort the values in ascending order.
-public struct InvertedTopNMetricSpec: Codable, Equatable, Hashable {
+public struct InvertedTopNMetricSpec: Codable, Equatable, Hashable, Sendable {
     public init(metric: TopNMetricSpec) {
         self.metric = metric
     }

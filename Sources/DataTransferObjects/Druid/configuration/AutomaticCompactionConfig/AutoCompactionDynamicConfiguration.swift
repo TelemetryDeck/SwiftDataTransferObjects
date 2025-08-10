@@ -1,5 +1,5 @@
 /// Defines Automatic Compaction settings for a data source
-public struct AutoCompactionDynamicConfig: Codable, Hashable, Equatable {
+public struct AutoCompactionDynamicConfig: Codable, Hashable, Equatable, Sendable {
     public init(
         dataSource: String,
         taskPriority: Int?,

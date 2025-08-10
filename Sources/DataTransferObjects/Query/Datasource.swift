@@ -1,6 +1,6 @@
 import Foundation
 
-public struct DataSource: Codable, Hashable, Equatable {
+public struct DataSource: Codable, Hashable, Equatable, Sendable {
     public init(type: DataSource.DataSourceType, name: String) {
         self.type = type
         self.name = name
@@ -11,7 +11,7 @@ public struct DataSource: Codable, Hashable, Equatable {
         self.name = name
     }
 
-    public enum DataSourceType: String, Codable, Hashable, Equatable {
+    public enum DataSourceType: String, Codable, Hashable, Equatable, Sendable {
         case table
     }
 

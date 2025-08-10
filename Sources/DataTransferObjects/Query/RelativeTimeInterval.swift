@@ -1,7 +1,7 @@
 import DateOperations
 import Foundation
 
-public struct RelativeTimeInterval: Codable, Hashable, Equatable {
+public struct RelativeTimeInterval: Codable, Hashable, Equatable, Sendable {
     public init(beginningDate: RelativeDate, endDate: RelativeDate) {
         self.beginningDate = beginningDate
         self.endDate = endDate
@@ -11,8 +11,8 @@ public struct RelativeTimeInterval: Codable, Hashable, Equatable {
     public let endDate: RelativeDate
 }
 
-public struct RelativeDate: Codable, Hashable, Equatable {
-    public enum RelativeDateComponent: String, Codable, Hashable, Equatable {
+public struct RelativeDate: Codable, Hashable, Equatable, Sendable {
+    public enum RelativeDateComponent: String, Codable, Hashable, Equatable, Sendable {
         case hour
         case day
         case week
@@ -38,7 +38,7 @@ public struct RelativeDate: Codable, Hashable, Equatable {
         }
     }
 
-    public enum ComponentPosition: String, Codable, Hashable, Equatable {
+    public enum ComponentPosition: String, Codable, Hashable, Equatable, Sendable {
         /// Generate a date at the first possible moment in the specified component
         case beginning
 

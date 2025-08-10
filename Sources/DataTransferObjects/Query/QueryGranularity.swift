@@ -1,4 +1,4 @@
-public enum QueryGranularity: String, Codable, Hashable, CaseIterable {
+public enum QueryGranularity: String, Codable, Hashable, CaseIterable, Sendable {
     case all
     case none
     case second

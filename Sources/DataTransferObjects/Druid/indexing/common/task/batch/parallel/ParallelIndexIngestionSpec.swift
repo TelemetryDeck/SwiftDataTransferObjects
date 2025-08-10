@@ -1,5 +1,5 @@
 /// The container object for the supervisor configuration.
-public struct ParallelIndexIngestionSpec: Codable, Hashable, Equatable {
+public struct ParallelIndexIngestionSpec: Codable, Hashable, Equatable, Sendable {
     public init(ioConfig: IoConfig? = nil, tuningConfig: TuningConfig? = nil, dataSchema: DataSchema? = nil) {
         self.ioConfig = ioConfig
         self.tuningConfig = tuningConfig

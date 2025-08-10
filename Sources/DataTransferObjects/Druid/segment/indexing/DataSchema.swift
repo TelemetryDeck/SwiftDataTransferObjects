@@ -1,7 +1,7 @@
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec#dataschema
 ///
 /// https://github.com/apache/druid/blob/master/server/src/main/java/org/apache/druid/segment/indexing/DataSchema.java
-public struct DataSchema: Codable, Hashable, Equatable {
+public struct DataSchema: Codable, Hashable, Equatable, Sendable {
     public init(
         dataSource: String,
         timestampSpec: TimestampSpec? = nil,

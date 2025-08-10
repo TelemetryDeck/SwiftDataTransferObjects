@@ -5,7 +5,7 @@ import Foundation
 /// Maps to "seriesConfiguration" internally in the charting library.
 ///
 /// Subset of https://echarts.apache.org/en/option.html#series-line
-public struct ChartAggregationConfiguration: Codable, Equatable {
+public struct ChartAggregationConfiguration: Codable, Equatable, Sendable {
     public var startAngle: Int?
     public var endAngle: Int?
     public var radius: [String]?

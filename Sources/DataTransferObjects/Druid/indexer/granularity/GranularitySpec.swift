@@ -1,6 +1,6 @@
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec/#granularityspec
 /// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/indexer/granularity/GranularitySpec.java
-public struct GranularitySpec: Codable, Hashable, Equatable {
+public struct GranularitySpec: Codable, Hashable, Equatable, Sendable {
     public init(
         type: GranularitySpec.GranularitySpecType? = nil,
         segmentGranularity: QueryGranularity? = nil,
@@ -15,7 +15,7 @@ public struct GranularitySpec: Codable, Hashable, Equatable {
         self.intervals = intervals
     }
 
-    public enum GranularitySpecType: String, Codable, CaseIterable {
+    public enum GranularitySpecType: String, Codable, CaseIterable, Sendable {
         case uniform
     }
 

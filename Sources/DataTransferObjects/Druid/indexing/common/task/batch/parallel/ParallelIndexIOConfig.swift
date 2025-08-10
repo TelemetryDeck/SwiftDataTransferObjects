@@ -1,6 +1,6 @@
 /// https://druid.apache.org/docs/latest/ingestion/native-batch#ioconfig
 /// https://github.com/apache/druid/blob/master/indexing-service/src/main/java/org/apache/druid/indexing/common/task/batch/parallel/ParallelIndexIOConfig.java
-public struct ParallelIndexIOConfig: Codable, Hashable, Equatable {
+public struct ParallelIndexIOConfig: Codable, Hashable, Equatable, Sendable {
     public init(inputFormat: InputFormat?, inputSource: InputSource? = nil, appendToExisting: Bool? = nil, dropExisting: Bool? = nil) {
         self.inputFormat = inputFormat
         self.inputSource = inputSource

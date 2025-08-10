@@ -1,7 +1,7 @@
 /// Defines segment storage format options to use at indexing time
 ///
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec/#indexspec
-public struct IndexSpec: Codable, Hashable, Equatable {
+public struct IndexSpec: Codable, Hashable, Equatable, Sendable {
     public init(
         bitmap: IndexSpecBitmap? = nil,
         dimensionCompression: IndexSpec.CompressionType? = nil,
@@ -20,7 +20,7 @@ public struct IndexSpec: Codable, Hashable, Equatable {
         self.jsonCompression = jsonCompression
     }
 
-    public enum CompressionType: String, Codable, CaseIterable {
+    public enum CompressionType: String, Codable, CaseIterable, Sendable {
         case lz4
         case lzf
         case zstd
@@ -28,7 +28,7 @@ public struct IndexSpec: Codable, Hashable, Equatable {
         case none
     }
 
-    public enum LongEncodingType: String, Codable, CaseIterable {
+    public enum LongEncodingType: String, Codable, CaseIterable, Sendable {
         case longs
         case auto
     }
@@ -42,12 +42,12 @@ public struct IndexSpec: Codable, Hashable, Equatable {
     public let jsonCompression: CompressionType?
 }
 
-public struct IndexSpecBitmap: Codable, Hashable, Equatable {
+public struct IndexSpecBitmap: Codable, Hashable, Equatable, Sendable {
     public init(type: IndexSpecBitmap.IndexSpecBitmapType) {
         self.type = type
     }
 
-    public enum IndexSpecBitmapType: String, Codable, CaseIterable {
+    public enum IndexSpecBitmapType: String, Codable, CaseIterable, Sendable {
         case roaring
         case concise
     }
@@ -55,7 +55,7 @@ public struct IndexSpecBitmap: Codable, Hashable, Equatable {
     public let type: IndexSpecBitmapType
 }
 
-public struct StringDictionaryEncoding: Codable, Hashable, Equatable {
+public struct StringDictionaryEncoding: Codable, Hashable, Equatable, Sendable {
     public init(
         type: StringDictionaryEncoding.StringDictionaryEncodingType,
         bucketSize: Int? = nil,
@@ -66,7 +66,7 @@ public struct StringDictionaryEncoding: Codable, Hashable, Equatable {
         self.formatVersion = formatVersion
     }
 
-    public enum StringDictionaryEncodingType: String, Codable, CaseIterable {
+    public enum StringDictionaryEncodingType: String, Codable, CaseIterable, Sendable {
         case utf8
         case frontCoded
     }

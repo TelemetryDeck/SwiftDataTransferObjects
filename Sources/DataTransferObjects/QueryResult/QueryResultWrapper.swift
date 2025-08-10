@@ -1,6 +1,6 @@
 import Foundation
 
-public struct QueryResultWrapper: Codable, Hashable, Equatable {
+public struct QueryResultWrapper: Codable, Hashable, Equatable, Sendable {
     public let result: QueryResult?
     public let error: String?
 

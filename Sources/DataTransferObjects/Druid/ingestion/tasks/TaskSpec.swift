@@ -4,7 +4,7 @@
 /// tasks are generally submitted for you by a supervisor.
 ///
 /// https://druid.apache.org/docs/latest/ingestion/tasks
-public indirect enum TaskSpec: Codable, Hashable, Equatable {
+public indirect enum TaskSpec: Codable, Hashable, Equatable, Sendable {
     case indexParallel(IndexParallelTaskSpec)
 
     enum CodingKeys: String, CodingKey {

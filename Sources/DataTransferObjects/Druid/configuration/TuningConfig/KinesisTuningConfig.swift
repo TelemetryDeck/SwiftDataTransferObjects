@@ -1,6 +1,6 @@
 /// https://druid.apache.org/docs/latest/ingestion/supervisor/#tuning-configuration
 /// https://druid.apache.org/docs/latest/ingestion/kinesis-ingestion#tuning-configuration
-public struct KinesisTuningConfig: Codable, Hashable, Equatable {
+public struct KinesisTuningConfig: Codable, Hashable, Equatable, Sendable {
     public init(
         skipSequenceNumberAvailabilityCheck: Bool? = nil,
         recordBufferSizeBytes: Int? = nil,
@@ -165,7 +165,7 @@ public struct KinesisTuningConfig: Codable, Hashable, Equatable {
     public let appendableIndexSpec: AppendableIndexSpec?
 }
 
-public struct AppendableIndexSpec: Codable, Hashable, Equatable {
+public struct AppendableIndexSpec: Codable, Hashable, Equatable, Sendable {
     public init(type: String, preserveExistingMetrics: Bool? = nil) {
         self.type = type
         self.preserveExistingMetrics = preserveExistingMetrics

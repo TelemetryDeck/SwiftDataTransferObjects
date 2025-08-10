@@ -1,4 +1,4 @@
-public indirect enum TuningConfig: Codable, Hashable, Equatable {
+public indirect enum TuningConfig: Codable, Hashable, Equatable, Sendable {
     case kinesis(KinesisTuningConfig)
     case indexParallel(IndexParallelTuningConfig)
     // case kafka not implemented

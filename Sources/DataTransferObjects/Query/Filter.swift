@@ -3,7 +3,7 @@ import Foundation
 /// The selector filter will match a specific dimension with a specific value.
 /// Selector filters can be used as the base filters for more complex Boolean
 /// expressions of filters.
-public struct FilterSelector: Codable, Hashable, Equatable {
+public struct FilterSelector: Codable, Hashable, Equatable, Sendable {
     public init(dimension: String, value: String) {
         self.dimension = dimension
         self.value = value
@@ -15,7 +15,7 @@ public struct FilterSelector: Codable, Hashable, Equatable {
 
 /// The column comparison filter is similar to the selector filter, but instead
 /// compares dimensions to each other.
-public struct FilterColumnComparison: Codable, Hashable, Equatable {
+public struct FilterColumnComparison: Codable, Hashable, Equatable, Sendable {
     public init(dimensions: [String]) {
         self.dimensions = dimensions
     }
@@ -32,7 +32,7 @@ public struct FilterColumnComparison: Codable, Hashable, Equatable {
 /// ranges and translates to an OR of Bound filters on those millisecond ranges,
 /// with numeric comparison. The Bound filters will have left-closed and
 /// right-open matching (i.e., start <= time < end).
-public struct FilterInterval: Codable, Hashable, Equatable {
+public struct FilterInterval: Codable, Hashable, Equatable, Sendable {
     public init(dimension: String, intervals: [QueryTimeInterval]? = nil, relativeIntervals: [RelativeTimeInterval]? = nil) {
         self.dimension = dimension
         self.intervals = intervals
@@ -49,7 +49,7 @@ public struct FilterInterval: Codable, Hashable, Equatable {
 /// pattern can be any standard Java regular expression.
 ///
 /// @see http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html
-public struct FilterRegex: Codable, Hashable, Equatable {
+public struct FilterRegex: Codable, Hashable, Equatable, Sendable {
     public init(dimension: String, pattern: String) {
         self.dimension = dimension
         self.pattern = pattern
@@ -62,7 +62,7 @@ public struct FilterRegex: Codable, Hashable, Equatable {
 // The Range Filter can be used to filter on ranges of dimension values. It can be
 // used for comparison filtering like greater than, less than, greater than or equal
 // to, less than or equal to, and "between"
-public struct FilterRange: Codable, Hashable, Equatable {
+public struct FilterRange: Codable, Hashable, Equatable, Sendable {
     public init(
         column: String,
         matchValueType: FilterRange.MatchValueType,
@@ -79,7 +79,7 @@ public struct FilterRange: Codable, Hashable, Equatable {
         self.upperOpen = upperOpen
     }
 
-    public enum MatchValueType: String, Codable, Hashable, Equatable {
+    public enum MatchValueType: String, Codable, Hashable, Equatable, Sendable {
         case String = "STRING"
         case Double = "DOUBLE"
     }
@@ -113,7 +113,7 @@ public struct FilterRange: Codable, Hashable, Equatable {
 }
 
 // logical expression filters
-public struct FilterExpression: Codable, Hashable, Equatable {
+public struct FilterExpression: Codable, Hashable, Equatable, Sendable {
     public init(fields: [Filter]) {
         self.fields = fields
     }
@@ -121,7 +121,7 @@ public struct FilterExpression: Codable, Hashable, Equatable {
     public let fields: [Filter]
 }
 
-public struct FilterNot: Codable, Hashable, Equatable {
+public struct FilterNot: Codable, Hashable, Equatable, Sendable {
     public init(field: Filter) {
         self.field = field
     }
@@ -131,7 +131,7 @@ public struct FilterNot: Codable, Hashable, Equatable {
 
 /// A filter is a JSON object indicating which rows of data should be included in the computation
 /// for a query. It’s essentially the equivalent of the WHERE clause in SQL.
-public indirect enum Filter: Codable, Hashable, Equatable {
+public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
     /// The selector filter will match a specific dimension with a specific value.
     /// Selector filters can be used as the base filters for more complex Boolean
     /// expressions of filters.

@@ -4,7 +4,7 @@
 /// field needs to be specified in the ingestion spec when using this input source.
 /// https://github.com/apache/druid/blob/master/indexing-service/src/main/java/org/apache/druid/indexing/input/DruidInputSource.java
 ///
-public struct DruidInputSource: Codable, Hashable, Equatable {
+public struct DruidInputSource: Codable, Hashable, Equatable, Sendable {
     public init(dataSource: String, interval: QueryTimeInterval, filter: Filter? = nil) {
         self.dataSource = dataSource
         self.interval = interval

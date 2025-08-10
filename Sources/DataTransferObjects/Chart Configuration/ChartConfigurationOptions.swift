@@ -3,7 +3,7 @@ import Foundation
 /// Options for configuring a chart in our charting library
 ///
 /// Subset of echart's options https://echarts.apache.org/en/option.html
-public struct ChartConfigurationOptions: Codable, Equatable {
+public struct ChartConfigurationOptions: Codable, Equatable, Sendable {
     /// Whether to enable animation.
     public var animation: Bool?
 
@@ -40,7 +40,7 @@ public struct ChartConfigurationOptions: Codable, Equatable {
     }
 }
 
-public struct ToolTipConfiguration: Codable, Equatable {
+public struct ToolTipConfiguration: Codable, Equatable, Sendable {
     public var show: Bool?
 
     public init(show: Bool? = nil) {
@@ -48,7 +48,7 @@ public struct ToolTipConfiguration: Codable, Equatable {
     }
 }
 
-public struct GridConfiguration: Codable, Equatable {
+public struct GridConfiguration: Codable, Equatable, Sendable {
     public var top: Int?
     public var bottom: Int?
     public var left: Int?
@@ -70,7 +70,7 @@ public struct GridConfiguration: Codable, Equatable {
     }
 }
 
-public enum EasingFunction: String, Codable {
+public enum EasingFunction: String, Codable, Sendable {
     case linear
     case quadraticIn
     case quadraticOut
@@ -104,7 +104,7 @@ public enum EasingFunction: String, Codable {
     case bounceInOut
 }
 
-public struct AxisOptions: Codable, Equatable {
+public struct AxisOptions: Codable, Equatable, Sendable {
     /// Set this to false to prevent the axis from showing.
     public var show: Bool?
     public var position: Position?
@@ -127,12 +127,12 @@ public struct AxisOptions: Codable, Equatable {
         self.inverse = inverse
     }
 
-    public enum Position: String, Codable, Equatable {
+    public enum Position: String, Codable, Equatable, Sendable {
         case top
         case bottom
     }
 
-    public enum AxisType: String, Codable, Equatable {
+    public enum AxisType: String, Codable, Equatable, Sendable {
         /// Numerical axis, suitable for continuous data.
         case value
 

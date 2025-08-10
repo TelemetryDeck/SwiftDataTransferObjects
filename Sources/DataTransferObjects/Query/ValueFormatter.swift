@@ -1,10 +1,10 @@
-public struct ValueFormatter: Codable, Hashable, Equatable {
+public struct ValueFormatter: Codable, Hashable, Equatable, Sendable {
     public let locale: String?
     public let options: ValueFormatterOptions?
 }
 
 /// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#currencydisplay
-public struct ValueFormatterOptions: Codable, Hashable, Equatable {
+public struct ValueFormatterOptions: Codable, Hashable, Equatable, Sendable {
     public let style: ValueFormatterStyle?
 
     public let currency: String?
@@ -30,38 +30,38 @@ public struct ValueFormatterOptions: Codable, Hashable, Equatable {
     public let signDisplay: ValueFormatterSignDisplay?
 }
 
-public enum ValueFormatterStyle: String, Codable, Hashable, Equatable {
+public enum ValueFormatterStyle: String, Codable, Hashable, Equatable, Sendable {
     case decimal
     case currency
     case percent
     case unit
 }
 
-public enum ValueFormatterCurrencyDisplay: String, Codable, Hashable, Equatable {
+public enum ValueFormatterCurrencyDisplay: String, Codable, Hashable, Equatable, Sendable {
     case code
     case symbol
     case narrowSymbol
     case name
 }
 
-public enum ValueFormatterCurrencySign: String, Codable, Hashable, Equatable {
+public enum ValueFormatterCurrencySign: String, Codable, Hashable, Equatable, Sendable {
     case standard
     case accounting
 }
 
-public enum ValueFormatterUnitDisplay: String, Codable, Hashable, Equatable {
+public enum ValueFormatterUnitDisplay: String, Codable, Hashable, Equatable, Sendable {
     case short
     case narrow
     case long
 }
 
-public enum ValueFormatterRoundingPriority: String, Codable, Hashable, Equatable {
+public enum ValueFormatterRoundingPriority: String, Codable, Hashable, Equatable, Sendable {
     case auto
     case morePrecision
     case lessPrecision
 }
 
-public enum ValueFormatterRoundingMode: Codable, Hashable, Equatable {
+public enum ValueFormatterRoundingMode: Codable, Hashable, Equatable, Sendable {
     case ceil
     case floor
     case expand
@@ -73,24 +73,24 @@ public enum ValueFormatterRoundingMode: Codable, Hashable, Equatable {
     case halfEven
 }
 
-public enum ValueFormatterTrailingZeroDisplay: String, Codable, Hashable, Equatable {
+public enum ValueFormatterTrailingZeroDisplay: String, Codable, Hashable, Equatable, Sendable {
     case auto
     case stripIfInteger
 }
 
-public enum ValueFormatterNotation: String, Codable, Hashable, Equatable {
+public enum ValueFormatterNotation: String, Codable, Hashable, Equatable, Sendable {
     case standard
     case scientific
     case engineering
     case compact
 }
 
-public enum ValueFormatterCompactDisplay: String, Codable, Hashable, Equatable {
+public enum ValueFormatterCompactDisplay: String, Codable, Hashable, Equatable, Sendable {
     case short
     case long
 }
 
-public enum ValueFormatterUseGrouping: String, Codable, Hashable, Equatable {
+public enum ValueFormatterUseGrouping: String, Codable, Hashable, Equatable, Sendable {
     case always
     case auto
     case min2
@@ -98,7 +98,7 @@ public enum ValueFormatterUseGrouping: String, Codable, Hashable, Equatable {
     case `false`
 }
 
-public enum ValueFormatterSignDisplay: String, Codable, Hashable, Equatable {
+public enum ValueFormatterSignDisplay: String, Codable, Hashable, Equatable, Sendable {
     case auto
     case always
     case exceptZero

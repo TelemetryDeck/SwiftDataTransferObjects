@@ -2,7 +2,7 @@ import Crypto
 import Foundation
 
 /// Custom JSON based  query
-public struct CustomQuery: Codable, Hashable, Equatable {
+public struct CustomQuery: Codable, Hashable, Equatable, Sendable {
     public init(
         queryType: CustomQuery.QueryType,
         compilationStatus: CompilationStatus? = nil,
@@ -135,7 +135,7 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         self.successCriterion = successCriterion
     }
 
-    public enum QueryType: String, Codable, CaseIterable, Identifiable {
+    public enum QueryType: String, Codable, CaseIterable, Identifiable, Sendable {
         public var id: String { rawValue }
 
         case timeseries
@@ -150,12 +150,12 @@ public struct CustomQuery: Codable, Hashable, Equatable {
         // case retention
     }
 
-    public enum Order: String, Codable, CaseIterable {
+    public enum Order: String, Codable, CaseIterable, Sendable {
         case ascending
         case descending
     }
 
-    public enum CompilationStatus: String, Codable, CaseIterable, Identifiable {
+    public enum CompilationStatus: String, Codable, CaseIterable, Identifiable, Sendable {
         public var id: String { rawValue }
 
         case notCompiled

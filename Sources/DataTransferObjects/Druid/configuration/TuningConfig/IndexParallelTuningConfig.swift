@@ -1,4 +1,4 @@
-public struct IndexParallelTuningConfig: Codable, Hashable, Equatable {
+public struct IndexParallelTuningConfig: Codable, Hashable, Equatable, Sendable {
     public init(
         maxRowsInMemory: Int? = nil,
         maxBytesInMemory: Int? = nil,

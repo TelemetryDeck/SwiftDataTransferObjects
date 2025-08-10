@@ -6,7 +6,7 @@ import Foundation
 /// If you include a post aggregation as part of a query, make sure to include all aggregators the post-aggregator requires.
 ///
 /// https://druid.apache.org/docs/latest/querying/post-aggregations.html
-public indirect enum PostAggregator: Codable, Hashable, Equatable {
+public indirect enum PostAggregator: Codable, Hashable, Equatable, Sendable {
     // Included
     case arithmetic(ArithmetricPostAggregator)
     case fieldAccess(FieldAccessPostAggregator)
@@ -172,7 +172,7 @@ public indirect enum PostAggregator: Codable, Hashable, Equatable {
     }
 }
 
-public enum PostAggregatorType: String, Codable, Hashable {
+public enum PostAggregatorType: String, Codable, Hashable, Sendable {
     case arithmetic
     case fieldAccess
     case finalizingFieldAccess
@@ -196,7 +196,7 @@ public enum PostAggregatorType: String, Codable, Hashable {
     case pvalue2tailedZtest
 }
 
-public enum PostAggregatorOrdering: String, Codable, Hashable {
+public enum PostAggregatorOrdering: String, Codable, Hashable, Sendable {
     case numericFirst
 }
 
@@ -217,7 +217,7 @@ public enum PostAggregatorOrdering: String, Codable, Hashable {
 ///
 /// - If no ordering (or null) is specified, the default floating point ordering is used.
 /// - numericFirst ordering always returns finite values first, followed by NaN, and infinite values last.
-public struct ArithmetricPostAggregator: Codable, Hashable {
+public struct ArithmetricPostAggregator: Codable, Hashable, Sendable {
     public init(name: String, function: MathematicalFunction, fields: [PostAggregator], ordering: PostAggregatorOrdering? = nil) {
         type = .arithmetic
         self.name = name
@@ -226,7 +226,7 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
         self.ordering = ordering
     }
 
-    public enum MathematicalFunction: String, Codable, Hashable {
+    public enum MathematicalFunction: String, Codable, Hashable, Sendable {
         case addition = "+"
         case subtraction = "-"
         case multiplication = "*"
@@ -253,7 +253,7 @@ public struct ArithmetricPostAggregator: Codable, Hashable {
 /// fieldName refers to the output name of the aggregator given in the aggregations portion of the query. For complex aggregators, like "cardinality" and
 /// "hyperUnique", the type of the post-aggregator determines what the post-aggregator will return. Use type "fieldAccess" to return the raw aggregation
 /// object, or use type "finalizingFieldAccess" to return a finalized value, such as an estimated cardinality.
-public struct FieldAccessPostAggregator: Codable, Hashable {
+public struct FieldAccessPostAggregator: Codable, Hashable, Sendable {
     public init(type: PostAggregatorType, name: String? = nil, fieldName: String) {
         self.type = type
         self.name = name
@@ -270,7 +270,7 @@ public struct FieldAccessPostAggregator: Codable, Hashable {
 }
 
 /// The constant post-aggregator always returns the specified value.
-public struct ConstantPostAggregator: Codable, Hashable {
+public struct ConstantPostAggregator: Codable, Hashable, Sendable {
     public init(name: String, value: Double) {
         type = .constant
         self.name = name
@@ -286,7 +286,7 @@ public struct ConstantPostAggregator: Codable, Hashable {
     public let value: Double
 }
 
-public struct GreatestLeastPostAggregator: Codable, Hashable {
+public struct GreatestLeastPostAggregator: Codable, Hashable, Sendable {
     public init(type: PostAggregatorType, name: String, fields: [PostAggregator]) {
         self.type = type
         self.name = name
@@ -303,7 +303,7 @@ public struct GreatestLeastPostAggregator: Codable, Hashable {
 
 /// The expression post-aggregator is defined using a Druid expression.
 /// see https://druid.apache.org/docs/latest/misc/math-expr.html
-public struct ExpressionPostAggregator: Codable, Hashable {
+public struct ExpressionPostAggregator: Codable, Hashable, Sendable {
     public init(name: String, expression: String, ordering: PostAggregatorOrdering? = nil) {
         type = .expression
         self.name = name
@@ -322,7 +322,7 @@ public struct ExpressionPostAggregator: Codable, Hashable {
 }
 
 /// The hyperUniqueCardinality post aggregator is used to wrap a hyperUnique object such that it can be used in post aggregations.
-public struct HyperUniqueCardinalityPostAggregator: Codable, Hashable {
+public struct HyperUniqueCardinalityPostAggregator: Codable, Hashable, Sendable {
     public init(name: String? = nil, fieldName: String) {
         type = .hyperUniqueCardinality
         self.name = name
@@ -335,7 +335,7 @@ public struct HyperUniqueCardinalityPostAggregator: Codable, Hashable {
 }
 
 ///   "field"  : <post aggregator of type fieldAccess that refers to a thetaSketch aggregator or that of type thetaSketchSetOp>
-public struct ThetaSketchEstimatePostAggregator: Codable, Hashable {
+public struct ThetaSketchEstimatePostAggregator: Codable, Hashable, Sendable {
     public init(name: String? = nil, field: PostAggregator) {
         type = .thetaSketchEstimate
         self.name = name
@@ -347,7 +347,7 @@ public struct ThetaSketchEstimatePostAggregator: Codable, Hashable {
     public let field: PostAggregator
 }
 
-public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
+public struct ThetaSketchSetOpPostAggregator: Codable, Hashable, Sendable {
     public init(name: String? = nil, func: ThetaSketchSetOpPostAggregator.SketchOperation, fields: [PostAggregator]) {
         type = .thetaSketchSetOp
         self.name = name
@@ -355,7 +355,7 @@ public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
         self.fields = fields
     }
 
-    public enum SketchOperation: String, Codable, Hashable {
+    public enum SketchOperation: String, Codable, Hashable, Sendable {
         case union = "UNION"
         case intersect = "INTERSECT"
         case not = "NOT"
@@ -376,7 +376,7 @@ public struct ThetaSketchSetOpPostAggregator: Codable, Hashable {
 /// Highly useful for A/B Tests and similar experiments.
 ///
 /// @see https://medium.com/paypal-tech/democratizing-experimentation-data-for-product-innovations-8b6e1cf40c27#DemocratizingExperimentationScience-Druid
-public struct ZScore2SamplePostAggregator: Codable, Hashable {
+public struct ZScore2SamplePostAggregator: Codable, Hashable, Sendable {
     public init(name: String, sample1Size: PostAggregator, successCount1: PostAggregator, sample2Size: PostAggregator, successCount2: PostAggregator) {
         type = .zscore2sample
         self.name = name
@@ -400,7 +400,7 @@ public struct ZScore2SamplePostAggregator: Codable, Hashable {
 /// calculated using the zscore2sample post aggregator
 ///
 /// @see https://medium.com/paypal-tech/democratizing-experimentation-data-for-product-innovations-8b6e1cf40c27#DemocratizingExperimentationScience-Druid
-public struct PValue2TailedZTestPostAggregator: Codable, Hashable {
+public struct PValue2TailedZTestPostAggregator: Codable, Hashable, Sendable {
     public init(name: String, zScore: PostAggregator) {
         type = .pvalue2tailedZtest
         self.name = name
@@ -416,7 +416,7 @@ public struct PValue2TailedZTestPostAggregator: Codable, Hashable {
 ///
 /// This returns an approximation to the value that would be preceded by a given fraction of a hypothetical sorted version of the input
 /// stream.
-public struct QuantilesDoublesSketchToQuantilePostAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchToQuantilePostAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         field: PostAggregator,
@@ -443,7 +443,7 @@ public struct QuantilesDoublesSketchToQuantilePostAggregator: Codable, Hashable 
 /// Quantiles
 ///
 /// This returns an array of quantiles corresponding to a given array of fractions
-public struct QuantilesDoublesSketchToQuantilesPostAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchToQuantilesPostAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         field: PostAggregator,
@@ -474,7 +474,7 @@ public struct QuantilesDoublesSketchToQuantilesPostAggregator: Codable, Hashable
 /// intervals. The definition of an interval is inclusive of the left split point and exclusive of the right split point. If the
 /// number of bins is specified instead of split points, the interval between the minimum and maximum values is divided into the
 /// given number of equally-spaced bins.
-public struct QuantilesDoublesSketchToHistogramPostAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchToHistogramPostAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         field: PostAggregator,
@@ -506,7 +506,7 @@ public struct QuantilesDoublesSketchToHistogramPostAggregator: Codable, Hashable
 /// Rank
 ///
 /// This returns an approximation to the rank of a given value that is the fraction of the distribution less than that value.
-public struct QuantilesDoublesSketchToRankPostAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchToRankPostAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         field: PostAggregator,
@@ -536,7 +536,7 @@ public struct QuantilesDoublesSketchToRankPostAggregator: Codable, Hashable {
 /// bins. An array of m unique, monotonically increasing split points divide the real number line into m+1 consecutive disjoint
 /// intervals. The definition of an interval is inclusive of the left split point and exclusive of the right split point. The resulting
 /// array of fractions can be viewed as ranks of each split point with one additional rank that is always 1.
-public struct QuantilesDoublesSketchToCDFPostAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchToCDFPostAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         field: PostAggregator,
@@ -563,7 +563,7 @@ public struct QuantilesDoublesSketchToCDFPostAggregator: Codable, Hashable {
 /// Sketch Summary
 ///
 /// This returns a summary of the sketch that can be used for debugging. This is the result of calling toString() method.
-public struct QuantilesDoublesSketchToStringPostAggregator: Codable, Hashable {
+public struct QuantilesDoublesSketchToStringPostAggregator: Codable, Hashable, Sendable {
     public init(
         name: String,
         field: PostAggregator

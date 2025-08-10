@@ -1,8 +1,8 @@
 import DateOperations
 import Foundation
 
-public struct QueryTimeIntervalsContainer: Codable, Hashable, Equatable {
-    public enum ContainerType: String, Codable, Hashable, Equatable {
+public struct QueryTimeIntervalsContainer: Codable, Hashable, Equatable, Sendable {
+    public enum ContainerType: String, Codable, Hashable, Equatable, Sendable {
         case intervals
     }
 
@@ -10,7 +10,7 @@ public struct QueryTimeIntervalsContainer: Codable, Hashable, Equatable {
     public let intervals: [QueryTimeInterval]
 }
 
-public struct QueryTimeInterval: Codable, Hashable, Equatable, Comparable {
+public struct QueryTimeInterval: Codable, Hashable, Equatable, Comparable, Sendable {
     public let beginningDate: Date
     public let endDate: Date
 

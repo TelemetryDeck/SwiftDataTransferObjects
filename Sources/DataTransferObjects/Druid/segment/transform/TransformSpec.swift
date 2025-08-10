@@ -2,7 +2,7 @@
 /// ingestion time. It is optional.
 ///
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec/#transformspec
-public struct TransformSpec: Codable, Hashable, Equatable {
+public struct TransformSpec: Codable, Hashable, Equatable, Sendable {
     public init(transforms: [TransformSpecTransform]? = nil, filter: Filter? = nil) {
         self.transforms = transforms
         self.filter = filter
@@ -12,7 +12,7 @@ public struct TransformSpec: Codable, Hashable, Equatable {
     public let filter: Filter?
 }
 
-public struct TransformSpecTransform: Codable, Hashable, Equatable {
+public struct TransformSpecTransform: Codable, Hashable, Equatable, Sendable {
     public init(type: String, name: String? = nil, expression: String? = nil) {
         self.type = type
         self.name = name

@@ -1,6 +1,6 @@
 /// https://druid.apache.org/docs/latest/ingestion/ingestion-spec/#dimensionsspec
 /// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/data/input/impl/DimensionsSpec.java
-public struct DimensionsSpec: Codable, Hashable, Equatable {
+public struct DimensionsSpec: Codable, Hashable, Equatable, Sendable {
     public init(
         dimensions: [IngestionDimensionSpecDimension]? = nil,
         dimensionExclusions: [String]? = nil,
@@ -60,7 +60,7 @@ public struct DimensionsSpec: Codable, Hashable, Equatable {
     public let forceSegmentSortByTime: Bool?
 }
 
-public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
+public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable, Sendable {
     public init(
         type: IngestionDimensionSpecDimension.DimensionType? = nil,
         name: String,
@@ -73,7 +73,7 @@ public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
         self.multiValueHandling = multiValueHandling
     }
 
-    public enum DimensionType: String, Codable, Hashable, Equatable {
+    public enum DimensionType: String, Codable, Hashable, Equatable, Sendable {
         case auto
         case string
         case long
@@ -82,7 +82,7 @@ public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
         case json
     }
 
-    public enum MultiValueHandlingOption: String, Codable, Hashable, Equatable {
+    public enum MultiValueHandlingOption: String, Codable, Hashable, Equatable, Sendable {
         case array
         case sorted_array
         case sorted_set
@@ -108,7 +108,7 @@ public struct IngestionDimensionSpecDimension: Codable, Hashable, Equatable {
     public let multiValueHandling: MultiValueHandlingOption?
 }
 
-public struct IngestionDimensionSpecSpatialDimension: Codable, Hashable, Equatable {
+public struct IngestionDimensionSpecSpatialDimension: Codable, Hashable, Equatable, Sendable {
     public init(dimName: String, dims: [String]? = nil) {
         self.dimName = dimName
         self.dims = dims

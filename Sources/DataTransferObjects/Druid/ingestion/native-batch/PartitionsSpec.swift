@@ -9,7 +9,7 @@
 /// For best-effort rollup, use dynamic.
 ///
 /// https://druid.apache.org/docs/latest/ingestion/native-batch/#partitionsspec
-public indirect enum PartitionsSpec: Codable, Hashable, Equatable {
+public indirect enum PartitionsSpec: Codable, Hashable, Equatable, Sendable {
     case dynamic(DynamicPartitionSpec)
     case hashed(HashedPartitionSpec)
     case singleDimension(SingleDimensionPartitionSpec)
@@ -64,7 +64,7 @@ public indirect enum PartitionsSpec: Codable, Hashable, Equatable {
 ///
 /// Whenever the number of rows in the current segment exceeds maxRowsPerSegment.
 /// When the total number of rows in all segments across all time chunks reaches to maxTotalRows. At this point the task pushes all segments created so far to the deep storage and creates new ones.
-public struct DynamicPartitionSpec: Codable, Hashable, Equatable {
+public struct DynamicPartitionSpec: Codable, Hashable, Equatable, Sendable {
     public init(maxRowsPerSegment: Int? = nil, maxTotalRows: Int? = nil) {
         self.maxRowsPerSegment = maxRowsPerSegment
         self.maxTotalRows = maxTotalRows
@@ -84,7 +84,7 @@ public struct DynamicPartitionSpec: Codable, Hashable, Equatable {
 /// In the partial segment generation phase, just like the Map phase in MapReduce, the Parallel task splits the input data based on the split hint spec and assigns each split to a worker task. Each worker task (type partial_index_generate) reads the assigned split, and partitions rows by the time chunk from segmentGranularity (primary partition key) in the granularitySpec and then by the hash value of partitionDimensions (secondary partition key) in the partitionsSpec. The partitioned data is stored in local storage of the middle Manager or the indexer.
 ///
 /// The partial segment merge phase is similar to the Reduce phase in MapReduce. The Parallel task spawns a new set of worker tasks (type partial_index_generic_merge) to merge the partitioned data created in the previous phase. Here, the partitioned data is shuffled based on the time chunk and the hash value of partitionDimensions to be merged; each worker task reads the data falling in the same time chunk and the same hash value from multiple Middle Manager/Indexer processes and merges them to create the final segments. Finally, they push the final segments to the deep storage at once.
-public struct HashedPartitionSpec: Codable, Hashable, Equatable {
+public struct HashedPartitionSpec: Codable, Hashable, Equatable, Sendable {
     public init(
         numShards: Int? = nil,
         targetRowsPerSegment: Int? = nil,
@@ -114,7 +114,7 @@ public struct HashedPartitionSpec: Codable, Hashable, Equatable {
 /// When you use this technique to partition your data, segment sizes may be unequally distributed if the data in your partitionDimension is also unequally distributed. Therefore, to avoid imbalance in data layout, review the distribution of values in your source data before deciding on a partitioning strategy.
 ///
 /// Range partitioning is not possible on multi-value dimensions. If the provided partitionDimension is multi-value, your ingestion job will report an error.
-public struct SingleDimensionPartitionSpec: Codable, Hashable, Equatable {
+public struct SingleDimensionPartitionSpec: Codable, Hashable, Equatable, Sendable {
     public init(
         partitionDimension: String,
         targetRowsPerSegment: Int? = nil,
@@ -145,7 +145,7 @@ public struct SingleDimensionPartitionSpec: Codable, Hashable, Equatable {
 /// Range partitioning has several benefits related to storage footprint and query performance. Multi-dimension range partitioning improves over single-dimension range partitioning by allowing Druid to distribute segment sizes more evenly, and to prune on more dimensions.
 ///
 /// Range partitioning is not possible on multi-value dimensions. If one of the provided partitionDimensions is multi-value, your ingestion job will report an error.
-public struct RangePartitionSpec: Codable, Hashable, Equatable {
+public struct RangePartitionSpec: Codable, Hashable, Equatable, Sendable {
     public init(
         partitionDimensions: [String],
         targetRowsPerSegment: Int? = nil,

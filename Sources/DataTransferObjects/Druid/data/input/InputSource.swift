@@ -1,5 +1,5 @@
 /// https://github.com/apache/druid/blob/master/processing/src/main/java/org/apache/druid/data/input/InputSource.java#L61
-public indirect enum InputSource: Codable, Hashable, Equatable {
+public indirect enum InputSource: Codable, Hashable, Equatable, Sendable {
     case druid(DruidInputSource)
 
     enum CodingKeys: String, CodingKey {

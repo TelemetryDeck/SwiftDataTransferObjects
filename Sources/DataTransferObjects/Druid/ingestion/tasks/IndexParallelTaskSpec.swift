@@ -14,7 +14,7 @@
 /// The detailed behavior of the parallel task is different depending on the partitionsSpec. See partitionsSpec for more details.
 ///
 /// https://druid.apache.org/docs/latest/ingestion/native-batch
-public struct IndexParallelTaskSpec: Codable, Hashable, Equatable {
+public struct IndexParallelTaskSpec: Codable, Hashable, Equatable, Sendable {
     public init(id: String? = nil, spec: ParallelIndexIngestionSpec) {
         self.id = id
         self.spec = spec

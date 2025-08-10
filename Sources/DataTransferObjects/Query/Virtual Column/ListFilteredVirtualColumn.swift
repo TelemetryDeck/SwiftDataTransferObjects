@@ -1,6 +1,6 @@
 /// This virtual column provides an alternative way to use 'list filtered' dimension spec as a virtual column. It has optimized access
 /// to the underlying column value indexes that can provide a small performance improvement in some cases.
-public struct ListFilteredVirtualColumn: Codable, Hashable, Equatable {
+public struct ListFilteredVirtualColumn: Codable, Hashable, Equatable, Sendable {
     public init(name: String, delegate: String, values: [String], isAllowList: Bool? = nil) {
         self.name = name
         self.delegate = delegate

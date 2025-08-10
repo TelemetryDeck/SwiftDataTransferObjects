@@ -1,5 +1,5 @@
 /// https://github.com/apache/druid/blob/master/server/src/main/java/org/apache/druid/segment/indexing/IOConfig.java
-public indirect enum IoConfig: Codable, Hashable, Equatable {
+public indirect enum IoConfig: Codable, Hashable, Equatable, Sendable {
     case kinesis(KinesisIndexTaskIOConfig)
     case indexParallel(ParallelIndexIOConfig)
 

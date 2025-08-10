@@ -1,6 +1,6 @@
 import Foundation
 
-public struct QueryContext: Codable, Hashable {
+public struct QueryContext: Codable, Hashable, Sendable {
     /// Query timeout in millis, beyond which unfinished queries will be cancelled. 0 timeout means no timeout.
     public var timeout: String?
 

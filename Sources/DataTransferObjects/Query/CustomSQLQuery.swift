@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CustomSQLQuery: Codable, Hashable {
+public struct CustomSQLQuery: Codable, Hashable, Sendable {
     let query: String
     let context: QueryContext
 

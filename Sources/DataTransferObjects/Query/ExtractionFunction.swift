@@ -1,7 +1,7 @@
 import Foundation
 
 /// Extraction functions define the transformation applied to each dimension value.
-public indirect enum ExtractionFunction: Codable, Equatable, Hashable {
+public indirect enum ExtractionFunction: Codable, Equatable, Hashable, Sendable {
     case regex(RegularExpressionExtractionFunction)
     case inlineLookup(InlineLookupExtractionFunction)
     case registeredLookup(RegisteredLookupExtractionFunction)
@@ -45,7 +45,7 @@ public indirect enum ExtractionFunction: Codable, Equatable, Hashable {
 
 /// Returns the first matching group for the given regular expression. If there is no match,
 /// it returns the dimension value as is.
-public struct RegularExpressionExtractionFunction: Codable, Equatable, Hashable {
+public struct RegularExpressionExtractionFunction: Codable, Equatable, Hashable, Sendable {
     public init(expr: String, index: Int = 1, replaceMissingValue: Bool = false, replaceMissingValueWith: String? = nil) {
         self.expr = expr
         self.index = index
@@ -81,7 +81,7 @@ public struct RegularExpressionExtractionFunction: Codable, Equatable, Hashable 
 /// retainMissingValue = false which causes missing values to be treated as missing.
 ///
 /// It is illegal to set retainMissingValue = true and also specify a replaceMissingValueWith.
-public struct InlineLookupExtractionFunction: Codable, Equatable, Hashable {
+public struct InlineLookupExtractionFunction: Codable, Equatable, Hashable, Sendable {
     public init(lookupMap: [String: String], retainMissingValue: Bool = true, injective: Bool = true, replaceMissingValueWith: String? = nil) {
         lookup = Lookup(map: lookupMap)
         self.retainMissingValue = retainMissingValue
@@ -89,7 +89,7 @@ public struct InlineLookupExtractionFunction: Codable, Equatable, Hashable {
         self.replaceMissingValueWith = replaceMissingValueWith
     }
 
-    public struct Lookup: Codable, Equatable, Hashable {
+    public struct Lookup: Codable, Equatable, Hashable, Sendable {
         public init(type: String = "map", map: [String: String]) {
             self.type = type
             self.map = map
@@ -106,7 +106,7 @@ public struct InlineLookupExtractionFunction: Codable, Equatable, Hashable {
 }
 
 /// The "registeredLookup" extraction function lets you refer to a lookup that has been registered in the cluster-wide configuration.
-public struct RegisteredLookupExtractionFunction: Codable, Equatable, Hashable {
+public struct RegisteredLookupExtractionFunction: Codable, Equatable, Hashable, Sendable {
     public init(lookup: String, retainMissingValue: Bool) {
         self.lookup = lookup
         self.retainMissingValue = retainMissingValue
