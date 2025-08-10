@@ -135,7 +135,7 @@ final class ExperimentQueryGenerationTests: XCTestCase {
             sample2: cohort2,
             successCriterion: successCriterion
         )
-        let generatedTinyQuery = try startingQuery.precompile(organizationAppIDs: organizationAppIDs, isSuperOrg: false)
+        let generatedTinyQuery = try startingQuery.precompile(useNamespace: false, organizationAppIDs: organizationAppIDs, isSuperOrg: false)
 
         XCTAssertEqual(tinyQuery.filter, generatedTinyQuery.filter)
         XCTAssertEqual(tinyQuery.aggregations, generatedTinyQuery.aggregations)
