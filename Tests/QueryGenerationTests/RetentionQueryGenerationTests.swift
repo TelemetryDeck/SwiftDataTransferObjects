@@ -121,6 +121,32 @@ final class RetentionQueryGenerationTests: XCTestCase {
         let end_august = Date(iso8601String: "2022-08-31T23:59:59.999Z")!
         let end_september = Date(iso8601String: "2022-09-30T23:59:59.999Z")!
 
+        // Test with new compile-down approach
+        let query1 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: begin_august, endDate: mid_august)],
+            granularity: .all
+        )
+        XCTAssertThrowsError(try query1.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        
+        let query2 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: begin_august, endDate: end_august)],
+            granularity: .all
+        )
+        XCTAssertThrowsError(try query2.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        
+        let query3 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: begin_august, endDate: end_september)],
+            granularity: .all
+        )
+        XCTAssertNoThrow(try query3.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        
+        // Also test legacy method for backwards compatibility if needed
         XCTAssertThrowsError(try RetentionQueryGenerator.generateRetentionQuery(dataSource: "com.telemetrydeck.all", appID: "", testMode: false, beginDate: begin_august, endDate: mid_august))
         XCTAssertThrowsError(try RetentionQueryGenerator.generateRetentionQuery(dataSource: "com.telemetrydeck.all", appID: "", testMode: false, beginDate: begin_august, endDate: end_august))
         XCTAssertNoThrow(try RetentionQueryGenerator.generateRetentionQuery(dataSource: "com.telemetrydeck.all", appID: "", testMode: false, beginDate: begin_august, endDate: end_september))
@@ -128,6 +154,24 @@ final class RetentionQueryGenerationTests: XCTestCase {
     }
 
     func testExample() throws {
+        // Test with new compile-down approach
+        let appID = UUID(uuidString: "79167A27-EBBF-4012-9974-160624E5D07B")!
+        let query = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            appID: appID,
+            baseFilters: .thisApp,
+            testMode: false,
+            intervals: [QueryTimeInterval(
+                beginningDate: Date(iso8601String: "2022-08-01T00:00:00.000Z")!,
+                endDate: Date(iso8601String: "2022-09-30T00:00:00.000Z")!
+            )],
+            granularity: .all
+        )
+        
+        let compiledQuery = try query.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [appID], isSuperOrg: true)
+        
+        // Also test legacy method for comparison
         let generatedTinyQuery = try RetentionQueryGenerator.generateRetentionQuery(
             dataSource: "com.telemetrydeck.all",
             appID: "79167A27-EBBF-4012-9974-160624E5D07B",

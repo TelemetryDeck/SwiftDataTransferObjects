@@ -147,7 +147,7 @@ public struct CustomQuery: Codable, Hashable, Equatable, Sendable {
         // derived types
         case funnel
         case experiment
-        // case retention
+        case retention
     }
 
     public enum Order: String, Codable, CaseIterable, Sendable {
@@ -183,7 +183,7 @@ public struct CustomQuery: Codable, Hashable, Equatable, Sendable {
 
     /// If a relative intervals are set, their calculated output replaces the regular intervals
     public var relativeIntervals: [RelativeTimeInterval]?
-    public let granularity: QueryGranularity?
+    public var granularity: QueryGranularity?
     public var aggregations: [Aggregator]?
     public var postAggregations: [PostAggregator]?
     public var limit: Int?

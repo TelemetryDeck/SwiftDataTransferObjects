@@ -48,6 +48,8 @@ public extension CustomQuery {
             query = try namespace == nil ? precompiledFunnelQuery() : precompiledFunnelQuery(accuracy: 65536)
         } else if query.queryType == .experiment {
             query = try precompiledExperimentQuery()
+        } else if query.queryType == .retention {
+            query = try precompiledRetentionQuery()
         }
 
         // Handle precompilable aggregators and post aggregators
