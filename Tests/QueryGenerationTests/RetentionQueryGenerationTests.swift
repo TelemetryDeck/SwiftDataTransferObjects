@@ -121,31 +121,72 @@ final class RetentionQueryGenerationTests: XCTestCase {
         let end_august = Date(iso8601String: "2022-08-31T23:59:59.999Z")!
         let end_september = Date(iso8601String: "2022-09-30T23:59:59.999Z")!
 
-        // Test with new compile-down approach
-        let query1 = CustomQuery(
+        // Test monthly retention (default)
+        let monthQuery1 = CustomQuery(
             queryType: .retention,
             dataSource: "com.telemetrydeck.all",
             intervals: [QueryTimeInterval(beginningDate: begin_august, endDate: mid_august)],
-            granularity: .all
+            granularity: .month
         )
-        XCTAssertThrowsError(try query1.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        XCTAssertThrowsError(try monthQuery1.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
         
-        let query2 = CustomQuery(
+        let monthQuery2 = CustomQuery(
             queryType: .retention,
             dataSource: "com.telemetrydeck.all",
             intervals: [QueryTimeInterval(beginningDate: begin_august, endDate: end_august)],
-            granularity: .all
+            granularity: .month
         )
-        XCTAssertThrowsError(try query2.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        XCTAssertThrowsError(try monthQuery2.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
         
-        let query3 = CustomQuery(
+        let monthQuery3 = CustomQuery(
             queryType: .retention,
             dataSource: "com.telemetrydeck.all",
             intervals: [QueryTimeInterval(beginningDate: begin_august, endDate: end_september)],
-            granularity: .all
+            granularity: .month
         )
-        XCTAssertNoThrow(try query3.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        XCTAssertNoThrow(try monthQuery3.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
         
+        // Test daily retention
+        let startDate = Date(iso8601String: "2022-08-01T00:00:00.000Z")!
+        let sameDay = Date(iso8601String: "2022-08-01T12:00:00.000Z")!
+        let nextDay = Date(iso8601String: "2022-08-02T00:00:00.000Z")!
+        
+        let dayQuery1 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: startDate, endDate: sameDay)],
+            granularity: .day
+        )
+        XCTAssertThrowsError(try dayQuery1.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        
+        let dayQuery2 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: startDate, endDate: nextDay)],
+            granularity: .day
+        )
+        XCTAssertNoThrow(try dayQuery2.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        
+        // Test weekly retention
+        let weekStart = Date(iso8601String: "2022-08-01T00:00:00.000Z")!
+        let weekMid = Date(iso8601String: "2022-08-05T00:00:00.000Z")!
+        let weekEnd = Date(iso8601String: "2022-08-08T00:00:00.000Z")!
+        
+        let weekQuery1 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: weekStart, endDate: weekMid)],
+            granularity: .week
+        )
+        XCTAssertThrowsError(try weekQuery1.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
+        
+        let weekQuery2 = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            intervals: [QueryTimeInterval(beginningDate: weekStart, endDate: weekEnd)],
+            granularity: .week
+        )
+        XCTAssertNoThrow(try weekQuery2.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [UUID()], isSuperOrg: false))
     }
 
     func testExample() throws {
@@ -161,7 +202,7 @@ final class RetentionQueryGenerationTests: XCTestCase {
                 beginningDate: Date(iso8601String: "2022-08-01T00:00:00.000Z")!,
                 endDate: Date(iso8601String: "2022-09-30T00:00:00.000Z")!
             )],
-            granularity: .all
+            granularity: .month  // Explicitly set to month
         )
         
         let compiledQuery = try query.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [appID], isSuperOrg: true)
@@ -174,40 +215,64 @@ final class RetentionQueryGenerationTests: XCTestCase {
         
         // The generated query should match the expected structure from tinyQuery
         // (though the exact aggregator names might differ due to date formatting)
-
-//        let aggregationNames = generatedTinyQuery.aggregations!.map { agg in
-//            switch agg {
-//            case .filtered(let filteredAgg):
-//                switch filteredAgg.aggregator {
-//                case .thetaSketch(let genAgg):
-//                    return genAgg.name
-//                default:
-//                    fatalError()
-//                }
-//            default:
-//                fatalError()
-//            }
-//        }
-//
-//        let postAggregationNames = generatedTinyQuery.postAggregations!.map { postAgg in
-//            switch postAgg {
-//            case .thetaSketchEstimate(let thetaEstimateAgg):
-//                return thetaEstimateAgg.name ?? "Name not defined"
-//            default:
-//                fatalError()
-//            }
-//        }
-//
-//        print("Aggregations: ")
-//        for aggregationName in aggregationNames {
-//            print(aggregationName)
-//        }
-//
-//        print("Post-Aggregations: ")
-//        for aggregationName in postAggregationNames {
-//            print(aggregationName)
-//        }
-//
-//        print(String(data: try! JSONEncoder.telemetryEncoder.encode(generatedTinyQuery), encoding: .utf8)!)
+    }
+    
+    func testRetentionWithDifferentGranularities() throws {
+        let appID = UUID(uuidString: "79167A27-EBBF-4012-9974-160624E5D07B")!
+        
+        // Test daily retention - 7 days should generate 8 intervals (0-7 inclusive)
+        let dailyQuery = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            appID: appID,
+            baseFilters: .thisApp,
+            testMode: false,
+            intervals: [QueryTimeInterval(
+                beginningDate: Date(iso8601String: "2022-08-01T00:00:00.000Z")!,
+                endDate: Date(iso8601String: "2022-08-07T23:59:59.000Z")!
+            )],
+            granularity: .day
+        )
+        
+        let compiledDailyQuery = try dailyQuery.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [appID], isSuperOrg: true)
+        XCTAssertEqual(compiledDailyQuery.aggregations?.count, 7) // 7 days
+        // Post-aggregations should be n*(n+1)/2 for n intervals
+        XCTAssertEqual(compiledDailyQuery.postAggregations?.count, 28) // 7*8/2 = 28
+        
+        // Test weekly retention - 4 weeks
+        let weeklyQuery = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            appID: appID,
+            baseFilters: .thisApp,
+            testMode: false,
+            intervals: [QueryTimeInterval(
+                beginningDate: Date(iso8601String: "2022-08-01T00:00:00.000Z")!,
+                endDate: Date(iso8601String: "2022-08-29T00:00:00.000Z")!
+            )],
+            granularity: .week
+        )
+        
+        let compiledWeeklyQuery = try weeklyQuery.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [appID], isSuperOrg: true)
+        XCTAssertEqual(compiledWeeklyQuery.aggregations?.count, 5) // 5 weeks (spans into 5th week)
+        XCTAssertEqual(compiledWeeklyQuery.postAggregations?.count, 15) // 5*6/2 = 15
+        
+        // Test monthly retention - 3 months
+        let monthlyQuery = CustomQuery(
+            queryType: .retention,
+            dataSource: "com.telemetrydeck.all",
+            appID: appID,
+            baseFilters: .thisApp,
+            testMode: false,
+            intervals: [QueryTimeInterval(
+                beginningDate: Date(iso8601String: "2022-08-01T00:00:00.000Z")!,
+                endDate: Date(iso8601String: "2022-10-31T00:00:00.000Z")!
+            )],
+            granularity: .month
+        )
+        
+        let compiledMonthlyQuery = try monthlyQuery.precompile(namespace: nil, useNamespace: false, organizationAppIDs: [appID], isSuperOrg: true)
+        XCTAssertEqual(compiledMonthlyQuery.aggregations?.count, 3) // 3 months
+        XCTAssertEqual(compiledMonthlyQuery.postAggregations?.count, 6) // 3*4/2 = 6
     }
 }
