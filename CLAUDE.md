@@ -42,43 +42,50 @@ swift package generate-xcodeproj
 
 ## Architecture Overview
 
-### Core Data Models
-- **DTOv1/DTOv2**: Main data transfer objects with versioning
-  - `DTOv1`: Legacy models (InsightGroup, LexiconPayloadKey, OrganizationJoinRequest)
-  - `DTOv2`: Current models (Organization, User, App, Insight, Badge, etc.)
-- **Models.swift**: Additional DTOs for API requests, authentication, and UI state
-
-### Query System
+### Query System (`Query/`)
 - **CustomQuery**: Main query builder for Apache Druid integration
-  - Supports multiple query types: timeseries, groupBy, topN, scan, timeBoundary, funnel, experiment
+  - Query types: `timeseries`, `groupBy`, `topN`, `scan`, `timeBoundary`, `funnel`, `experiment`, `retention`
   - Handles filters, aggregations, post-aggregations, and time intervals
 - **Query Components**:
-  - `Aggregator`: Define aggregation functions (sum, count, etc.)
+  - `Aggregator`: Aggregation functions (sum, count, etc.)
   - `Filter`: Query filtering logic
   - `DimensionSpec`: Dimension specifications for grouping
   - `QueryGranularity`: Time granularity (day, week, month)
   - `VirtualColumn`: Computed columns
+  - `PostAggregator`: Post-aggregation calculations
+  - `Datasource`: Data source configuration
 
-### Druid Integration
-- **Druid/**: Complete Apache Druid configuration DTOs
-  - `configuration/`: Tuning configs, compaction configs
-  - `data/input/`: Input formats, sources, and dimension specs
-  - `indexing/`: Parallel indexing, batch processing
-  - `ingestion/`: Native batch ingestion specs
-  - `segment/`: Data schema and transformation specs
-  - `Supervisor/`: Kafka streaming supervision
+### Query Generation (`QueryGeneration/`)
+- **CustomQuery+Funnel**: Funnel analysis query generation
+- **CustomQuery+Experiment**: A/B experiment queries
+- **CustomQuery+Retention**: Retention analysis queries
+- **Precompilable**: Query precompilation protocol
+- **SQLQueryConversion**: SQL conversion utilities
 
-### Chart Configuration
-- **ChartConfiguration**: Display settings for analytics charts
-- **ChartDefinitionDTO**: Chart metadata and configuration
-- **InsightDisplayMode**: Chart types (lineChart, barChart, pieChart, etc.)
-
-### Query Results
-- **QueryResult**: Polymorphic result handling for different query types
+### Query Results (`QueryResult/`)
+- **QueryResult**: Polymorphic enum for different result types
 - **TimeSeriesQueryResult**: Time-based query results
 - **TopNQueryResult**: Top-N dimension results
 - **GroupByQueryResult**: Grouped aggregation results
 - **ScanQueryResult**: Raw data scanning results
+- **TimeBoundaryResult**: Time boundary query results
+- Helper types: `StringWrapper`, `DoubleWrapper`, `DoublePlusInfinity`
+
+### Druid Configuration (`Druid/`)
+- `configuration/`: TuningConfig, AutoCompactionConfig
+- `data/input/`: Input formats and dimension specs
+- `indexer/`: Granularity specs
+- `indexing/`: Kinesis streaming, parallel batch indexing
+- `ingestion/`: Task specs, native batch, ingestion specs
+- `segment/`: Data schema and transform specs
+
+### Supervisor (`Supervisor/`)
+- Kafka/Kinesis streaming supervision DTOs
+
+### Chart Configuration (`Chart Configuration/`)
+- **ChartConfiguration**: Display settings for analytics charts
+- **ChartAggregationConfiguration**: Aggregation configuration
+- **ChartConfigurationOptions**: Chart options
 
 ## Key Dependencies
 
@@ -86,9 +93,6 @@ swift package generate-xcodeproj
 - **Apple Swift Crypto**: Cryptographic hashing for query stability
 
 ## Development Notes
-
-### DTO Versioning
-The library uses a versioning strategy with `DTOv1` and `DTOv2` namespaces. `DTOv2.Insight` is deprecated in favor of V3InsightsController patterns.
 
 ### Query Hashing
 CustomQuery implements stable hashing using SHA256 for caching and query deduplication. The `stableHashValue` property provides consistent query identification.
@@ -98,7 +102,7 @@ Tests are organized by functionality:
 - **DataTransferObjectsTests**: Basic DTO serialization/deserialization
 - **QueryTests**: Query building and validation
 - **QueryResultTests**: Result parsing and handling
-- **QueryGenerationTests**: Advanced query generation (funnels, experiments)
+- **QueryGenerationTests**: Advanced query generation (funnels, experiments, retention)
 - **SupervisorTests**: Druid supervisor configuration
 - **DataSchemaTests**: Data ingestion schema validation
 
