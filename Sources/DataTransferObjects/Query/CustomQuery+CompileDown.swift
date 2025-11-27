@@ -158,6 +158,10 @@ public extension CustomQuery {
             return filter
         case .range:
             return filter
+        case .equals:
+            return filter
+        case .null:
+            return filter
         case .and(let filterExpression):
             return Filter.and(.init(fields: filterExpression.fields.map { compileRelativeFilterInterval(filter: $0) }))
         case .or(let filterExpression):

@@ -129,8 +129,97 @@ public struct FilterNot: Codable, Hashable, Equatable, Sendable {
     public let field: Filter
 }
 
+/// The equality filter matches rows where a column value equals a specific value.
+public struct FilterEquals: Codable, Hashable, Equatable, Sendable {
+    public init(column: String, matchValueType: MatchValueType, matchValue: MatchValue) {
+        self.column = column
+        self.matchValueType = matchValueType
+        self.matchValue = matchValue
+    }
+
+    public enum MatchValueType: String, Codable, Hashable, Equatable, Sendable {
+        case string = "STRING"
+        case long = "LONG"
+        case double = "DOUBLE"
+        case float = "FLOAT"
+        case arrayString = "ARRAY<STRING>"
+        case arrayLong = "ARRAY<LONG>"
+        case arrayDouble = "ARRAY<DOUBLE>"
+        case arrayFloat = "ARRAY<FLOAT>"
+    }
+
+    public enum MatchValue: Hashable, Equatable, Sendable {
+        case string(String)
+        case int(Int)
+        case double(Double)
+        case arrayString([String])
+        case arrayInt([Int])
+        case arrayDouble([Double])
+    }
+
+    public let column: String
+    public let matchValueType: MatchValueType
+    public let matchValue: MatchValue
+}
+
+extension FilterEquals.MatchValue: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if let arrayString = try? container.decode([String].self) {
+            self = .arrayString(arrayString)
+        } else if let arrayInt = try? container.decode([Int].self) {
+            self = .arrayInt(arrayInt)
+        } else if let arrayDouble = try? container.decode([Double].self) {
+            self = .arrayDouble(arrayDouble)
+        } else if let string = try? container.decode(String.self) {
+            self = .string(string)
+        } else if let int = try? container.decode(Int.self) {
+            self = .int(int)
+        } else if let double = try? container.decode(Double.self) {
+            self = .double(double)
+        } else {
+            throw DecodingError.typeMismatch(
+                FilterEquals.MatchValue.self,
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Expected String, Int, Double, or array types"
+                )
+            )
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+
+        switch self {
+        case .string(let value):
+            try container.encode(value)
+        case .int(let value):
+            try container.encode(value)
+        case .double(let value):
+            try container.encode(value)
+        case .arrayString(let value):
+            try container.encode(value)
+        case .arrayInt(let value):
+            try container.encode(value)
+        case .arrayDouble(let value):
+            try container.encode(value)
+        }
+    }
+}
+
+/// The null filter matches rows where a column value is null.
+public struct FilterNull: Codable, Hashable, Equatable, Sendable {
+    public init(column: String) {
+        self.column = column
+    }
+
+    public let column: String
+}
+
 /// A filter is a JSON object indicating which rows of data should be included in the computation
-/// for a query. It’s essentially the equivalent of the WHERE clause in SQL.
+/// for a query. It's essentially the equivalent of the WHERE clause in SQL.
 public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
     /// The selector filter will match a specific dimension with a specific value.
     /// Selector filters can be used as the base filters for more complex Boolean
@@ -157,6 +246,12 @@ public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
     // to, less than or equal to, and "between"
     case range(FilterRange)
 
+    /// The equality filter matches rows where a column value equals a specific value.
+    case equals(FilterEquals)
+
+    /// The null filter matches rows where a column value is null.
+    case null(FilterNull)
+
     // logical expression filters
     case and(FilterExpression)
     case or(FilterExpression)
@@ -179,14 +274,18 @@ public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
             self = try .interval(FilterInterval(from: decoder))
         case "regex":
             self = try .regex(FilterRegex(from: decoder))
+        case "range":
+            self = try .range(FilterRange(from: decoder))
+        case "equals":
+            self = try .equals(FilterEquals(from: decoder))
+        case "null":
+            self = try .null(FilterNull(from: decoder))
         case "and":
             self = try .and(FilterExpression(from: decoder))
         case "or":
             self = try .or(FilterExpression(from: decoder))
         case "not":
             self = try .not(FilterNot(from: decoder))
-        case "range":
-            self = try .range(FilterRange(from: decoder))
         default:
             throw EncodingError.invalidValue("Invalid type", .init(codingPath: [CodingKeys.type], debugDescription: "Invalid Type", underlyingError: nil))
         }
@@ -216,6 +315,12 @@ public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
         case let .range(range):
             try container.encode("range", forKey: .type)
             try range.encode(to: encoder)
+        case let .equals(equals):
+            try container.encode("equals", forKey: .type)
+            try equals.encode(to: encoder)
+        case let .null(null):
+            try container.encode("null", forKey: .type)
+            try null.encode(to: encoder)
         case let .and(and):
             try container.encode("and", forKey: .type)
             try and.encode(to: encoder)
