@@ -252,7 +252,6 @@ final class AggregatorTests: XCTestCase {
         XCTAssertEqual(String(data: encodedAggregators, encoding: .utf8)!, expectedEncodedAggregators)
     }
 
-
     func testUserCountAggregator() throws {
         let stringRepresentation = """
         [

@@ -4,31 +4,31 @@ import DateOperations
 extension CustomQuery {
     func precompiledRetentionQuery() throws -> CustomQuery {
         var query = self
-        
+
         // Get the query intervals - we need at least one interval
         guard let queryIntervals = intervals ?? relativeIntervals?.map({ QueryTimeInterval.from(relativeTimeInterval: $0) }),
               let firstInterval = queryIntervals.first else {
             throw QueryGenerationError.keyMissing(reason: "Missing intervals for retention query")
         }
-        
+
         let beginDate = firstInterval.beginningDate
         let endDate = firstInterval.endDate
-        
+
         // Use the query's granularity to determine retention period, defaulting to month if not specified
         let retentionGranularity = query.granularity ?? .month
-        
+
         // Validate minimum interval based on granularity
         try validateMinimumInterval(from: beginDate, to: endDate, granularity: retentionGranularity)
-        
+
         // Split into intervals based on the specified granularity
         let retentionIntervals = try splitIntoIntervals(from: beginDate, to: endDate, granularity: retentionGranularity)
-        
+
         // Generate Aggregators
         var aggregators = [Aggregator]()
         for interval in retentionIntervals {
             aggregators.append(aggregator(for: interval))
         }
-        
+
         // Generate Post-Aggregators
         var postAggregators = [PostAggregator]()
         for row in retentionIntervals {
@@ -36,26 +36,26 @@ extension CustomQuery {
                 postAggregators.append(postAggregatorBetween(interval1: row, interval2: column))
             }
         }
-        
+
         // Set the query properties
         query.queryType = .groupBy
         query.granularity = .all
         query.aggregations = uniqued(aggregators)
         query.postAggregations = uniqued(postAggregators)
-        
+
         return query
     }
-    
+
     private func uniqued<T: Hashable>(_ array: [T]) -> [T] {
         var set = Set<T>()
         return array.filter { set.insert($0).inserted }
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func validateMinimumInterval(from beginDate: Date, to endDate: Date, granularity: QueryGranularity) throws {
         let calendar = Calendar.current
-        
+
         switch granularity {
         case .day:
             let components = calendar.dateComponents([.day], from: beginDate, to: endDate)
@@ -86,11 +86,11 @@ extension CustomQuery {
             throw QueryGenerationError.notImplemented(reason: "Retention queries support day, week, month, quarter, or year granularity")
         }
     }
-    
+
     private func splitIntoIntervals(from fromDate: Date, to toDate: Date, granularity: QueryGranularity) throws -> [DateInterval] {
         let calendar = Calendar.current
         var intervals = [DateInterval]()
-        
+
         switch granularity {
         case .day:
             let numberOfDays = numberOfUnitsBetween(beginDate: fromDate, endDate: toDate, component: .day)
@@ -100,7 +100,7 @@ extension CustomQuery {
                 let endOfDay = startOfDay.end(of: .day) ?? startOfDay
                 intervals.append(DateInterval(start: startOfDay, end: endOfDay))
             }
-            
+
         case .week:
             let numberOfWeeks = numberOfUnitsBetween(beginDate: fromDate, endDate: toDate, component: .weekOfYear)
             for week in 0...numberOfWeeks {
@@ -109,7 +109,7 @@ extension CustomQuery {
                 let endOfWeek = startOfWeek.end(of: .weekOfYear) ?? startOfWeek
                 intervals.append(DateInterval(start: startOfWeek, end: endOfWeek))
             }
-            
+
         case .month:
             let numberOfMonths = numberOfUnitsBetween(beginDate: fromDate, endDate: toDate, component: .month)
             for month in 0...numberOfMonths {
@@ -118,7 +118,7 @@ extension CustomQuery {
                 let endOfMonth = startOfMonth.end(of: .month) ?? startOfMonth
                 intervals.append(DateInterval(start: startOfMonth, end: endOfMonth))
             }
-            
+
         case .quarter:
             let numberOfQuarters = numberOfUnitsBetween(beginDate: fromDate, endDate: toDate, component: .quarter)
             for quarter in 0...numberOfQuarters {
@@ -127,7 +127,7 @@ extension CustomQuery {
                 let endOfQuarter = startOfQuarter.end(of: .quarter) ?? startOfQuarter
                 intervals.append(DateInterval(start: startOfQuarter, end: endOfQuarter))
             }
-            
+
         case .year:
             let numberOfYears = numberOfUnitsBetween(beginDate: fromDate, endDate: toDate, component: .year)
             for year in 0...numberOfYears {
@@ -136,18 +136,18 @@ extension CustomQuery {
                 let endOfYear = startOfYear.end(of: .year) ?? startOfYear
                 intervals.append(DateInterval(start: startOfYear, end: endOfYear))
             }
-            
+
         default:
             throw QueryGenerationError.notImplemented(reason: "Retention queries support day, week, month, quarter, or year granularity")
         }
-        
+
         return intervals
     }
-    
+
     private func numberOfUnitsBetween(beginDate: Date, endDate: Date, component: Calendar.Component) -> Int {
         let calendar = Calendar.current
         let components = calendar.dateComponents([component], from: beginDate, to: endDate)
-        
+
         switch component {
         case .day:
             return components.day ?? 0
@@ -163,13 +163,13 @@ extension CustomQuery {
             return 0
         }
     }
-    
+
     private func title(for interval: DateInterval) -> String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
         return "\(formatter.string(from: interval.start))_\(formatter.string(from: interval.end))"
     }
-    
+
     private func aggregator(for interval: DateInterval) -> Aggregator {
         .filtered(.init(
             filter: .interval(.init(
@@ -182,7 +182,7 @@ extension CustomQuery {
             ))
         ))
     }
-    
+
     private func postAggregatorBetween(interval1: DateInterval, interval2: DateInterval) -> PostAggregator {
         .thetaSketchEstimate(.init(
             name: "retention_\(title(for: interval1))_\(title(for: interval2))",

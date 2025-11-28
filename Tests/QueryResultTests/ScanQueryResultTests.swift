@@ -52,8 +52,8 @@ class ScanQueryResultTests: XCTestCase {
             "events": [{
                 "__time": 1741168800000,
                 "payload": [
-                    "TelemetryDeck.API.Ingest.version:v2", 
-                    "TelemetryDeck.Accessibility.isInvertColorsEnabled:false", 
+                    "TelemetryDeck.API.Ingest.version:v2",
+                    "TelemetryDeck.Accessibility.isInvertColorsEnabled:false",
                     "TelemetryDeck.Accessibility.isReduceMotionEnabled:false"
                 ]
             }],
