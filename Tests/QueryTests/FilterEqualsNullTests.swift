@@ -205,4 +205,29 @@ class FilterEqualsNullTests: XCTestCase {
         XCTAssertEqual(filterNull, decodedFilter)
         XCTAssertEqual(filterJSON, String(data: encodedFilter, encoding: .utf8))
     }
+
+    func testFilterIn() throws {
+        let filterJSON = """
+        {
+            "dimension": "outlaw",
+            "type": "in",
+            "values": ["Good", "Bad", "Ugly"]
+        }
+        """
+        .filter { !$0.isWhitespace }
+
+        let filterNull = Filter.in(
+            FilterIn(dimension: "outlaw", values: ["Good", "Bad", "Ugly"])
+        )
+
+        let decodedFilter = try JSONDecoder.telemetryDecoder.decode(
+            Filter.self,
+            from: filterJSON.data(using: .utf8)!
+        )
+
+        let encodedFilter = try JSONEncoder.telemetryEncoder.encode(filterNull)
+
+        XCTAssertEqual(filterNull, decodedFilter)
+        XCTAssertEqual(filterJSON, String(data: encodedFilter, encoding: .utf8))
+    }
 }

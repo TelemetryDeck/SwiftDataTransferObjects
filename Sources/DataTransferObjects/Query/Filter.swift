@@ -193,20 +193,32 @@ extension FilterEquals.MatchValue: Codable {
         var container = encoder.singleValueContainer()
 
         switch self {
-        case .string(let value):
+        case let .string(value):
             try container.encode(value)
-        case .int(let value):
+        case let .int(value):
             try container.encode(value)
-        case .double(let value):
+        case let .double(value):
             try container.encode(value)
-        case .arrayString(let value):
+        case let .arrayString(value):
             try container.encode(value)
-        case .arrayInt(let value):
+        case let .arrayInt(value):
             try container.encode(value)
-        case .arrayDouble(let value):
+        case let .arrayDouble(value):
             try container.encode(value)
         }
     }
+}
+
+/// The in filter can match input rows against a set of values, where a match occurs if the value is contained in the set.
+public struct FilterIn: Codable, Hashable, Equatable, Sendable {
+    public init(dimension: String, values: [String]) {
+        self.dimension = dimension
+        self.values = values
+    }
+
+    public let dimension: String
+    public let values: [String]
+    // extractionFn not supported atm
 }
 
 /// The null filter matches rows where a column value is null.
@@ -223,7 +235,7 @@ public struct FilterNull: Codable, Hashable, Equatable, Sendable {
 public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
     /// The selector filter will match a specific dimension with a specific value.
     /// Selector filters can be used as the base filters for more complex Boolean
-    /// expressions of filters.
+    /// expressions of filters (deprecated -- use equals instead)
     case selector(FilterSelector)
 
     /// The column comparison filter is similar to the selector filter, but instead
@@ -251,6 +263,10 @@ public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
 
     /// The null filter matches rows where a column value is null.
     case null(FilterNull)
+
+    /// The in filter can match input rows against a set of values, where a match occurs
+    /// if the value is contained in the set.
+    case `in`(FilterIn)
 
     // logical expression filters
     case and(FilterExpression)
@@ -280,6 +296,8 @@ public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
             self = try .equals(FilterEquals(from: decoder))
         case "null":
             self = try .null(FilterNull(from: decoder))
+        case "in":
+            self = try .in(FilterIn(from: decoder))
         case "and":
             self = try .and(FilterExpression(from: decoder))
         case "or":
@@ -321,6 +339,9 @@ public indirect enum Filter: Codable, Hashable, Equatable, Sendable {
         case let .null(null):
             try container.encode("null", forKey: .type)
             try null.encode(to: encoder)
+        case let .in(inFilter):
+            try container.encode("in", forKey: .type)
+            try inFilter.self.encode(to: encoder)
         case let .and(and):
             try container.encode("and", forKey: .type)
             try and.encode(to: encoder)
