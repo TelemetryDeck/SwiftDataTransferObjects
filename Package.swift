@@ -18,8 +18,8 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/TelemetryDeck/SwiftDateOperations.git", from: "2.0.0"),
+        // .package(name: "SwiftDateOperations", path: "../SwiftDateOperations"), // local development
+        .package(url: "https://github.com/TelemetryDeck/SwiftDateOperations.git", from: "2.0.1"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.8.0"),
     ],
     targets: [

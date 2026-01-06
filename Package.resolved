@@ -1,13 +1,13 @@
 {
-  "originHash" : "d17c94abeac2fe916c4c167caafdaeb10540ebc564c324d666dfe0b7f75071eb",
+  "originHash" : "d4b2d263e046baf7bb3ab0b81f6eedd85d4d027cf47962c255a7fff09651b51a",
   "pins" : [
     {
       "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",
       "state" : {
-        "revision" : "40d25bbb2fc5b557a9aa8512210bded327c0f60d",
-        "version" : "1.5.0"
+        "revision" : "810496cf121e525d660cd0ea89a758740476b85f",
+        "version" : "1.5.1"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/TelemetryDeck/SwiftDateOperations.git",
       "state" : {
-        "revision" : "2d9dea9b05d9d8eb2e1c2ce9fed1d4a274ffe900",
-        "version" : "2.0.0"
+        "revision" : "ae414202ac985cf9bb78244ba365e82d1d9e7a4c",
+        "version" : "2.0.1"
       }
     }
   ],

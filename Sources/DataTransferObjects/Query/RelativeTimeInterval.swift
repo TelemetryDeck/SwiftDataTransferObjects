@@ -66,20 +66,76 @@ public struct RelativeDate: Codable, Hashable, Equatable, Sendable {
 }
 
 public extension Date {
-    static func from(relativeDate: RelativeDate) -> Date {
-        var date = Date()
+    static func from(relativeDate: RelativeDate, originDate: Date? = nil) -> Date {
+        var date = originDate ?? Date()
 
         let calendarComponent = relativeDate.component.calendarComponent
-        date = date.calendar.date(byAdding: calendarComponent, value: relativeDate.offset, to: date) ?? date
 
-        switch relativeDate.position {
-        case .beginning:
-            date = date.beginning(of: calendarComponent) ?? date
-        case .end:
-            date = date.end(of: calendarComponent) ?? date
+        // Swift's Calendar has a known bug where adding/subtracting .quarter doesn't work correctly.
+        // Work around this by converting quarters to months (1 quarter = 3 months).
+        if relativeDate.component == .quarter {
+            date = date.calendar.date(byAdding: .month, value: relativeDate.offset * 3, to: date) ?? date
+        } else {
+            date = date.calendar.date(byAdding: calendarComponent, value: relativeDate.offset, to: date) ?? date
+        }
+
+        // Swift's Calendar also has bugs with beginning(of: .quarter) and end(of: .quarter).
+        // Implement custom quarter boundary logic.
+        if relativeDate.component == .quarter {
+            switch relativeDate.position {
+            case .beginning:
+                date = date.beginningOfQuarter ?? date
+            case .end:
+                date = date.endOfQuarter ?? date
+            }
+        } else {
+            switch relativeDate.position {
+            case .beginning:
+                date = date.beginning(of: calendarComponent) ?? date
+            case .end:
+                date = date.end(of: calendarComponent) ?? date
+            }
         }
 
         return date
+    }
+
+    /// Returns the first moment of the quarter containing this date.
+    /// Q1: Jan 1, Q2: Apr 1, Q3: Jul 1, Q4: Oct 1
+    private var beginningOfQuarter: Date? {
+        let month = calendar.component(.month, from: self)
+        let year = calendar.component(.year, from: self)
+
+        // Determine the first month of the quarter (1, 4, 7, or 10)
+        let quarterIndex = (month - 1) / 3  // 0, 1, 2, or 3
+        let firstMonthOfQuarter = quarterIndex * 3 + 1
+
+        var components = DateComponents()
+        components.year = year
+        components.month = firstMonthOfQuarter
+        components.day = 1
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        components.nanosecond = 0
+
+        return calendar.date(from: components)
+    }
+
+    /// Returns the last moment of the quarter containing this date.
+    /// Q1: Mar 31 23:59:59, Q2: Jun 30, Q3: Sep 30, Q4: Dec 31
+    private var endOfQuarter: Date? {
+        guard let beginningOfNextQuarter = quarterAfter?.beginningOfQuarter else {
+            return nil
+        }
+
+        // Subtract 1 second to get the last moment of the current quarter
+        return calendar.date(byAdding: .second, value: -1, to: beginningOfNextQuarter)
+    }
+
+    /// Returns a date in the next quarter
+    private var quarterAfter: Date? {
+        calendar.date(byAdding: .month, value: 3, to: self)
     }
 }
 
